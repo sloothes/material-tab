@@ -12,16 +12,35 @@ $(function(){
 
 </script>
 
+<div style="height:30px;">
+    <h4 class="x-large">TYPE:
+        <div class="product-item-textfield" style="display:inline-block;">
+            <select id="material-type" class="form-control material-type-droplist" readOnly>
+                <!-- option value="">select material type:</option -->
+                <option value="MeshStandardMaterial">standard</option>
+                <option value="MeshPhongMaterial">phong</option>
+                <option value="MeshLambertMaterial">lambert</option>
+                <option value="MeshBasicMaterial">basic</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
 <div id="new-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="margin-bottom:10px;">New</div>
 
+<script>
+
+    $("#new-material-button").on("click", function(){
+        var TYPE = #("select#material-type").val();
+        MATERIAL = new THREE[ TYPE ]();
+        debugMode && console.log({"material":MATERIAL})
+    });
 
 
 
 
 
-
-
-
+</script>
 
 
 
