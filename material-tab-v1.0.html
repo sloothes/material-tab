@@ -99,6 +99,7 @@ $(function(){
 
             if ( material[ name ] == undefined ) continue;         // important!
             if ( material[ name ] instanceof Function ) continue;  // important!
+            if ( typeof(material[name]) === "function" ) continue; // important!
 
             switch( name ){
 
@@ -212,7 +213,7 @@ $(function(){
 
             if ( texture[ name ] == undefined ) continue;
             if ( texture[ name ] instanceof Function ) continue;
-
+            if ( typeof(texture[name]) === "function" ) continue;
 
             switch (name){
 
