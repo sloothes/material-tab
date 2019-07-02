@@ -31,7 +31,7 @@ $(function(){
 <script>
 
     $("#new-material-button").on("click", function(){
-        var TYPE = #("select#material-type").val();
+        var TYPE = $("select#material-type").val();
         MATERIAL = new THREE[ TYPE ]();
         debugMode && console.log({"material":MATERIAL})
     });
