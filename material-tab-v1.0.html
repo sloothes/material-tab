@@ -13,10 +13,9 @@ $(function(){
 </script>
 
 <div style="height:50px;margin-bottom:20px;">
-    <h4>SELECT TYPE:
-        <div class="product-item-textfield" style="display:inline-block;">
+    <h4>Select type:
+        <div style="width:50%;display:inline-block;">
             <select id="material-type" class="form-control material-type-droplist" readOnly>
-                <!-- option value="">select material type:</option -->
                 <option value="MeshStandardMaterial">standard</option>
                 <option value="MeshPhongMaterial">phong</option>
                 <option value="MeshLambertMaterial">lambert</option>
@@ -35,10 +34,6 @@ $(function(){
         MATERIAL = new THREE[ TYPE ]();
         debugMode && console.log({"material":MATERIAL})
     });
-
-
-
-
 
 </script>
 
