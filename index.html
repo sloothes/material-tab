@@ -670,7 +670,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         for (var i = 0; i < this.files.length; i++ ) {
 
-            (function(){
+            (() => {
 
                 var file = this.files[i];
                 var name = this.files[i].name;
