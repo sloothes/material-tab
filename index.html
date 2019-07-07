@@ -597,6 +597,31 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "visible":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "visible"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_visible"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.visible;
+
+                        $(input).on("click", function(){
+                            json.visible = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#visible").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
                 case "opacity":
 
                     (function(){
@@ -623,6 +648,184 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     })();
 
                 break;
+
+                case "transparent":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "transparent"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_transparent"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.transparent;
+
+                        $(input).on("click", function(){
+                            json.transparent = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#transparent").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "fog":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "fog"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_fog"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.fog;
+
+                        $(input).on("click", function(){
+                            json.fog = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#fog").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "lights":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "lights"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_lights"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.lights;
+
+                        $(input).on("click", function(){
+                            json.lights = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#lights").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "colorWrite":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "colorWrite"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_colorWrite"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.colorWrite;
+
+                        $(input).on("click", function(){
+                            json.colorWrite = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#colorWrite").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "depthTest":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "depthTest"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_depthTest"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.depthTest;
+
+                        $(input).on("click", function(){
+                            json.depthTest = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#depthTest").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "depthWrite":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "depthWrite"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_depthWrite"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.depthWrite;
+
+                        $(input).on("click", function(){
+                            json.depthWrite = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#depthTest").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "polygonOffset":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "polygonOffset"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_polygonOffset"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.polygonOffset;
+
+                        $(input).on("click", function(){
+                            json.polygonOffset = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#polygonOffset").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+
+
 
 
 
