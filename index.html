@@ -222,8 +222,9 @@
 </div>
 
 <div style="margin-bottom:20px;">
-    <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn">Import textures</div>
     <input id="texture-fileinput" type="file" class="hidden" multiple>
+    <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Import textures</div>
+    <div id="clear-import-textures" class="form-control btn btn-info btn-white-outline gradient-btn pull-right" style="width:24%;">Clear</div>
 </div>
 
 <div style="height:45px;margin-bottom:20px;">
@@ -311,7 +312,7 @@
 
 <div style="margin-bottom:10px;">
     <div id="save-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Save</div>
-    <div id="reset-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Reset</div>
+    <div id="reset-material-button" class="form-control btn btn-info btn-white-outline gradient-btn pull-right" style="width:24%;">Reset</div>
 </div>
 
 <script>
@@ -331,6 +332,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     const textureImportBtn = $("#import-texture-button").get(0);
     const textureFileinput = $("input#texture-fileinput").get(0);
+    const texturesClearBtn = $("#clear-import-textures").get(0);
+
     const textureDroplist  = $("select#imported-textures").get(0);
     const textureCheckboxSelector = "input[type=checkbox].form-control.pull-right.material-checkbox";
 
@@ -711,6 +714,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     });
 
+    $(texturesClearBtn).on("click", function(){
+        files = {};
+        textures = {};
+    });
+
+
+
     var maps = [
         "map", 
         "bumpMap", 
@@ -740,7 +750,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             propertyValueChanged.dispatch( map, texture );
         });
     });
-
 
 
 //  SAVE.
