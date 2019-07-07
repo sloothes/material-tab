@@ -179,8 +179,8 @@
 
     outfitSlotChanged.add(function(value){
         if ( !value ) return;
-        var data = "/select/" + value;
-        viewer.contentWindow.outfitSelectHandler(data);
+        var data = "/outfit/" + value;
+        viewer.contentWindow.localPlayerHandler(data);
 
     });
 
