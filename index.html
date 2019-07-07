@@ -719,12 +719,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     maps.forEach(function(map){
         $(`input[type=checkbox]#${map}`).on("click", function(){
+
             if (!textureDroplist.value) return;
             var name = textureDroplist.value;
-            if ( this.checked )
+
+            if ( this.checked ) {
                 var texture = textures[name];
-            else
+            } else {
                 var texture = null;
+            }
+
             propertyValueChanged.dispatch( map, texture );
         });
     });
