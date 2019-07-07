@@ -179,7 +179,7 @@
 
     outfitSlotChanged.add(function(value){
         if ( !value ) return;
-        var data = "/outfit/" + value;
+        var data = "/select/" + value;
         viewer.contentWindow.localPlayerHandler(data);
 
     });
@@ -437,7 +437,7 @@ loadjs("/three/three.js", function(){
 
                             move: function(color) {
                                 var hex = color.toString("hex").replace(/#/, "0x");
-                                json[ key ] = Number(hex); // important!
+                                json[ key ] = Number(hex);
                                 propertyValueChanged.dispatch(key, hex);
                                 $(propDroplist).find(`option#${key}`).val( json[key] );
                             },
