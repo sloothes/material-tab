@@ -181,7 +181,6 @@
     //  if ( !value ) return;
         var data = "/select/" + value;
         viewer.contentWindow.localPlayerHandler(data);
-        debugMode && console.log({"data": data});
     });
 
     $(droplist).on("change", function(){
