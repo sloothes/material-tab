@@ -693,6 +693,56 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "skinning":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "skinning"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_skinning"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.skinning;
+
+                        $(input).on("click", function(){
+                            json.skinning = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#skinning").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "wireframe":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "wireframe"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_wireframe"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.wireframe;
+
+                        $(input).on("click", function(){
+                            json.wireframe = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#wireframe").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
                 case "fog":
 
                     (function(){
@@ -760,6 +810,31 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             json.colorWrite = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
                             $(propDroplist).find("option#colorWrite").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "clipShadows":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "clipShadows"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_clipShadows"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.clipShadows;
+
+                        $(input).on("click", function(){
+                            json.clipShadows = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#clipShadows").val( this.checked );
                         });
 
                         $(propControls).append(span, input);
@@ -843,7 +918,55 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "morphNormals":
 
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "morphNormals"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_morphNormals"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.morphNormals;
+
+                        $(input).on("click", function(){
+                            json.morphNormals = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#morphNormals").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "morphTargets":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "morphTargets"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_morphTargets"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.morphTargets;
+
+                        $(input).on("click", function(){
+                            json.morphTargets = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#morphTargets").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
 
 
 
