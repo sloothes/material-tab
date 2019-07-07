@@ -543,6 +543,25 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "type":
+                    
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "type"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_type"; input.type = "text"; input.readOnly = true;
+                        input.classList.add("form-control", "pull-right", "material-textfield");
+
+                        input.value = json.type;
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
                 case "bumpScale":
 
                     (function(){
