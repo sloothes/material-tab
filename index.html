@@ -317,7 +317,7 @@
 
 <script>
 
-(function(){
+loadjs("/three/three.js", function(){
 
     var files = {};
     var textures = {};
@@ -387,11 +387,9 @@
 
         $(titleTextfield).val("");
 
-    //  var TYPE = $(typeDroplist).val();
-    //  var material = new THREE[ TYPE ]();
-    //  var json = materialtoJSON(material);
-
-        var json = newJsonTexture();
+        var TYPE = $(typeDroplist).val();
+        var material = new THREE[ TYPE ]();
+        var json = materialtoJSON(material);
 
         $(propDroplist).off();
         $(propDroplist).children().remove();
@@ -744,6 +742,6 @@
         debugMode && console.log({"save":"TODO"});
     });
 
-})();
+});
 
 
