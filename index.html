@@ -4,7 +4,7 @@
         var component_ID = {
             type: "tab",
             demo: true,
-            version: 1.3,
+            version: "1.3.1",
             kind: "component",
             name: "material-tab.html",
             description: "creates outfit material in zangoDB.",
@@ -338,6 +338,25 @@
     var Signal = signals.Signal;
     var propertyValueChanged = new Signal();
 
+    propertyValueChanged.add( function(key, value){
+
+        if ( key == undefined ) return;
+        if ( !$(slotDroplist).val() ) return;
+        if ( !$(genderDroplist).val() ) return;
+
+        var data = {};
+
+        data.key    = key;
+        data.value  = value;
+        data.slot   = $(slotDroplist).val();
+        data.gender = $(genderDroplist).val();
+
+        viewer.contentWindow.localPlayerMaterialHandler(data);
+
+    });
+
+    initMaterialPropertiesDroplist();
+
     function newJsonTexture() {
         return {
             anisotropy: 1,
@@ -364,23 +383,6 @@
         };
     }
 
-    propertyValueChanged.add( function(key, value){
-
-        if ( key == undefined ) return;
-        if ( !$(slotDroplist).val() ) return;
-        if ( !$(genderDroplist).val() ) return;
-
-        var data = {};
-
-        data.key    = key;
-        data.value  = value;
-        data.slot   = $(slotDroplist).val();
-        data.gender = $(genderDroplist).val();
-
-        viewer.contentWindow.localPlayerMaterialHandler(data);
-
-    });
-
     function updateMaterialPropertiesDroplist(){
 
         $(titleTextfield).val("");
@@ -406,6 +408,221 @@
 
         }
 
+        $(propDroplist).on("change", function(){
+
+            $(propControls).css({height:""});
+            $(propControls).children().remove();
+            var key = $(this.selectedOptions[0]).text();
+
+            switch (key) {
+
+                case "color":
+                case "emissive":
+
+                    (function(){
+
+                        var input = document.createElement("input");
+                        input.type = "hidden"; input.id = "input_" + key;
+
+                        $(propControls).append(input);
+                        $(propControls).css({height:"auto"});
+
+                        $(input).spectrum({
+
+                            preferredFormat: "hex",
+                            color: "#ffffff",
+                            flat: true,
+                            showInput: true,
+                            showInitial: true,
+                            showButtons: false,
+                            allowEmpty: false,
+
+                            move: function(color) {
+                                var hex = color.toString("hex").replace(/#/, "0x");
+                                json[ key ] = Number(hex); // important!
+                                propertyValueChanged.dispatch(key, hex);
+                                $(propDroplist).find(`option#${key}`).val( json[key] );
+                            },
+
+                        });
+
+                    //  Colorpicker startup.
+
+                        var hexString = "#" + json[ key ].toString(16);
+                        $("#sp-scene-background").spectrum( "set", hexString );
+
+                    })();
+
+                break;
+
+                case "_id":
+
+                    (function(){
+
+                        var button = document.createElement("div");
+                        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+                        button.id = "button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+                        var input = document.createElement("input");
+                        input.id = "input_id"; input.type = "text";
+                        input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
+
+                        if (json._id) input.value = json._id;
+                        else input.value = json._id = ObjectId();
+
+                        $(button).on("click", function(){
+                            var objectId = ObjectId();
+                            input.value = json._id = objectId;
+                            $(propDroplist).find("option#_id").val( objectId );
+                        });
+
+                        $(input).on("input", function(){
+                            json._id = this.value;
+                            $(propDroplist).find("option#_id").val( this.value );
+                        });
+
+                        $(propControls).append(button, input);
+
+                    })();
+
+                break;
+
+                case "uuid":
+
+                    (function(){
+
+                        var button = document.createElement("div");
+                        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+                        button.id = "button_uuid"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+                        var input = document.createElement("input");
+                        input.id = "input_uuid"; input.type = "text"; input.readOnly = true;
+                        input.classList.add("form-control", "pull-right", "uuid-material-textfield");
+
+                        if (json.uuid) input.value = json.uuid;
+                        else input.value = json.uuid = THREE.Math.generateUUID();
+
+                        $(button).on("click", function(){
+                            var uuid = THREE.Math.generateUUID();
+                            input.value = json.uuid = uuid;
+                            $(propDroplist).find("option#uuid").val( uuid );
+                        });
+
+                        $(input).on("input", function(){
+                            json.uuid = this.value;
+                            $(propDroplist).find("option#uuid").val( this.value );
+                        });
+
+                        $(propControls).append(button, input);
+
+                    })();
+
+                break;
+
+                case "name":
+                    
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "name"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_name"; input.type = "text";
+                        input.classList.add("form-control", "pull-right", "material-textfield");
+
+                        titleTextfield.value = input.value = json.name;
+
+                        $(input).on("input", function(){
+                            titleTextfield.value = json.name = this.value;
+                            $(propDroplist).find("option#name").val( this.value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "bumpScale":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "bumpScale"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_bumpScale"; input.type = "number"; input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.bumpScale;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.bumpScale = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#bumpScale").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "normalScale":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "normalScale"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_normalScale"; input.type = "number"; input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        if ( json.normalScale && typeof(json.normalScale) == "array" ) {
+                            input.value = json.normalScale[0];
+                        }
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            propertyValueChanged.dispatch(key, value );
+                            json.normalScale[0] = json.normalScale[1] = value;
+                            $(propDroplist).find("option#normalScale").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "opacity":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "opacity"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_opacity"; input.type = "number"; 
+                        input.step = 0.01; input.min = 0; input.max = 1;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.opacity;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.opacity = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#opacity").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
 
 
 
@@ -413,12 +630,16 @@
 
 
 
+
+
+
+            }
+
+        });
 
         $(propDroplist).change();
 
     }
-
-    initMaterialPropertiesDroplist();
 
     function initMaterialPropertiesDroplist(){
 
@@ -433,14 +654,6 @@
         updateMaterialPropertiesDroplist();
 
     }
-
-    $("#reset-material-button").on("click", function(){
-        initMaterialPropertiesDroplist();
-    });
-
-    $("#save-material-button").on("click", function(){
-        debugMode && console.log({"save":"TODO"});
-    });
 
 
 //  TEXTURES.
@@ -517,6 +730,18 @@
                 var texture = null;
             propertyValueChanged.dispatch( map, texture );
         });
+    });
+
+
+
+//  SAVE.
+
+    $("#reset-material-button").on("click", function(){
+        initMaterialPropertiesDroplist();
+    });
+
+    $("#save-material-button").on("click", function(){
+        debugMode && console.log({"save":"TODO"});
     });
 
 })();
