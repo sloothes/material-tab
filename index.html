@@ -588,6 +588,58 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "displacementScale":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "displacementScale"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_displacementScale"; input.type = "number"; input.step = 0.01;
+
+                        input.value = json.displacementScale;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.displacementScale = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#displacementScale").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "displacementBias":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "displacementBias"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_displacementBias"; input.type = "number"; input.step = 0.01;
+
+                        input.value = json.displacementBias;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.displacementBias = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#displacementBias").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
                 case "normalScale":
 
                     (function(){
@@ -793,6 +845,84 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "emissiveIntensity":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "emissiveIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_emissiveIntensity"; input.type = "number";  input.step = 0.01;
+
+                        input.value = json.emissiveIntensity;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.emissiveIntensity = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#emissiveIntensity").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "lightMapIntensity":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "lightMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_lightMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                        input.value = json.lightMapIntensity;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.lightMapIntensity = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#lightMapIntensity").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "aoMapIntensity":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "aoMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_aoMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                        input.value = json.aoMapIntensity;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.aoMapIntensity = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#aoMapIntensity").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
                 case "colorWrite":
 
                     (function(){
@@ -835,6 +965,32 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             json.clipShadows = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
                             $(propDroplist).find("option#clipShadows").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "alphaTest":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "alphaTest"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_alphaTest"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = Boolean(json.alphaTest);
+
+                        $(input).on("click", function(){
+                            var value = Number(this.checked);
+                            json.alphaTest = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#alphaTest").val( value );
                         });
 
                         $(propControls).append(span, input);
@@ -893,23 +1049,25 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
-                case "polygonOffset":
+                case "depthFunc":
 
                     (function(){
 
                         var span = document.createElement("span");
-                        span.innerText = "polygonOffset"; span.style.cssText = "vertical-align:-0.7rem;";
-
+                        span.innerText = "depthFunc"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
                         var input = document.createElement("input"); 
-                        input.id = "input_polygonOffset"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
+                        input.min = 0; input.max = 7; input.step = 1;
+                        input.id = "input_depthFunc"; input.type = "number";  
+                        input.classList.add("form-control", "pull-right", "material-input-number");
 
-                        input.checked = json.polygonOffset;
+                        input.value = json.depthFunc;
 
-                        $(input).on("click", function(){
-                            json.polygonOffset = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#polygonOffset").val( this.checked );
+                        $(input).on("input", function(){
+                            var value = parseInt(this.value);
+                            json.depthFunc = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#depthFunc").val( value );
                         });
 
                         $(propControls).append(span, input);
@@ -968,9 +1126,267 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 break;
 
+                case "refractionRatio":
 
+                    (function(){
 
+                        var span = document.createElement("span");
+                        span.innerText = "refractionRatio"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_refractionRatio"; input.type = "number";  input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
 
+                        input.value = json.refractionRatio;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.refractionRatio = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#shading").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "metalness":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "metalness"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_metalness"; input.type = "number";  input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.metalness;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.metalness = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#metalness").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "roughness":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "roughness"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_roughness"; input.type = "number";  input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.roughness;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.roughness = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#roughness").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "shading":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "shading"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_shading"; input.type = "number"; 
+                        input.step = 1; input.min = 0; input.max = 2;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.shading;
+
+                        $(input).on("input", function(){
+                            var value = parseInt(this.value);
+                            json.shading = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#shading").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "side":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "side"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_side"; input.type = "number"; 
+                        input.step = 1; input.min = 0; input.max = 2;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.side;
+
+                        $(input).on("input", function(){
+                            var value = parseInt(this.value);
+                            json.side = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#side").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "wireframeLinewidth":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "wireframeLinewidth"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_wireframeLinewidth"; 
+                        input.type = "number"; input.step = 0.1; input.min = 1;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.wireframeLinewidth;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 1);
+                            json.wireframeLinewidth = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#wireframeLinewidth").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "polygonOffset":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "polygonOffset"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_polygonOffset"; input.type = "checkbox"; 
+                        input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                        input.checked = json.polygonOffset;
+
+                        $(input).on("click", function(){
+                            json.polygonOffset = this.checked;
+                            propertyValueChanged.dispatch(key, this.checked);
+                            $(propDroplist).find("option#polygonOffset").val( this.checked );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "polygonOffsetFactor":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "polygonOffsetFactor"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_polygonOffsetFactor"; input.type = "number"; input.step = 1;
+
+                        input.value = json.polygonOffsetFactor;
+
+                        $(input).on("input", function(){
+                            var value = parseInt(this.value);
+                            json.polygonOffsetFactor = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#side").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "polygonOffsetUnits":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "polygonOffsetUnits"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_polygonOffsetUnits"; input.type = "number"; input.step = 1;
+
+                        input.value = json.polygonOffsetUnits;
+
+                        $(input).on("input", function(){
+                            var value = parseInt(this.value);
+                            json.polygonOffsetUnits = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#side").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "envMapIntensity":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "envMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+                        input.id = "input_envMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                        input.value = json.envMapIntensity;
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.envMapIntensity = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#envMapIntensity").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
 
 
 
