@@ -1,0 +1,1167 @@
+<script>
+
+    $(function(){
+        var component_ID = {
+            type: "tab",
+            demo: true,
+            version: 1.2,
+            kind: "component",
+            name: "material-tab.html",
+            description: "creates outfit material in zangoDB.",
+        };
+    });
+
+</script>
+
+<style>
+
+    .selected {
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(0, 142, 255, 1);
+    }
+
+    #material-title {
+        color:#ffffff;
+        background:none;
+    }
+
+    .material-value {
+        text-align: center;
+        font-size: x-large;
+        font-weight: bold;
+    }
+    
+    .material-textfield {
+        width:70%;
+        float:right;
+    }
+
+    .x-large {
+        font-size: x-large;
+    }
+    
+    .material-property-controls {
+        height:72px;
+    }
+
+    .material-textfield {
+        width:75%;
+    }
+
+    .uuid-material-textfield {
+        width:80%;
+    }
+
+    .material-checkbox {
+        width:34px;
+    }
+
+    .material-input-number {
+        width: 60px;
+        padding: 0;
+        text-align: right;
+        background: none;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        color: #ffff;
+    }
+/*
+    #material-texture-controls {
+        border:none;
+        background:none;
+        border-radius:8px;
+        height:auto;
+    }
+*/
+    #material-property-controls {
+        background:none;
+        border-radius:8px;
+        height:73px;
+    }
+
+    .catalog-item {
+        width:85px;
+        height:85px;
+        margin:4px;
+        background-size: contain;
+        background-position:50% 50%;
+        background-repeat:no-repeat;
+    }
+    
+    .sp-container {
+        width:100%;
+    }
+
+    .sp-picker-container {
+        width:93%;
+    }
+
+
+</style>
+
+<div class="helpers-header material-header" style="margin-bottom:20px;">
+    <input type="text" id="material-title" class="form-control text-center x-large material-title-field" placeholder="new untitled material" readOnly>
+</div>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select gender:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-gender-droplist" class="form-control gender droplist" readOnly>
+                <option value="">Select sex:</option>
+                <option value="male">male</option>
+                <option value="female">female</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const droplist = document.getElementById("material-gender-droplist");
+    const outfitHelpersTabSelector = ".outfit-helpers.component-pane.tab-pane";
+
+    var Signal = signals.Signal;
+    var genderChanged = new Signal();
+
+    genderChanged.add(function(value){
+        if ( !value ) return;
+
+    //  Send data locally.
+        var data = "/gender/" + value;
+        viewer.contentWindow.localPlayerHandler(data);
+        store( "Sex", data );  //  important!
+
+    });
+
+    $(droplist).on("change", function(){
+        if ( !this.value ) return;
+        genderChanged.dispatch( this.value );
+    });
+
+})();
+
+</script>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="outifit-slot" class="form-control outfit-slot-droplist" readOnly>
+                <option value="">Select slot:</option>
+                <option value="body">body</option>
+                <option value="eyes">eyes</option>
+                <option value="hairs">hairs</option>
+                <option value="stockings">stockings</option>
+                <option value="underwears">underwears</option>
+                <option value="costume">costume</option>
+                <option value="tshirt">tshirt</option>
+                <option value="trousers">trousers</option>
+                <option value="dress">dress</option>
+                <option value="shoes">shoes</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const droplist = $("select#outifit-slot").get(0);
+
+    var Signal = signals.Signal;
+    var outfitSlotChanged = new Signal();
+
+    outfitSlotChanged.add(function(value){
+        if ( !value ) return;
+
+    //  Send data locally.
+        var data = "/select/" + value;
+        viewer.contentWindow.outfitSelectHandler(data);
+
+    });
+
+    $(droplist).on("change", function(){
+        if (!this.value) return;
+        outfitSlotChanged.dispatch(this.value);
+    });
+
+})();
+
+</script>
+
+
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select material type:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-type" class="form-control material-type-droplist" readOnly>
+                <option value="MeshStandardMaterial">standard</option>
+                <option value="MeshPhongMaterial">phong</option>
+                <option value="MeshLambertMaterial">lambert</option>
+                <option value="MeshBasicMaterial">basic</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select property:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-property" class="form-control material-property-droplist" readOnly>
+                <option value="">Select key:</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<div id="material-property-controls" class="well"></div>
+
+<div id="material-textures-controls" style="height:35px;margin-bottom:20px;">
+    <h4><span style="vertical-align:-0.7rem;">Import texture:</span>
+        <input id="texture-fileinput" type="file" class="hidden">
+        <div style="width:55%;display:inline-block;float:right;">
+            <select id="material-texture" class="form-control material-property-droplist" readOnly>
+                <option value="">Select map:</option>
+                <option value="map">map</option>
+                <option value="bumpMap">bumpMap</option>
+                <option value="emissiveMap">emissiveMap</option>
+                <option value="metalnessMap">metalnessMap</option>
+                <option value="roughnessMap">roughnessMap</option>
+                <option value="displacementMap">displacementMap</option>
+                <option value="aoMap">aoMap</option>
+                <option value="envMap">envMap</option>
+                <option value="alphaMap">alphaMap</option>
+                <option value="lightMap">lightMap</option>
+                <option value="normalMap">normalMap</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+
+<div style="margin-bottom:10px;">
+    <div id="save-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Save</div>
+    <div id="reset-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Reset</div>
+</div>
+
+<script>
+
+(function(){
+
+    var files = {};
+//  var images = {};
+    var textures = {};
+
+    const viewer = document.getElementById("viewer");
+    const propControls = document.getElementById("material-property-controls");
+    const genderDroplist = document.getElementById("material-gender-droplist");
+    const slotDroplist = $("select#outifit-slot").get(0);
+    const typeDroplist = $("select#material-type").get(0);
+    const propDroplist = $("select#material-property").get(0);
+    const titleTextfield = $("input#material-title").get(0);
+    const textureDroplist = $("select#material-texture").get(0);
+    const textureFileinput = $("input#texture-fileinput").get(0);
+
+    var Signal = signals.Signal;
+    var propertyValueChanged = new Signal();
+
+    propertyValueChanged.add( function(key, value){
+
+        if ( key == undefined ) return;   //  danger! do not use "!key"
+    //  if ( value == undefined ) return; //  danger! value can be null.
+        if ( !$(slotDroplist).val() ) return;
+        if ( !$(genderDroplist).val() ) return;
+
+        var data = {};
+
+        data.key    = key;
+        data.value  = value;
+        data.slot   = $(slotDroplist).val();
+        data.gender = $(genderDroplist).val();
+
+    //  Send data locally.
+        viewer.contentWindow.localPlayerMaterialHandler(data);
+
+    });
+
+    function updateMaterialPropertiesDroplist(){
+
+        $(titleTextfield).val("");
+
+        var TYPE = $(typeDroplist).val();
+        var material = new THREE[ TYPE ]();
+        debugMode && console.log({"material":material});
+
+    //  "json" does not include "null" value properties (e.g textures).
+        var json = materialtoJSON(material);
+
+        $(propDroplist).off();                // important!
+        $(propDroplist).children().remove();  // important!
+        $(propControls).children().remove();  // important!
+
+        for ( var key in json ) {
+
+            if ( key == undefined ) return;
+
+        //  debugMode && console.log({
+        //      [key]:json[ key ],
+        //      "typeof":typeof(json[key]),
+        //  });
+
+            var option = $(`<option id="${key}" value="${json[key]}">${key}</option>`).get(0);
+
+            $(propDroplist).append(option);
+
+        }
+
+        debugMode && console.log({"json":json});
+
+        $(propDroplist).on("change", function(){
+
+            $(propControls).children().remove();          // important!
+            $(propControls).css({height:""});
+
+            var key = $(this.selectedOptions[0]).text();  // important!
+            debugMode && console.log({[key]:this.value});
+
+        //  Values first update json[key], and
+        //  then json[key] update input values.
+
+            switch (key) {
+
+                case "color":
+                case "emissive":
+
+                    (function(){
+
+                        var input = $(`<input type="hidden" id="input_${key}">`).get(0);
+
+                    //  Append input first. important!
+                        $(propControls).append(input);
+                        $(propControls).css({height:"auto"});
+
+                        $(input).spectrum({
+
+                            preferredFormat: "hex",
+                            color: "#ffffff",
+                            flat: true,
+                            showInput: true,
+                            showInitial: true,
+                            showButtons: false,
+                            allowEmpty: false,
+
+                            move: function(color) {
+                                var hex = color.toString("hex").replace(/#/, "0x");
+                                json[ key ] = Number(hex); // important!
+                                propertyValueChanged.dispatch(key, hex);
+                                $(propDroplist).find(`option#${key}`).val( json[key] );
+                            },
+
+                        });
+
+                    //  Colorpicker update.
+
+                        if ( json[ key ] != undefined ) {
+                            var hexString = "#" + json[ key ].toString(16);
+                            $("#sp-scene-background").spectrum( "set", hexString );
+                        }
+
+                    })();
+
+                break;
+
+                case "_id":
+
+                    (function(){
+
+                        var button = document.createElement("div");
+                        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+                        button.id = "button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+                    //  $(`<input id="input${key}" type="text" class="form-control text-center pull-right uuid-material-textfield">`).get(0);
+
+                        var input = document.createElement("input");
+                        input.id = "input_id"; input.type = "text";
+                        input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
+
+                        if (json._id) input.value = json._id;
+                        else input.value = json._id = ObjectId();
+
+                        $(button).on("click", function(){
+                            var objectId = ObjectId();
+                            input.value = json._id = objectId;
+                            $(propDroplist).find("option#_id").val( objectId );
+                            debugMode && console.log({"json": json });
+                        });
+
+                        $(input).on("input", function(){
+                            json._id = this.value;
+                            $(propDroplist).find("option#_id").val( this.value );
+                        });
+
+                        $(propControls).append(button, input);
+
+                    })();
+
+                break;
+
+                case "uuid":
+
+                    (function(){
+
+                        var button = document.createElement("div");
+                        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+                        button.id = "button_uuid"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+                    //  $(`<input id="input_${key}" type="text" class="form-control pull-right uuid-material-textfield" readOnly>`).get(0);
+
+                        var input = document.createElement("input");
+                        input.id = "input_uuid"; input.type = "text"; input.readOnly = true;
+                        input.classList.add("form-control", "pull-right", "uuid-material-textfield");
+
+                        if (json.uuid) input.value = json.uuid;
+                        else input.value = json.uuid = THREE.Math.generateUUID();
+
+                        $(button).on("click", function(){
+                            var uuid = THREE.Math.generateUUID();
+                            input.value = json.uuid = uuid;
+                            $(propDroplist).find("option#uuid").val( uuid );
+                        });
+
+                        $(input).on("input", function(){
+                            json.uuid = this.value;
+                            $(propDroplist).find("option#uuid").val( this.value );
+                        });
+
+                        $(propControls).append(button, input);
+
+                    })();
+
+                break;
+
+                case "name":
+                    
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "name"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    //  $(`<input id="input_${key}" type="text" class="form-control pull-right material-textfield" value="${json[key]}">`).get(0);
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_name"; input.type = "text";
+                        input.classList.add("form-control", "pull-right", "material-textfield");
+
+                        titleTextfield.value = input.value = json.name;
+
+                        $(input).on("input", function(){
+                            titleTextfield.value = json.name = this.value;
+                            $(propDroplist).find("option#name").val( this.value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "bumpScale":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "bumpScale"; span.style.cssText = "vertical-align:-0.7rem;";
+                        
+                        var input = document.createElement("input"); 
+                        input.id = "input_bumpScale"; input.type = "number"; input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        input.value = json.bumpScale; // important!
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            json.bumpScale = value;
+                            propertyValueChanged.dispatch(key, value);
+                            $(propDroplist).find("option#bumpScale").val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "normalScale":
+
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "normalScale"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_normalScale"; input.type = "number"; input.step = 0.01;
+                        input.classList.add("form-control", "pull-right", "material-input-number");
+
+                        if ( json.normalScale && typeof(json.normalScale) == "array" ) {
+                        //  leading value is "json.normalScale[0]" (normalScale.x).
+                            input.value = json.normalScale[0];           // danger!
+                        }
+
+                        $(input).on("input", function(){
+                            var value = round(this.value, 2);
+                            propertyValueChanged.dispatch(key, value );
+                            json.normalScale[0] = json.normalScale[1] = value;
+                            $(propDroplist).find(`option#${key}`).val( value );
+                        });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+
+                default:
+
+                    if (typeof( json[key] ) == "string") {
+
+                        (function(){
+
+                            var label = $(`<span style="vertical-align:-0.7rem;">${key}:</span>`).get(0);
+                            var input = $(`<input id="input_${key}" type="text" class="form-control pull-right material-textfield" value="${json[key]}">`).get(0);
+
+                            input.value = json[key];                    //  important!
+
+                            $(input).on("input", function(){
+                                json[ key ] = this.value;               //  important!
+                                $(propDroplist).find(`option#${key}`).val( json[ key ] );
+                            });
+
+                            $(propControls).append(label, input);
+
+                        })();
+
+                    } else if (typeof( json[key] ) == "number") {
+
+                        (function(){
+
+                            var label = $(`<span style="vertical-align:-0.7rem;">${key}:</span>`).get(0);
+                            var input = $(`<input id="input_${key}" type="number" class="form-control pull-right material-input-number">`).get(0);
+
+                            input.value = json[key];                    //  important!
+
+                            $(input).on("input", function(){
+                                json[ key ] = Number(this.value);       //  danger!
+                                $(propDroplist).find(`option#${key}`).val( json[ key ] );
+                            });
+
+                            $(propControls).append(label, input);
+
+                        })();
+
+                    } else if (typeof( json[key] ) == "boolean") {
+
+                        (function(){
+
+                            var label = $(`<span style="vertical-align:-0.7rem;">${key}:</span>`).get(0);
+                            var input = $(`<input id="input_${key}" type="checkbox" class="form-control pull-right material-checkbox">`).get(0);
+
+                            input.checked = json[ key ];                           //  danger!
+
+                            $(input).on("click", function(){
+                                json[ key ] = this.checked;                        //  danger!
+                                propertyValueChanged.dispatch(key, this.checked);  //  boolean.
+                                $(propDroplist).find(`option#${key}`).val( json[ key ] );
+                                debugMode && console.log({"json": json });
+                            });
+
+                            $(propControls).append(label, input);
+
+                        })();
+
+                    }
+
+                break;
+
+            }
+
+            debugMode && console.log({"json": json });
+
+        });
+
+
+    //  TEXTURES.
+
+        $(textureDroplist).off();   //  important!
+        $(textureFileinput).off();  //  important!
+
+        $(textureDroplist).on("change", function(){
+            if ( !this.value ) return;
+            $(textureFileinput).val("");
+            $(textureFileinput).click();
+        });
+
+        $(textureFileinput).on("change", function(){
+
+            if ( this.files.length == 0 ) return;
+            if ( !textureDroplist.value ) return;
+
+            var map = textureDroplist.value;
+
+            var file = this.files[0];
+            var name = this.files[0].name;
+
+            if ( name in files && file.lastModified == files[name].lastModified 
+              && file.size == files[name].size && file.type == files[name].type ) {
+
+                debugMode && console.log(`file "${name}" already exists in files and is equal with imported file.`);
+                debugMode && console.log({"file":files[name], [map]:textures[name] });
+
+                json[ map ] = texturetoJSON( textures[ name ] );
+                propertyValueChanged.dispatch(map, json[ map ]);
+
+                debugMode && console.log({"json": json });
+
+            } else {
+
+                files[ name ] = file;
+
+                var reader = new FileReader();
+                reader.onload = function() {
+
+                //  Uses "sourceFile" instead "image".
+                    var texture = new THREE.Texture();
+                    texture.sourceFile = reader.result;
+                    textures[ name ] = texture;
+
+                    json[ map ] = texturetoJSON( textures[ name ] );
+                    propertyValueChanged.dispatch( map, json[ map ] );
+
+                    debugMode && console.log({"json": json });
+
+                };
+
+                reader.readAsDataURL(files[ name ]);
+
+            }
+
+        });
+
+        $(propDroplist).change();
+
+        debugMode && console.log({
+            "files":    files,
+            "textures": textures,
+        });
+
+    }
+
+    function initMaterialPropertiesDroplist(){
+
+        $(slotDroplist).on("change", function(){
+            updateMaterialPropertiesDroplist();
+        });
+
+        $(typeDroplist).on("change", function(){
+            updateMaterialPropertiesDroplist();
+        });
+
+        updateMaterialPropertiesDroplist();
+
+    }
+
+//  var dependences = [
+//      "/three/three.js", 
+//      "/material/materialtoJson.js",
+//  ];
+
+    loadjs("/material/materialtoJson.js", {
+        success: initMaterialPropertiesDroplist,
+    });
+
+    $("#reset-material-button").on("click", function(){
+        initMaterialPropertiesDroplist();
+    });
+
+    $("#save-material-button").on("click", function(){
+        debugMode && console.log({"save-material-button":"TODO"});
+    });
+
+})();
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+/*
+    var files = {};
+    var images = {};
+    var textures = {};
+
+    const textureDroplist = $("select#material-texture").get(0);
+    const textureFileinput = $("input#texture-fileinput").get(0);
+
+
+    $(textureDroplist).on("change", function(){
+        if ( !this.value ) return;
+        $(textureFileinput).val("");
+        $(textureFileinput).click();
+    });
+
+    $(textureFileinput).on("change", function(){
+
+        if ( this.files.length == 0 ) return;
+        if ( !textureDroplist.value ) return;
+
+        var map = textureDroplist.value;
+
+        var file = this.files[0];
+        var name = this.files[0].name;
+
+        if ( name in files && file.lastModified == files[name].lastModified 
+          && file.size == files[name].size && file.type == files[name].type ) {
+
+            debugMode && console.log({"file":files[name], "texture":textures[name] });
+            debugMode && console.log(`file "${name}" already exists in files and is equal with imported file.`);
+
+            var texture = textures[ name ];
+            debugMode && console.log({
+                [map]: textures[ name ],
+            });
+
+            propertyValueChanged.dispatch(map, texture);
+
+
+        } else {
+
+            files[ name ] = file;
+
+            var img = new Image();
+            img.crossOrigin = "anonymous";  //  important!
+            $(img).one("load", function(){
+                images[ name ] = img;
+                var canvas = makePowerOfTwo( img, true );
+                var texture = new THREE.Texture(canvas);
+                textures[ name ] = texture;
+            //  texture.needsUpdate = true;
+
+                debugMode && console.log({
+                    "map":map,
+                    "files":files,
+                    "images":images,
+                    "textures":textures,
+                });
+
+                debugMode && console.log({
+                    [map]: textures[ name ],
+                });
+
+                propertyValueChanged.dispatch(map, texture);
+
+            });
+
+            var reader = new FileReader();
+            reader.onload = function() {
+                img.src = reader.result;
+            };
+
+            reader.readAsDataURL(files[ name ]);
+
+        }
+
+
+    });
+*/
+</script>
+
+<script>
+/*
+    if (typeof( json[key] ) == "string") {
+
+        var element = $(
+            `<h4 id="property-${key}" class="material-property-controls">
+                <span style="vertical-align:-0.7rem;">${key}:</span>
+                <input id="${key}-field" type="text" class="form-control pull-right material-textfield" value="${json[key]}">
+            </h4>`).get(0);
+
+        var input = $(element).find(`input#${key}-field`).get(0);
+        $(input).on("input", function(){
+            $(propDroplist).find(`option#${key}`).val( this.value );
+        });
+
+    } else if (typeof( json[key] ) == "number") {
+
+        var element = $(
+            `<h4 id="property-${key}" class="material-property-controls">
+                <span style="vertical-align:-0.7rem;">${key}:</span>
+                <input id="${key}-field" type="number" class="form-control pull-right material-input-number">
+            </h4>`).get(0);
+
+        var input = $(element).find(`input#${key}-field`).get(0);
+        input.value = json[key];
+
+        $(input).on("input", function(){
+            $(propDroplist).find(`option#${key}`).val( this.value );
+        });
+
+    } else if (typeof( json[key] ) == "boolean") {
+
+        var element = $(
+            `<h4 id="property-${key}" class="material-property-controls">
+                <span style="vertical-align:-0.7rem;">${key}:</span>
+                <input id="${key}-field" type="checkbox" class="form-control pull-right material-checkbox">
+            </h4>`).get(0);
+
+        var input = $(element).find(`input#${key}-field`).get(0);
+        input.checked = json[key];
+
+        $(input).on("click", function(){
+            $(propDroplist).find(`option#${key}`).val( this.checked );
+        });
+
+    }
+
+    $(propControls).append(element);
+    debugMode && console.log(element);
+*/
+</script>
+
+<!--
+    <h4 id="property_id" class="material-property-controls">
+        <div id="_id-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:fit-content;">_ID</div>
+        <input id="_id-field" type="text" class="form-control pull-right material-textfield" readOnly>
+    </h4>
+
+    <script>
+        (function(){
+            $("#_id-button").on("click", function(){
+                var value = ObjectId();
+                $("input#_id-field").val( value );
+                $("select#material-property").find("option#_id").val( value );
+            });
+        })();
+    </script>
+
+    <h4 id="property_uuid" class="material-property-controls">
+        <div id="uuid-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:fit-content;">UUID</div>
+        <input id="uuid-field" type="text" class="form-control pull-right material-textfield" readOnly>
+    </h4>
+
+    <script>
+        (function(){
+            $("#uuid-button").on("click", function(){
+                var value = THREE.Math.generateUUID();
+                $("input#uuid-field").val( value );
+                $("select#material-property").find("option#uuid").val( value );
+            });
+        })();
+    </script>
+
+    <h4 id="property_name" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">name:</span>
+        <input id="name-field" type="text" class="form-control pull-right material-textfield">
+    </h4>
+
+    <h4 id="property_type" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">type:</span>
+        <input id="type-field" type="text" class="form-control pull-right material-textfield" readOnly>
+    </h4>
+
+    <h4 id="property_fog" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">fog:</span>
+        <input id="fog-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_lights" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">lights:</span>
+        <input id="lights-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_blending" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">blending:</span>
+        <input id="blending-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_side" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">side:</span>
+        <input id="side-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_shading" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">shading:</span>
+        <input id="shading-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_vertexColors" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">vertexColors:</span>
+        <input id="vertexColors-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_opacity" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">opacity:</span>
+        <input id="opacity-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_transparent" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">transparent:</span>
+        <input id="transparent-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_blendSrc" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">blendSrc:</span>
+        <input id="blendSrc-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_blendDst" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">blendDst:</span>
+        <input id="blendDst-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_blendEquation" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">blendEquation:</span>
+        <input id="blendEquation-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_depthFunc" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">depthFunc:</span>
+        <input id="depthFunc-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_depthTest" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">depthTest:</span>
+        <input id="depthTest-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_depthWrite" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">depthWrite:</span>
+        <input id="depthWrite-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_clipShadows" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">clipShadows:</span>
+        <input id="clipShadows-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_colorWrite" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">colorWrite:</span>
+        <input id="colorWrite-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_polygonOffset" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">polygonOffset:</span>
+        <input id="polygonOffset-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_polygonOffsetFactor" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">polygonOffsetFactor:</span>
+        <input id="polygonOffsetFactor-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_polygonOffsetUnits" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">polygonOffsetUnits:</span>
+        <input id="polygonOffsetUnits-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_alphaTest" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">alphaTest:</span>
+        <input id="alphaTest-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_premultipliedAlpha" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">premultipliedAlpha:</span>
+        <input id="premultipliedAlpha-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_overdraw" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">overdraw:</span>
+        <input id="overdraw-field" type="number" class="form-control pull-right material-input-number" value="0">
+    </h4>
+
+    <h4 id="property_visible" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">visible:</span>
+        <input id="visible-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_roughness" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">roughness:</span>
+        <input id="roughness-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_metalness" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">metalness:</span>
+        <input id="metalness-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_lightMapIntensity" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">lightMapIntensity:</span>
+        <input id="lightMapIntensity-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_aoMapIntensity" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">aoMapIntensity:</span>
+        <input id="aoMapIntensity-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_emissiveIntensity" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">emissiveIntensity:</span>
+        <input id="emissiveIntensity-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_envMapIntensity" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">envMapIntensity:</span>
+        <input id="envMapIntensity-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_bumpScale" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">bumpScale:</span>
+        <input id="bumpScale-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_bumpScale" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">normalScale:</span>
+        <input id="normalScale-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_displacementScale" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">displacementScale:</span>
+        <input id="displacementScale-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_displacementBias" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">displacementBias:</span>
+        <input id="displacementBias-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_refractionRatio" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">refractionRatio:</span>
+        <input id="refractionRatio-field" type="number" class="form-control pull-right material-input-number" value="0.00">
+    </h4>
+
+    <h4 id="property_wireframe" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">wireframe:</span>
+        <input id="wireframe-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_skinning" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">skinning:</span>
+        <input id="skinning-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_morphNormals" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">morphNormals:</span>
+        <input id="morphNormals-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+    <h4 id="property_morphTargets" class="material-property-controls">
+        <span style="vertical-align:-0.7rem;">morphTargets:</span>
+        <input id="morphTargets-field" type="checkbox" class="form-control pull-right material-checkbox">
+    </h4>
+
+
+
+    <h4 id="property_color" class="material-property-controls" style="height:auto!important;">
+        <input type="hidden" id="sp-material-color" class="pull-right">
+    </h4>
+
+    <script>
+
+        (function (){
+
+            var material;
+            $("#sp-material-color").spectrum({
+                preferredFormat: "hex",
+                color: "#000000",
+                flat: true,
+                showInput: true,
+                showInitial: true,
+                showButtons: false,
+                allowEmpty: false,
+                move: function(color) {
+                    if ( !material ) return;
+                    var hex = color.toString("hex").replace(/#/, "0x");
+                    material.color.setHex(hex);
+                }
+            });
+
+            $("#sp-material-color").on("dragstop.spectrum", function(e, color) {
+                if ( !material ) {
+                    $(this).spectrum( "set", "#000000" );
+                    return;
+                }
+            });
+
+            //  Colorpicker update.
+
+            (function (){
+                //  var material = viewer.contentWindow[gender][slot].material;
+                if ( material ) {
+                    var hexString = "#" + material.color.getHexString();
+                    $("#sp-material-color").spectrum( "set", hexString );
+                }
+            })();
+
+        })();
+
+    </script>
+
+    <h4 id="property_emissive" class="material-spectrum-controls" style="height:auto;">
+        <input type="hidden" id="sp-material-emissive" class="pull-right">
+    </h4>
+
+    <script>
+
+        (function (){
+
+            var material;
+            $("#sp-material-emissive").spectrum({
+                preferredFormat: "hex",
+                color: "#000000",
+                flat: true,
+                showInput: true,
+                showInitial: true,
+                showButtons: false,
+                allowEmpty: false,
+                move: function(color) {
+                    if ( !material ) return;
+                    var hex = color.toString("hex").replace(/#/, "0x");
+                    material.emissive.setHex(hex);
+                }
+            });
+
+            $("#sp-material-emissive").on("dragstop.spectrum", function(e, color) {
+                if ( !material ) {
+                    $(this).spectrum( "set", "#000000" );
+                    return;
+                }
+            });
+
+            //  Colorpicker update.
+
+            (function (){
+                //  var material = viewer.contentWindow[gender][slot].material;
+                if ( material ) {
+                    var hexString = "#" + material.emissive.getHexString();
+                    $("#sp-material-emissive").spectrum( "set", hexString );
+                }
+            })();
+
+        })();
+
+    </script>
+
+-->
+
+
