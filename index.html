@@ -178,14 +178,14 @@
     var outfitSlotChanged = new Signal();
 
     outfitSlotChanged.add(function(value){
-        if ( !value ) return;
+    //  if ( !value ) return;
         var data = "/select/" + value;
         viewer.contentWindow.localPlayerHandler(data);
-
+        debugMode && console.log({"data": data});
     });
 
     $(droplist).on("change", function(){
-        if (!this.value) return;
+    //  if (!this.value) return;
         outfitSlotChanged.dispatch(this.value);
     });
 
