@@ -651,7 +651,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_normalScale"; input.type = "number"; input.step = 0.01;
                         input.classList.add("form-control", "pull-right", "material-input-number");
 
-                        if ( json.normalScale && typeof(json.normalScale) == "array" ) {
+                        if ( json.normalScale && json.normalScale instanceof Array ) {
                             input.value = json.normalScale[0];
                         }
 
@@ -972,7 +972,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     })();
 
                 break;
-
+            /*
                 case "alphaTest":
 
                     (function(){
@@ -998,7 +998,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     })();
 
                 break;
-
+            */
                 case "depthTest":
 
                     (function(){
@@ -1267,17 +1267,57 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         
                         var input = document.createElement("input"); 
                         input.id = "input_wireframeLinewidth"; 
-                        input.type = "number"; input.step = 0.1; input.min = 1;
+                        input.type = "number"; input.step = 1; input.min = 1;
                         input.classList.add("form-control", "pull-right", "material-input-number");
 
                         input.value = json.wireframeLinewidth;
 
                         $(input).on("input", function(){
-                            var value = round(this.value, 1);
+                            var value = parseInt(this.value);
                             json.wireframeLinewidth = value;
                             propertyValueChanged.dispatch(key, value);
                             $(propDroplist).find("option#wireframeLinewidth").val( value );
                         });
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "wireframeLinecap":
+                    
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "wireframeLinecap"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_wireframeLinecap"; input.type = "text"; 
+                        input.style.cssText = "width:40%;"; input.readOnly = true;
+                        input.classList.add("form-control", "pull-right", "material-textfield"); 
+
+                        input.value = json.wireframeLinecap;
+
+                        $(propControls).append(span, input);
+
+                    })();
+
+                break;
+
+                case "wireframeLinejoin":
+                    
+                    (function(){
+
+                        var span = document.createElement("span");
+                        span.innerText = "wireframeLinejoin"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                        var input = document.createElement("input"); 
+                        input.id = "input_wireframeLinejoin"; input.type = "text"; 
+                        input.style.cssText = "width:40%;"; input.readOnly = true;
+                        input.classList.add("form-control", "pull-right", "material-textfield"); 
+
+                        input.value = json.wireframeLinejoin;
 
                         $(propControls).append(span, input);
 
