@@ -310,6 +310,101 @@
 
 </script>
 
+<div style="margin-bottom:10px;">
+    <div id="save-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Save</div>
+    <div id="reset-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Reset</div>
+</div>
+
+<script>
+
+(function(){
+
+    var files = {};
+    var textures = {};
+
+    const viewer = document.getElementById("viewer");
+    const propControls = document.getElementById("material-property-controls");
+    const genderDroplist = document.getElementById("material-gender-droplist");
+    const slotDroplist = $("select#outifit-slot").get(0);
+    const typeDroplist = $("select#material-type").get(0);
+    const propDroplist = $("select#material-property").get(0);
+    const titleTextfield = $("input#material-title").get(0);
+
+    const textureImportBtn = $("#import-texture-button").get(0);
+    const textureFileinput = $("input#texture-fileinput").get(0);
+    const textureDroplist  = $("select#imported-textures").get(0);
+    const textureCheckboxSelector = "input[type=checkbox].form-control.pull-right.material-checkbox";
+
+    var Signal = signals.Signal;
+    var propertyValueChanged = new Signal();
+
+    function newJsonTexture() {
+        return {
+            anisotropy: 1,
+            encoding: 3000,
+            flipY: true,
+            format: 1021,
+            generateMipmaps: true,
+            magFilter: 1006,
+            mapping: 300,
+            minFilter: 1008,
+            mipmaps: [],
+            name: "",
+            offset: [0, 0],
+            premultiplyAlpha: false,
+            repeat: [1, 1],
+            sourceFile: "",
+            type: 1009,
+            unpackAlignment: 4,
+            uuid: THREE.Math.generateUUID(),
+            version: 0,
+            wrapS: 1001,
+            wrapT: 1001,
+            _id: ObjectId(),
+        };
+    }
+
+    propertyValueChanged.add( function(key, value){
+
+        if ( key == undefined ) return;
+        if ( !$(slotDroplist).val() ) return;
+        if ( !$(genderDroplist).val() ) return;
+
+        var data = {};
+
+        data.key    = key;
+        data.value  = value;
+        data.slot   = $(slotDroplist).val();
+        data.gender = $(genderDroplist).val();
+
+        viewer.contentWindow.localPlayerMaterialHandler(data);
+
+    });
+
+    function updateMaterialPropertiesDroplist(){
+
+        $(titleTextfield).val("");
+
+    //  var TYPE = $(typeDroplist).val();
+    //  var material = new THREE[ TYPE ]();
+    //  var json = materialtoJSON(material);
+
+        var json = newJsonTexture();
+
+        $(propDroplist).off();
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
+
+        for ( var key in json ) {
+
+            if ( key == undefined ) return;
+
+            var option = document.createElement("option");
+            option.id = key; option.value = json[ key ]; option.innerText = key;
+
+            $(propDroplist).append(option);
+
+        }
 
 
 
@@ -319,13 +414,111 @@
 
 
 
+        $(propDroplist).change();
+
+    }
+
+    initMaterialPropertiesDroplist();
+
+    function initMaterialPropertiesDroplist(){
+
+        $(slotDroplist).on("change", function(){
+            updateMaterialPropertiesDroplist();
+        });
+
+        $(typeDroplist).on("change", function(){
+            updateMaterialPropertiesDroplist();
+        });
+
+        updateMaterialPropertiesDroplist();
+
+    }
+
+    $("#reset-material-button").on("click", function(){
+        initMaterialPropertiesDroplist();
+    });
+
+    $("#save-material-button").on("click", function(){
+        debugMode && console.log({"save":"TODO"});
+    });
 
 
+//  TEXTURES.
 
+    $(textureDroplist).on("change", function(){
+        $(textureCheckboxSelector).attr({checked:false});
+    });
 
+    $(textureImportBtn).on("click", function(){
+        $(textureFileinput).val("");
+        $(textureFileinput).click();
+    });
 
+    $(textureFileinput).on("change", function(){
 
+        if ( this.files.length == 0 ) return;
 
+        var file = this.files[0];
+        var name = this.files[0].name;
 
+        if ( name in files && file.lastModified == files[name].lastModified 
+            && file.size == files[name].size && file.type == files[name].type ) {
+
+                                /* (DO WHATEVER) */
+
+        } else {
+
+            files[ name ] = file;
+
+            var reader = new FileReader();
+            reader.onload = function() {
+
+                textures[ name ] = newJsonTexture();
+                textures[ name ].sourceFile = reader.result;
+                textures[ name ].name = name;
+
+                var option = document.createElement("option");
+                option.value = option.innerText = name;
+                option.id = textures[ name ]._id;
+
+                $(textureDroplist).append(option);
+                textureDroplist.value = name;
+                $(textureCheckboxSelector).attr({checked:false});
+
+            };
+
+            reader.readAsDataURL(files[ name ]);
+
+        }
+
+    });
+
+    var maps = [
+        "map", 
+        "bumpMap", 
+        "emissiveMap", 
+        "metalnessMap", 
+        "roughnessMap", 
+        "displacementMap", 
+        "alphaMap", 
+        "normalMap", 
+        "lightMap", 
+        "aoMap", 
+        "envMap",
+    ];
+
+    maps.forEach(function(map){
+        $(`input[type=checkbox]#${map}`).on("click", function(){
+            if (!textureDroplist.value) return;
+            var name = textureDroplist.value;
+            if ( this.checked )
+                var texture = textures[name];
+            else
+                var texture = null;
+            propertyValueChanged.dispatch( map, texture );
+        });
+    });
+
+})();
 
 
