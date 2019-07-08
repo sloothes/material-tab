@@ -1558,8 +1558,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             if ( this.checked ) {
                 var texture = textures[name];
+                json[ map ] = textures[name];
             } else {
                 var texture = null;
+                delete json[ map ];
             }
 
             propertyValueChanged.dispatch( map, texture );
