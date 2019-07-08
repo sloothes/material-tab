@@ -182,13 +182,11 @@
     var outfitSlotChanged = new Signal();
 
     outfitSlotChanged.add(function(value){
-    //  if ( !value ) return;
         var data = "/select/" + value;
         viewer.contentWindow.localPlayerHandler(data);
     });
 
     $(droplist).on("change", function(){
-    //  if (!this.value) return;
         outfitSlotChanged.dispatch(this.value);
     });
 
@@ -367,6 +365,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const slotDroplist = $("select#outifit-slot").get(0);
     const typeDroplist = $("select#material-type").get(0);
     const propDroplist = $("select#material-property").get(0);
+    const propControls = $("#material-property-controls").get(0);
     const titleTextfield = $("input#material-title").get(0);
 
     const textureImportBtn = $("#import-texture-button").get(0);
@@ -502,6 +501,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         var hexString = "#" + json[ key ].toString(16);
                         $("#sp-scene-background").spectrum( "set", hexString );
 
+                        $(propControls).slideDown();
+
                     })();
 
                 break;
@@ -532,6 +533,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#_id").val( this.value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(button, input);
 
                     })();
@@ -564,6 +566,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#uuid").val( this.value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(button, input);
 
                     })();
@@ -588,6 +591,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#name").val( this.value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -633,6 +637,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#bumpScale").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -659,6 +664,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#displacementScale").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -685,6 +691,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#displacementBias").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -713,6 +720,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#normalScale").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -738,6 +746,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#visible").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -765,6 +774,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#opacity").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -790,6 +800,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#transparent").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -840,6 +851,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#wireframe").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -865,6 +877,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#fog").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -890,6 +903,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#lights").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -916,6 +930,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#emissiveIntensity").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -942,6 +957,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#lightMapIntensity").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -968,6 +984,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#aoMapIntensity").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -993,6 +1010,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#colorWrite").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1018,6 +1036,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#clipShadows").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1044,6 +1063,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#alphaTest").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1069,6 +1089,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#depthTest").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1094,6 +1115,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#depthTest").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1121,6 +1143,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#depthFunc").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1146,6 +1169,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#morphNormals").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1171,6 +1195,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#morphTargets").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1197,6 +1222,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#shading").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1223,6 +1249,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#metalness").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1249,6 +1276,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#roughness").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1276,6 +1304,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#shading").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1303,6 +1332,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#side").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1330,6 +1360,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#wireframeLinewidth").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1350,6 +1381,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         input.value = json.wireframeLinecap;
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1370,6 +1402,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         input.value = json.wireframeLinejoin;
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1395,6 +1428,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#polygonOffset").val( this.checked );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1421,6 +1455,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#side").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1447,6 +1482,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#side").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
@@ -1473,6 +1509,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             $(propDroplist).find("option#envMapIntensity").val( value );
                         });
 
+                        $(propControls).slideDown();
                         $(propControls).append(span, input);
 
                     })();
