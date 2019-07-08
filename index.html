@@ -601,7 +601,15 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if ( key == undefined ) return;
 
             var option = document.createElement("option");
-            option.id = key; option.value = json[ key ]; option.innerText = key;
+
+            option.id = key; 
+            option.innerText = key;
+
+            if ( typeof(json[key]) != "boolean" ) {
+                option.value = json[ key ]; 
+            } else {
+                option.value = json[key] || "";
+            }
 
             $(propDroplist).append(option);
 
@@ -670,6 +678,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         if (json._id) input.value = json._id;
                         else input.value = json._id = ObjectId();
+                        $(propDroplist).find("option#_id").val( json._id );
 
                         $(button).on("click", function(){
                             var objectId = ObjectId();
@@ -703,6 +712,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         if (json.uuid) input.value = json.uuid;
                         else input.value = json.uuid = THREE.Math.generateUUID();
+                        $(propDroplist).find("option#uuid").val( json.uuid );
 
                         $(button).on("click", function(){
                             var uuid = THREE.Math.generateUUID();
@@ -887,12 +897,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_visible"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.visible;
+                        input.checked = json.visible || "";
 
                         $(input).on("click", function(){
                             json.visible = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#visible").val( this.checked );
+                            $(propDroplist).find("option#visible").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -941,12 +951,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_transparent"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.transparent;
+                        input.checked = json.transparent || "";
 
                         $(input).on("click", function(){
                             json.transparent = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#transparent").val( this.checked );
+                            $(propDroplist).find("option#transparent").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -967,12 +977,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_skinning"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.skinning;
+                        input.checked = json.skinning || "";
 
                         $(input).on("click", function(){
                             json.skinning = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#skinning").val( this.checked );
+                            $(propDroplist).find("option#skinning").val( this.checked || "" );
                         });
 
                         $(propControls).append(span, input);
@@ -992,12 +1002,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_wireframe"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.wireframe;
+                        input.checked = json.wireframe || "";
 
                         $(input).on("click", function(){
                             json.wireframe = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#wireframe").val( this.checked );
+                            $(propDroplist).find("option#wireframe").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1018,12 +1028,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_fog"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.fog;
+                        input.checked = json.fog || "";
 
                         $(input).on("click", function(){
                             json.fog = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#fog").val( this.checked );
+                            $(propDroplist).find("option#fog").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1044,12 +1054,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_lights"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.lights;
+                        input.checked = json.lights || "";
 
                         $(input).on("click", function(){
                             json.lights = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#lights").val( this.checked );
+                            $(propDroplist).find("option#lights").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1151,12 +1161,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_colorWrite"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.colorWrite;
+                        input.checked = json.colorWrite || "";
 
                         $(input).on("click", function(){
                             json.colorWrite = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#colorWrite").val( this.checked );
+                            $(propDroplist).find("option#colorWrite").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1177,12 +1187,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_clipShadows"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.clipShadows;
+                        input.checked = json.clipShadows || "";
 
                         $(input).on("click", function(){
                             json.clipShadows = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#clipShadows").val( this.checked );
+                            $(propDroplist).find("option#clipShadows").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1203,7 +1213,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_alphaTest"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = Boolean(json.alphaTest);
+                        input.checked = Boolean(json.alphaTest) || "";
 
                         $(input).on("click", function(){
                             var value = Number(this.checked);
@@ -1230,12 +1240,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_depthTest"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.depthTest;
+                        input.checked = json.depthTest || "";
 
                         $(input).on("click", function(){
                             json.depthTest = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#depthTest").val( this.checked );
+                            $(propDroplist).find("option#depthTest").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1256,12 +1266,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_depthWrite"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.depthWrite;
+                        input.checked = json.depthWrite || "";
 
                         $(input).on("click", function(){
                             json.depthWrite = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#depthTest").val( this.checked );
+                            $(propDroplist).find("option#depthTest").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1310,12 +1320,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_morphNormals"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.morphNormals;
+                        input.checked = json.morphNormals || "";
 
                         $(input).on("click", function(){
                             json.morphNormals = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#morphNormals").val( this.checked );
+                            $(propDroplist).find("option#morphNormals").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1336,12 +1346,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_morphTargets"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.morphTargets;
+                        input.checked = json.morphTargets || "";
 
                         $(input).on("click", function(){
                             json.morphTargets = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#morphTargets").val( this.checked );
+                            $(propDroplist).find("option#morphTargets").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
@@ -1569,12 +1579,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_polygonOffset"; input.type = "checkbox"; 
                         input.classList.add("form-control", "pull-right", "material-checkbox");
 
-                        input.checked = json.polygonOffset;
+                        input.checked = json.polygonOffset || "";
 
                         $(input).on("click", function(){
                             json.polygonOffset = this.checked;
                             propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#polygonOffset").val( this.checked );
+                            $(propDroplist).find("option#polygonOffset").val( this.checked || "" );
                         });
 
                         $(propControls).slideDown();
