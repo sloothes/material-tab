@@ -1689,6 +1689,38 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 //  TEXTURES.
 
+    var maps = [
+        "map", 
+        "bumpMap", 
+        "emissiveMap", 
+        "metalnessMap", 
+        "roughnessMap", 
+        "displacementMap", 
+        "alphaMap", 
+        "normalMap", 
+        "lightMap", 
+        "aoMap", 
+        "envMap",
+    ];
+
+    maps.forEach(function(map){
+        $(`input[type=checkbox]#${map}`).on("click", function(){
+
+            if (!textureDroplist.value) return;
+            var name = textureDroplist.value;
+
+            if ( this.checked ) {
+                var texture = textures[name];
+                json[ map ] = textures[name];
+            } else {
+                var texture = null;
+                delete json[ map ];
+            }
+
+            propertyValueChanged.dispatch( map, texture );
+        });
+    });
+
     $(textureDroplist).on("change", function(){
         $(textureCheckboxSelector).attr({checked:false});
     });
@@ -1759,50 +1791,34 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
 
-    var maps = [
-        "map", 
-        "bumpMap", 
-        "emissiveMap", 
-        "metalnessMap", 
-        "roughnessMap", 
-        "displacementMap", 
-        "alphaMap", 
-        "normalMap", 
-        "lightMap", 
-        "aoMap", 
-        "envMap",
-    ];
-
-    maps.forEach(function(map){
-        $(`input[type=checkbox]#${map}`).on("click", function(){
-
-            if (!textureDroplist.value) return;
-            var name = textureDroplist.value;
-
-            if ( this.checked ) {
-                var texture = textures[name];
-                json[ map ] = textures[name];
-            } else {
-                var texture = null;
-                delete json[ map ];
-            }
-
-            propertyValueChanged.dispatch( map, texture );
-        });
-    });
-
-
 //  SAVE.
 
     $("#reset-material-button").on("click", function(){
         initMaterialPropertiesDroplist();
     });
 
-    $("#save-material-button").on("click", function(){
+    $("#save-material-button").on("click", async function(){
+
+        if ( !json.name ) {
+            json.name = await new Promise(function(resolve){
+                bootbox.prompt({
+                    size: "small",
+                    title:"Please type a name for this material", 
+                    callback: function(name){
+                        debuMode && console.log("name:", name);
+                        if ( name ) {
+                            return name;
+                        } else {
+                            throw name;
+                        }
+                    },
+                });
+            });
+        }
+
+        $(titleTextfield).val(json.name);
+
         debugMode && console.log({"json":json});
-
-        if ( !json.name ) {}
-
 
 
 
