@@ -1805,7 +1805,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     size: "small",
                     title:"Please type a name for this material", 
                     callback: function(name){
-                        debuMode && console.log("name:", name);
+                        debugMode && console.log("name:", name);
                         if ( name ) {
                             return name;
                         } else {
