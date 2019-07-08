@@ -401,6 +401,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json = materialtoJSON(material);
 
     //  Settings.
+        json.skinning = true;
         json.depthTest = true;
         json.depthWrite = false;
         json.displacementBias = 0;
