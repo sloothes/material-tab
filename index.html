@@ -1807,9 +1807,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     callback: function(name){
                         debugMode && console.log("name:", name);
                         if ( name ) {
-                            return name;
+                            resolve(name);
                         } else {
-                            throw name;
+                            throw "Material name required.";
                         }
                     },
                 });
