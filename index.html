@@ -390,12 +390,161 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         var data = {};
 
+        var slot = $(slotDroplist).val();
+        var gender = $(genderDroplist).val();
+
         data.key    = key;
         data.value  = value;
-        data.slot   = $(slotDroplist).val();
-        data.gender = $(genderDroplist).val();
+        data.slot   = slot;
+        data.gender = gender;
 
-        viewer.contentWindow.localPlayerMaterialHandler(data);
+        switch( key ) {
+
+            case "map":
+            case "alphaMap":
+                viewer.contentWindow.localPlayerMaterialHandler(data);
+            break;
+
+            case "bumpMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "bumpScale",
+                    value: json.bumpScale,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "emissiveMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "emissive",
+                    value: json.emissive,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: "emissiveIntensity",
+                    value: json.emissiveIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "displacementMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "displacementBias",
+                    value: json.displacementBias,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: "displacementScale",
+                    value: json.displacementScale,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "lightMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "lightMapIntensity",
+                    value: json.lightMapIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "metalnessMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "metalness",
+                    value: json.metalness,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "roughnessMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "roughness",
+                    value: json.roughness,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "normalMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "normalScale",
+                    value: json.normalScale[0],
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "aoMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "aoMapIntensity",
+                    value: json.aoMapIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "envMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "envMapIntensity",
+                    value: json.envMapIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            default:
+                viewer.contentWindow.localPlayerMaterialHandler(data);
+            break;
+        }
 
     });
 
@@ -1650,6 +1799,24 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     $("#save-material-button").on("click", function(){
         debugMode && console.log({"json":json});
+
+        if ( !json.name ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     });
 
 });
