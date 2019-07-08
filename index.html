@@ -237,43 +237,43 @@
 
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">Map:</span>
-        <input type="checkbox" id="map" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="map" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">BumpMap:</span>
-        <input type="checkbox" id="bumpMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="bumpMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">EmissiveMap:</span>
-        <input type="checkbox" id="emissiveMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="emissiveMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">MetalnessMap:</span>
-        <input type="checkbox" id="metalnessMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="metalnessMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">RoughnessMap:</span>
-        <input type="checkbox" id="roughnessMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="roughnessMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">DisplacementMap:</span>
-        <input type="checkbox" id="displacementMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="displacementMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">AOMap:</span>
-        <input type="checkbox" id="aoMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="aoMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">AlphaMap:</span>
-        <input type="checkbox" id="alphaMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="alphaMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">LightMap:</span>
-        <input type="checkbox" id="lightMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="lightMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">NormalMap:</span>
-        <input type="checkbox" id="normalMap" class="form-control pull-right material-checkbox texture-checkbox">
+        <input type="checkbox" id="normalMap" class="form-control pull-right material-checkbox material-texture-checkbox">
     </h4>
 
 </div>
@@ -335,7 +335,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const texturesClearBtn = $("#clear-import-textures").get(0);
 
     const textureDroplist  = $("select#imported-textures").get(0);
-    const textureCheckboxSelector = "input[type=checkbox].texture-checkbox";
+    const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
 
     var Signal = signals.Signal;
     var propertyValueChanged = new Signal();
