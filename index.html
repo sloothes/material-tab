@@ -323,6 +323,7 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
+    var json = materialtoJSON( new THREE.Material() );
     var files = {};
     var textures = {};
 
@@ -395,7 +396,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         var TYPE = $(typeDroplist).val();
         var material = new THREE[ TYPE ]();
-        var json = materialtoJSON(material);
+        json = materialtoJSON(material);
 
     //  Settings.
         json.depthTest = true;
