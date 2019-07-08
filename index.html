@@ -221,6 +221,38 @@
 
 <div id="material-property-controls" class="well"></div>
 
+<script>
+
+(function(){
+
+    const materialHeaderSelector = ".material-header";
+    const helpersHeaderSelector = ".helpers-header";
+    const materialControlSelector = "#material-property-controls";
+
+    var Signal = signals.Signal;
+    var dblclicked = new Signal();
+
+//  Event handlers.
+    function onDoubleClickEventHandler( element ){
+        if ( $(element).css("display") == "none" ) {
+            $(element).slideDown();
+        } else {
+            $(element).slideUp();
+        }
+    }
+
+//  Event listeners.
+    dblclicked.add(onDoubleClickEventHandler);
+
+//  Dispatch events.
+    $(materialHeaderSelector).on("dblclick", function(){
+        dblclicked.dispatch( $(materialControlSelector).get(0) );
+    });
+
+})();
+
+</script>
+
 <div class="helpers-header texture-header">
     <h2 style="margin-bottom:20px;">Textures:</h2>
 </div>
