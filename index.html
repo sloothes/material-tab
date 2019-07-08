@@ -393,6 +393,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         var material = new THREE[ TYPE ]();
         var json = materialtoJSON(material);
 
+    //  Settings.
+        json.depthTest = true;
+        json.depthWrite = false;
+        json.displacementBias = 0;
+        json.displacementScale = 0;
+
         $(propDroplist).off();
         $(propDroplist).children().remove();
         $(propControls).children().remove();
