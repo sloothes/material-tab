@@ -106,7 +106,7 @@
     <h2 style="margin-bottom:20px;">Material:</h2>
 </div>
 
-<div class="helpers-header material-header" style="margin-bottom:20px;">
+<div style="margin-bottom:20px;">
     <input type="text" id="material-title" class="form-control text-center x-large material-title-field" placeholder="new untitled material" readonly>
 </div>
 
@@ -346,6 +346,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     var Signal = signals.Signal;
     var propertyValueChanged = new Signal();
+
+    $(titleTextfield).on("input", function(){
+        json.name = this.value;
+        $("input[type=text]#input_name").val(this.value);
+    });
 
     propertyValueChanged.add( function(key, value){
 
@@ -1463,7 +1468,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         updateMaterialPropertiesDroplist();
 
     }
-
 
 //  TEXTURES.
 
