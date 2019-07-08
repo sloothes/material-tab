@@ -323,9 +323,11 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
-    var json = materialtoJSON( new THREE.Material() );
     var files = {};
     var textures = {};
+
+    var json = materialtoJSON( new THREE.Material() );
+    debugMode && console.log({"json": json});
 
     const viewer = document.getElementById("viewer");
     const propControls = document.getElementById("material-property-controls");
