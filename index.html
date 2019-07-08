@@ -1799,26 +1799,33 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     $("#save-material-button").on("click", async function(){
 
+        if ( !json._id ) json._id = ObjectId();  
+        //  throw `Material "_id" required.`;
+        if ( !json.uuid ) json.uuid = THREE.Math.generateUUID();  
+        //  throw `Material "uuid" required.`;
+
         if ( !json.name ) {
             json.name = await new Promise(function(resolve){
                 bootbox.prompt({
                     size: "small",
                     title:"Please type a name for this material", 
                     callback: function(name){
-                        debugMode && console.log("name:", name);
                         if ( name ) {
                             resolve(name);
                         } else {
-                            throw "Material name required.";
+                        //  if null, dialog does not close!
+                            throw `Material "name" required.`;
                         }
                     },
                 });
             });
         }
 
-        $(titleTextfield).val(json.name);
-
+        $("option#name").val( json.name );   // optional!
+        $(titleTextfield).val( json.name );  // optional!
         debugMode && console.log({"json":json});
+
+
 
 
 
