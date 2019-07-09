@@ -1887,15 +1887,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             var textureImages = {};
 
         //  Filter duplicate textures.
-
             var textureMaps = maps.filter(function(map){
                 return ( doc[ map ] != undefined );
-            }}
+            });
 
             debugMode && console.log({"textureMaps": textureMaps});
 
         //  First pass (collect file names and src).
-
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
@@ -1916,7 +1914,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             debugMode && console.log( "first pass:", deepCopy(textureImages) );
 
         //  Second pass (collect maps).
-
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
@@ -1946,7 +1943,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     var endpoint = "https://api.imgur.com/3/image";
                     var xhttp = new XMLHttpRequest();
                     xhttp.open('POST', endpoint, true);
-                    xhttp.setRequestHeader('Authorization', 'Client-ID ' + clientid);
+                    xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
                     xhttp.onreadystatechange = function () {
                         if (this.readyState === 4) {
                             var response = "";
