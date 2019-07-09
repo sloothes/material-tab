@@ -1837,9 +1837,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         //  throw `Material "uuid" required.`;
 
         if ( !json.name ) {
-            json.name = await new Promise(function(resolve){
+            json.name = await new Promise(function(resolve, reject){
                 var title = `<div class="alert-icon icon-warning"></div>`
-                + `<h2 style="margin-top:0px;">Name required</h2>`
+                + `<h2 style="margin:auto;">Name required</h2>`
                 + `<div>Please type a name for this material</div>`
                 bootbox.prompt({
                     size: "small",
@@ -1850,7 +1850,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             resolve(name);
                         } else {
                         //  if null, dialog does not close!
-                            throw `Material "name" required.`;
+                            reject( `Material name required.` );
                         }
                     },
                 });
@@ -2014,7 +2014,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             return bootbox.dialog({
                 size: "small",
                 className: "middle",
-                title: `<div class="alert-icon icon-success"></div><h2 style="margin:0px;">Success</h2>`,
+                title: `<div class="alert-icon icon-success"></div><h2 style="margin:auto;">Success</h2>`,
                 message: `<div>Material ${doc.name} saved successfully!</div>`,
                 buttons: {
                     cancel: {
@@ -2036,7 +2036,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                message: `<div>Sorry! An error occurred.<br>Please try again later.</div>`,,
+                message: `<div>Sorry! An error occurred.<br>Please try again later.</div>`,
                 buttons: {
                     cancel: {
                         label: 'Close',
