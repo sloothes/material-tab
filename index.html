@@ -353,11 +353,8 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
-    files = {};
+    var files = {};
     var textures = {};
-
-    var json = materialtoJSON( new THREE.Material() );
-    debugMode && console.log({"json": json});
 
     const viewer = document.getElementById("viewer");
     const propControls = document.getElementById("material-property-controls");
@@ -366,20 +363,37 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const typeDroplist = $("select#material-type").get(0);
     const propDroplist = $("select#material-property").get(0);
     const titleTextfield = $("input#material-title").get(0);
-
     const textureImportBtn = $("#import-texture-button").get(0);
     const textureFileinput = $("input#texture-fileinput").get(0);
     const texturesClearBtn = $("#clear-import-textures").get(0);
-
     const textureDroplist  = $("select#imported-textures").get(0);
     const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
 
     var Signal = signals.Signal;
     var propertyValueChanged = new Signal();
+    var outfitMaterialChanged = new Signal();
+
+    var json = materialtoJSON( new THREE.Material() );
+    debugMode && console.log({"json": json});
 
     $(titleTextfield).on("input", function(){
         json.name = this.value;
         $("input[type=text]#input_name").val(this.value);
+    });
+
+    outfitMaterialChanged.add(function(json){
+
+        if ( !$(slotDroplist).val() ) return;
+        if ( !$(genderDroplist).val() ) return;
+
+        var data = {
+            slot: $(slotDroplist).val(),
+            gender: $(genderDroplist).val(),
+            material: json,
+        };
+
+        viewer.contentWindow.localPlayerChangeMaterial(data);
+
     });
 
     propertyValueChanged.add( function(key, value){
@@ -548,8 +562,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     });
 
-    initMaterialPropertiesDroplist();
-
     function newJsonTexture() {
         return {
             anisotropy: 1,
@@ -594,6 +606,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json.displacementBias = 0;
         json.displacementScale = 0;
         json.normalScale = [0.1, 0.1];
+
+    //  Apply material.
+        outfitMaterialChanged.dispatch(json);  //  important!
 
         $(propDroplist).off();
         $(propDroplist).children().remove();
@@ -1706,7 +1721,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     }
 
+/*
+//  initMaterialPropertiesDroplist();
+
     function initMaterialPropertiesDroplist(){
+        $(slotDroplist).off();
+        $(typeDroplist).off();
 
         $(slotDroplist).on("change", function(){
             updateMaterialPropertiesDroplist();
@@ -1719,6 +1739,18 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         updateMaterialPropertiesDroplist();
 
     }
+*/
+
+    $(slotDroplist).on("change", function(){
+        updateMaterialPropertiesDroplist();
+    });
+
+    $(typeDroplist).on("change", function(){
+        updateMaterialPropertiesDroplist();
+    });
+
+    updateMaterialPropertiesDroplist();
+
 
 //  TEXTURES.
 
@@ -1810,23 +1842,25 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     });
 
+
+//  CLEAR.
+
     $(texturesClearBtn).on("click", function(){
 
+    //  files = {}; textures = {}; // optional!
         $(textureDroplist).children().remove();
         var option = document.createElement("option");
         option.value = ""; option.innerText = "Select imported texture:";
         $(textureDroplist).append(option);
 
-    //  files = {}; textures = {}; // optional!
-
     });
-
 
 
 //  SAVE.
 
     $("#reset-material-button").on("click", function(){
-        initMaterialPropertiesDroplist();
+    //  initMaterialPropertiesDroplist();
+        updateMaterialPropertiesDroplist();
     });
 
     $("#save-material-button").on("click", async function(){
@@ -1860,6 +1894,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         $("option#name").val( json.name );   // optional!
         $(titleTextfield).val( json.name );  // optional!
         debugMode && console.log({"json":json});
+
 
     //  Validate json.
 
