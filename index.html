@@ -1926,28 +1926,46 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (err) throw err;
         }).catch(function(err){
             console.error(err);
-            return bootbox.dialog({
+        //  Error.
+            bootbox.dialog({
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                message: `<div>Sorry! An error occurred.</div><div>err</div>`,
+                message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
                 buttons: {
                     cancel: {
                         label: 'Close',
                         className: 'btn-default',
                     },
-                }
+                },
             });
+            throw err;
         });
 
 
     //  Upload texture images.
+
         var selector = {_id:json._id};
 
         await collection.findOne(selector, function(err){
             if (err) throw err;
         }).then(function(doc){
-            if (!doc) throw "doc not found!";
+
+            if (!doc) throw "material can not be found!";
+
+        //  Success.
+            bootbox.dialog({
+                size: "small",
+                className: "middle",
+                title: `<div class="alert-icon icon-success"></div><h2 style="margin:auto;">Success</h2>`,
+                message: `<div>Material ${json.name} has been saved!</div>`,
+                buttons: {
+                    success: {
+                        label: 'Close',
+                        className: 'btn-default',
+                    }
+                },
+            });
 
             var textureImages = {};
 
@@ -1959,6 +1977,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             debugMode && console.log({"textureMaps": textureMaps});
 
         //  First pass (collect data).
+
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
@@ -1979,6 +1998,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             debugMode && console.log( "first pass:", deepCopy(textureImages) );
 
         //  Second pass (collect mapkeys).
+
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
@@ -1991,13 +2011,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             debugMode && console.log( "second pass:", textureImages );
 
         //  Third pass (upload images).
-            for (var name in textureImages ) {
 
-                (function(){
+            var uploads = [];
+
+            for (var name in textureImages ) {
+                uploads.push( function(){
+
                     var item = textureImages[ name ];
                 //  debugMode && console.log({"item": item});
 
-                    new Promise(function(resolve, reject){
+                    return new Promise(function(resolve, reject){
 
                         var formdata = new FormData();
                         formdata.append("type",  item.type);
@@ -2066,26 +2089,14 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                     });
 
-                })();
+                });
             }
 
-        //  Success.
-            bootbox.dialog({
-                size: "small",
-                className: "middle",
-                title: `<div class="alert-icon icon-success"></div><h2 style="margin:auto;">Success</h2>`,
-                message: `<div>Material ${doc.name} saved successfully!</div>`,
-                buttons: {
-                    cancel: {
-                        label: 'Close',
-                        className: 'btn-default',
-                    },
-                    success: {
-                        label: 'OK',
-                        className: 'btn-primary',
-                    }
-                },
-            });
+            debugMode && console.log("uploads:", uploads);
+
+            while( uploads.length ){
+                uploads.shift().call();
+            }
 
         }).catch(function(err){
         //  Error.
@@ -2093,7 +2104,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                message: `<div>Sorry! An error occurred.<br>Please try again later.</div>`,
+                message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
                 buttons: {
                     cancel: {
                         label: 'Close',
@@ -2102,7 +2113,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 },
             });
             console.error(err);
-
         });
 
     });
