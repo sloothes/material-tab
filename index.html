@@ -584,6 +584,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         var material = new THREE[ TYPE ]();
         json = materialtoJSON(material);
 
+        json._id = ObjectId();  //  important!
+
     //  Settings.
         json.skinning = true;
         json.bumpScale = 0.05;
