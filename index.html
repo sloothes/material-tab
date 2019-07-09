@@ -353,7 +353,7 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
-    var files = {};
+    files = {};
     var textures = {};
 
     var json = materialtoJSON( new THREE.Material() );
@@ -1736,21 +1736,21 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         "envMap",
     ];
 
-    maps.forEach(function(map){
-        $(`input[type=checkbox]#${map}`).on("click", function(){
+    maps.forEach(function(mapkey){
+        $(`input[type=checkbox]#${mapkey}`).on("click", function(){
 
             if (!textureDroplist.value) return;
             var name = textureDroplist.value;
 
             if ( this.checked ) {
                 var texture = textures[name];
-                json[ map ] = textures[name];
+                json[ mapkey ] = textures[name];
             } else {
                 var texture = null;
-                delete json[ map ];
+                delete json[ mapkey ];
             }
 
-            propertyValueChanged.dispatch( map, texture );
+            propertyValueChanged.dispatch( mapkey, texture );
         });
     });
 
@@ -1840,7 +1840,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             json.name = await new Promise(function(resolve){
                 bootbox.prompt({
                     size: "small",
-                    title:"Please type a name for this material", 
+                    message:"Please type a name for this material",
+                    title: `<div class="alert-icon icon-warning"></div><b>Name required.</b>`,
                     callback: function(name){
                         if ( name ) {
                             resolve(name);
@@ -1877,10 +1878,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             console.error(err);
         });
 
+
     //  Upload texture images.
 
-        UserDB.collection("materials")
-        .findOne({_id:json._id}, function(err){
+        var collection = UserDB.collection("materials");
+
+        await collection.findOne({_id:json._id}, function(err){
             if (err) throw err;
         }).then(function(doc){
 
@@ -1930,49 +1933,78 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         //  Third pass (upload images).
 
             for (var name in textureImages ) {
-                new Promise(function(resolve, reject){
+
+                (function(){
 
                     var item = textureImages[ name ];
-                    var formdata = new FormData();
-                    formdata.append("type",  item.type);
-                    formdata.append("image", item.data);
-                    formdata.append("name",  item.name);
-                    formdata.append("title", item.name);
 
-                    var clientid = "95e1ecaf14ca5e6";
-                    var endpoint = "https://api.imgur.com/3/image";
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.open('POST', endpoint, true);
-                    xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
-                    xhttp.onreadystatechange = function () {
-                        if (this.readyState === 4) {
-                            var response = "";
-                            if (this.status >= 200 && this.status < 300) {
-                                response = JSON.parse(this.responseText);
-                                resolve( response ); // resolve promise.
-                            } else {
-                                var err = JSON.parse(this.responseText).data.error;
-                                console.error( err.type, err );
-                                var errmsg = `<h2 style="margin:0;">${err.type}</h2><br>${err.message.replace(". ", ".<br>")}`;
-                                return bootboxErrorAlert(errmsg);  //  throw error.
+                    new Promise(function(resolve, reject){
+                        var formdata = new FormData();
+                        formdata.append("type",  item.type);
+                        formdata.append("image", item.data);
+                        formdata.append("name",  item.name);
+                        formdata.append("title", item.name);
+
+                        var clientid = "95e1ecaf14ca5e6";
+                        var endpoint = "https://api.imgur.com/3/image";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open('POST', endpoint, true);
+                        xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState === 4) {
+                                var response = "";
+                                if (this.status >= 200 && this.status < 300) {
+                                    response = JSON.parse(this.responseText);
+                                    resolve( response ); // resolve promise.
+                                } else {
+                                    var err = JSON.parse(this.responseText).data.error;
+                                    console.error( err.type, err );
+                                    var errmsg = `<h2 style="margin:0;">${err.type}</h2><br>${err.message.replace(". ", ".<br>")}`;
+                                    return bootboxErrorAlert(errmsg);  //  throw error.
+                                }
                             }
-                        }
-                    };
+                        };
 
+                    //  xhttp.send(formdata);
+                    //  xhttp = null;
 
-                //  xhttp.send(formdata);
-                //  xhttp = null;
+                    }).then( function( response ){
 
-                    debugMode && console.log( xhttp );
+                        var data = response.data;
+                        debugMode && console.log({"data": data});
 
-                }).then( function( response ){
+                        var link = data.link;
+                        var modifier = {$set:{}};
+                        var selector = {_id: doc._id};
 
+                        item.maps.forEach(function(mapkey){
+                            var keypath = mapkey + ".sourceFile";
+                            modifier.$set[ keypath ] = data.link;
+                        });
 
+                        debugMode && console.log(modifier);
 
+                        collection.update(selector, modifier, function(err){
+                            if (err) throw err;
+                        }).catch(function(err){
+                            console.error(err);
+                        });
 
+                        return data;
 
-                });
+                    }).then( function( data ){
+
+                    //  Add to cache.
+                        caches.open("textures").then(function(cache){
+                            cache.add(data.link);
+                        });
+
+                    });
+
+                })();
             }
+
+            return;
 
         }).catch(function(err){
             console.error(err);
