@@ -1867,73 +1867,119 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (!isValid) throw "json is not valid";
         }
 
-    //  Filter duplicate textures.
-
-        var materialMaps = {};
-    //  var imagesData = {};
-
-    //  First pass (collect file names).
-
-        maps.forEach(function( key ){
-            if ( !json[ key ] ) return;
-            var texture = json[ key ];
-        //  It is a "fake" texture, not real one.
-            if ( texture.sourceFile && texture.name ) {
-                var name = texture.name;
-                if ( materialMaps[ name ] == undefined ) {
-                    materialMaps[ name ] = { 
-                        maps: [ key ], 
-                        data: texture.sourceFile, 
-                    };
-                }
-            }
-        });
-
-        debugMode && console.log({"first pass": deepCopy(materialMaps)});
-
-    //  Second pass (collect maps and src).
-
-        maps.forEach(function( key ){
-            if ( !json[ key ] ) return;
-            var texture = json[ key ];
-        //  It is a "fake" texture, not real one.
-            var name = texture.name;
-            if ( !materialMaps[ name ].maps.includes(key) )
-                materialMaps[ name ].maps.push( key );
-            if ( !materialMaps[ name ].data )
-                materialMaps[ name ].data = texture.sourceFile;
-        });
-
-        debugMode && console.log({"second pass": deepCopy(materialMaps)});
 
     //  Insert to collection.
-/*
+
         await UserDB.collection("materials")
         .insert(json, function(err){
             if (err) throw err;
         }).catch(function(err){
             console.error(err);
         });
-*/
+
     //  Upload texture images.
-/*
+
         UserDB.collection("materials")
         .findOne({_id:json._id}, function(err){
             if (err) throw err;
         }).then(function(doc){
 
+            var textureImages = {};
+
+        //  Filter duplicate textures.
+
+            var textureMaps = maps.filter(function(map){
+                return ( doc[ map ] != undefined );
+            }}
+
+            debugMode && console.log({"textureMaps": textureMaps});
+
+        //  First pass (collect file names and src).
+
+            textureMaps.forEach(function( key ){
+                if ( !doc[ key ] ) return;
+                var texture = doc[ key ];
+            //  It is a "fake" texture, not real one.
+                if ( texture.sourceFile && texture.name ) {
+                    var name = texture.name;
+                    if ( textureImages[ name ] == undefined ) {
+                        textureImages[ name ] = { 
+                            name: name,
+                            maps: [ key ],
+                            data: texture.sourceFile,
+                            type: texture.sourceFile.split(";base64,")[0].replace("data:", ""),
+                        };
+                    }
+                }
+            });
+
+            debugMode && console.log( "first pass:", deepCopy(textureImages) );
+
+        //  Second pass (collect maps).
+
+            textureMaps.forEach(function( key ){
+                if ( !doc[ key ] ) return;
+                var texture = doc[ key ];
+            //  It is a "fake" texture, not real one.
+                var name = texture.name;
+                if ( !textureImages[ name ].maps.includes(key) )
+                    textureImages[ name ].maps.push( key );
+                if ( !textureImages[ name ].data )
+                    textureImages[ name ].data = texture.sourceFile;
+            });
+
+            debugMode && console.log( "second pass:", textureImages );
+
+        //  Third pass (upload images).
+
+            for (var name in textureImages ) {
+                new Promise(function(resolve, reject){
+
+                    var item = textureImages[ name ];
+                    var formdata = new FormData();
+                    formdata.append("type",  item.type);
+                    formdata.append("image", item.data);
+                    formdata.append("name",  item.name);
+                    formdata.append("title", item.name);
+
+                    var clientid = "95e1ecaf14ca5e6";
+                    var endpoint = "https://api.imgur.com/3/image";
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.open('POST', endpoint, true);
+                    xhttp.setRequestHeader('Authorization', 'Client-ID ' + clientid);
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState === 4) {
+                            var response = "";
+                            if (this.status >= 200 && this.status < 300) {
+                                response = JSON.parse(this.responseText);
+                                resolve( response ); // resolve promise.
+                            } else {
+                                var err = JSON.parse(this.responseText).data.error;
+                                console.error( err.type, err );
+                                var errmsg = `<h2 style="margin:0;">${err.type}</h2><br>${err.message.replace(". ", ".<br>")}`;
+                                return bootboxErrorAlert(errmsg);  //  throw error.
+                            }
+                        }
+                    };
+
+
+                //  xhttp.send(formdata);
+                //  xhttp = null;
+
+                    debugMode && console.log( xhttp );
+
+                }).then( function( response ){
+
+
+
+
+
+                });
+            }
 
         }).catch(function(err){
             console.error(err);
         });
-*/
-
-
-
-
-
-
-
 
     });
 
