@@ -219,6 +219,12 @@
 
 <div id="material-property-controls" class="well"></div>
 
+<div style="margin-bottom:10px;">
+    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:24%;">Save</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div>
+    <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Reset</div>
+</div>
+
 <script>
 
 (function(){
@@ -253,12 +259,6 @@
 
 <div class="helpers-header texture-header">
     <h2 style="margin-bottom:20px;">Textures:</h2>
-</div>
-
-<div style="margin-bottom:20px;">
-    <input id="texture-fileinput" type="file" class="hidden" multiple>
-    <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Import textures</div>
-    <div id="clear-import-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Clear</div>
 </div>
 
 <div style="height:45px;margin-bottom:20px;">
@@ -312,6 +312,12 @@
 
 </div>
 
+<div style="margin-bottom:20px;">
+    <input id="texture-fileinput" type="file" class="hidden" multiple>
+    <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Import textures</div>
+    <div id="clear-import-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Clear</div>
+</div>
+
 <script>
 
 (function(){
@@ -344,11 +350,6 @@
 
 </script>
 
-<div style="margin-bottom:10px;">
-    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:24%;">Save</div>
-    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div>
-    <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Reset</div>
-</div>
 
 <script>
 
@@ -368,6 +369,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const textureFileinput = $("input#texture-fileinput").get(0);
     const texturesClearBtn = $("#clear-import-textures").get(0);
     const textureDroplist  = $("select#imported-textures").get(0);
+    const textureControlSelector = "#material-texture-controls";
     const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
 
     var Signal = signals.Signal;
@@ -1786,6 +1788,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     $(textureDroplist).on("change", function(){
         $(textureCheckboxSelector).attr({checked:false});
+
+        if ( this.value ) {
+            $(textureControlSelector).slideDown();
+        } else {
+            $(textureControlSelector).slideUp();
+        }
+
     });
 
     $(textureImportBtn).on("click", function(){
@@ -1984,11 +1993,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             for (var name in textureImages ) {
 
                 (function(){
-
                     var item = textureImages[ name ];
-                    debugMode && console.log({"item": item});
+                //  debugMode && console.log({"item": item});
 
                     new Promise(function(resolve, reject){
+
                         var formdata = new FormData();
                         formdata.append("type",  item.type);
                         formdata.append("image", item.data);
@@ -2009,8 +2018,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                                 } else {
                                     var err = JSON.parse(this.responseText).data.error;
                                     console.error( err.type, err );
-                                    var errmsg = `<h2 style="margin:0;">${err.type}</h2><br>${err.message.replace(". ", ".<br>")}`;
-                                    return bootboxErrorAlert(errmsg);  //  throw error.
                                 }
                             }
                         };
@@ -2021,10 +2028,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     }).then( function( response ){
 
                         var data = response.data;
-                    //  debugMode && console.log({"data": data});
 
-                    //  var link = data.link;
-                    //  var selector = {_id: doc._id};
+                        //  var link = data.link;
+                        //  var selector = {_id: doc._id};
+                        //  debugMode && console.log({"data": data});
 
                         var modifier = {$set:{}};
 
@@ -2062,7 +2069,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             }
 
         //  Success.
-            return bootbox.dialog({
+            bootbox.dialog({
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-success"></div><h2 style="margin:auto;">Success</h2>`,
@@ -2080,8 +2087,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             });
 
         }).catch(function(err){
-            console.error(err);
-            return bootbox.dialog({
+        //  Error.
+            bootbox.dialog({
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
@@ -2091,8 +2098,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         label: 'Close',
                         className: 'btn-default',
                     },
-                }
+                },
             });
+            console.error(err);
 
         });
 
