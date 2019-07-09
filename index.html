@@ -1893,7 +1893,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     //  Filter duplicate textures.
 
         var imageMaps = {};
-        var imageData = {};
+    //  var imageData = {};
 
     //  First pass (collect the img files).
 
@@ -1903,15 +1903,15 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             var texture = json[ key ];
             if ( texture.sourceFile && texture.name ) {
                 var name = texture.name;
-                imageMaps[ name ] = [];
-                imageData[ name ] = {};
+                imageMaps[ name ] = {
+                    map:[],
+                    src:"",
+                };
             }
         });
 
-        debugMode && console.log(
-            "first pass:", {
-            "imageMaps": imageMaps,
-            "imageData": imageData,
+        debugMode && console.log("first pass:", {
+            "imageMaps": deepCopy(imageMaps)
         });
 
     //  Second pass (collect the map keys).
@@ -1921,15 +1921,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         //  It is a "fake" texture, not real one.
             var texture = json[ key ];
             var name = texture.name;
-            imageMaps[ name ].push( key );
-            imageData[ name ] = texture.sourceFile;
+            imageMaps[ name ].map.push( key );
+            imageMaps[ name ].src = texture.sourceFile;
         });
 
-        debugMode && console.log(
-            "second pass:", {
-            "imageMaps": imageMaps,
-            "imageData": imageData,
-        });
+        debugMode && console.log("second pass:", {"imageMaps": imageMaps});
 
 /*
     //  Third pass (collect the img data).
