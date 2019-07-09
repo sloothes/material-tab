@@ -267,7 +267,7 @@
     </select>
 </div>
 
-<div id="material-texture-controls" class="well" style="background:none;border-radius:8px;height:auto;">
+<div id="material-texture-controls" class="well" style="background:none;border-radius:8px;height:auto;display:none;">
 
     <h4 class="texture-checkbox">
         <span style="vertical-align:-0.7rem;">Map:</span>
@@ -1787,6 +1787,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
     $(textureDroplist).on("change", function(){
+
         $(textureCheckboxSelector).attr({checked:false});
 
         if ( this.value ) {
