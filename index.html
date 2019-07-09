@@ -345,7 +345,8 @@
 </script>
 
 <div style="margin-bottom:10px;">
-    <div id="save-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:74%;">Save</div>
+    <div id="save-material-button" class="form-control btn btn-info btn-white-outline gradient-btn pull-left" style="width:24%;">Save</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;">Apply</div>
     <div id="reset-material-button" class="form-control btn btn-info btn-white-outline gradient-btn pull-right" style="width:24%;">Reset</div>
 </div>
 
@@ -392,7 +393,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             material: json,
         };
 
-        viewer.contentWindow.localPlayerChangeMaterial(data);
+        viewer.contentWindow.localPlayerApplyMaterial(data);
 
     });
 
@@ -602,13 +603,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json.skinning = true;
         json.bumpScale = 0.05;
         json.depthTest = true;
-        json.depthWrite = false;
+        json.depthWrite = true;
         json.displacementBias = 0;
         json.displacementScale = 0;
         json.normalScale = [0.1, 0.1];
-
-    //  Apply material.
-        outfitMaterialChanged.dispatch(json);  //  important!
 
         $(propDroplist).off();
         $(propDroplist).children().remove();
@@ -1857,6 +1855,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
 //  SAVE.
+
+    $("#apply-material-button").on("click", function(){
+        outfitMaterialChanged.dispatch(json);
+    });
 
     $("#reset-material-button").on("click", function(){
     //  initMaterialPropertiesDroplist();
