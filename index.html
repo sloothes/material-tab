@@ -1844,7 +1844,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 var msg = "Please type a name for this material";
                 bootbox.prompt({
                     size: "small",
-                    title: `<div class="${cls}"></div><h2 style="${stl}">${ttl}</h2><h4>${msg}</h4>`,
+                    title: `<div class="${cls}"></div><h2 style="${stl}">${ttl}</h2><div>${msg}</div>`,
                     callback: function(name){
                         if ( name ) {
                             resolve(name);
