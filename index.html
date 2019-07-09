@@ -4,7 +4,7 @@
         var component_ID = {
             type: "tab",
             demo: true,
-            version: 1.4,
+            version: "1.4.1",
             kind: "component",
             name: "material-tab.html",
             description: "creates outfit material in zangoDB.",
@@ -1873,20 +1873,20 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
     //  Insert to collection.
+        var collection = UserDB.collection("materials");
 
-        await UserDB.collection("materials")
-        .insert(json, function(err){
+        await collection.insert(json, function(err){
             if (err) throw err;
         }).catch(function(err){
+            throw err;
             console.error(err);
         });
 
 
     //  Upload texture images.
+        var selector = {_id:json._id};
 
-        var collection = UserDB.collection("materials");
-
-        await collection.findOne({_id:json._id}, function(err){
+        await collection.findOne(selector, function(err){
             if (err) throw err;
         }).then(function(doc){
 
@@ -1899,7 +1899,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             debugMode && console.log({"textureMaps": textureMaps});
 
-        //  First pass (collect file names and src).
+        //  First pass (collect data).
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
@@ -1910,8 +1910,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         textureImages[ name ] = { 
                             name: name,
                             maps: [ key ],
-                            data: texture.sourceFile,
-                            type: texture.sourceFile.split(";base64,")[0].replace("data:", ""),
+                            data: texture.sourceFile.split(";base64,").pop(), // important!
+                            type: texture.sourceFile.split(";base64,").shift().replace("data:", ""),
                         };
                     }
                 }
@@ -1919,7 +1919,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             debugMode && console.log( "first pass:", deepCopy(textureImages) );
 
-        //  Second pass (collect maps).
+        //  Second pass (collect mapkeys).
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
@@ -1927,14 +1927,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 var name = texture.name;
                 if ( !textureImages[ name ].maps.includes(key) )
                     textureImages[ name ].maps.push( key );
-                if ( !textureImages[ name ].data )
-                    textureImages[ name ].data = texture.sourceFile;
             });
 
             debugMode && console.log( "second pass:", textureImages );
 
         //  Third pass (upload images).
-
             for (var name in textureImages ) {
 
                 (function(){
@@ -1977,9 +1974,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         var data = response.data;
                         debugMode && console.log({"data": data});
 
-                        var link = data.link;
+                    //  var link = data.link;
+                    //  var selector = {_id: doc._id};
+
                         var modifier = {$set:{}};
-                        var selector = {_id: doc._id};
 
                         item.maps.forEach(function(mapkey){
                             var sourcekey = mapkey + ".sourceFile";
@@ -1987,7 +1985,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         //  optional.
                             var metakey = mapkey + ".meta";
                             modifier.$set[ metakey ] = data;
-
                         });
 
                         debugMode && console.log(modifier);
