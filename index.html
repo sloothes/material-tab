@@ -1867,29 +1867,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (!isValid) throw "json is not valid";
         }
 
-    //  Insert to collection.
-/*
-        await UserDB.collection("materials")
-        .insert(json, function(err){
-            if (err) throw err;
-        }).catch(function(err){
-            console.error(err);
-        });
-*/
-    //  Upload texture images.
-/*
-        UserDB.collection("materials")
-        .findOne({_id:json._id}, function(err){
-            if (err) throw err;
-        }).then(function(doc){
-
-
-        }).catch(function(err){
-            console.error(err);
-        });
-*/
-
-
     //  Filter duplicate textures.
 
         var materialMaps = {};
@@ -1912,7 +1889,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             }
         });
 
-        debugMode && console.log("first pass:", { "materialMaps": deepCopy(materialMaps) });
+        debugMode && console.log({"first pass": deepCopy(materialMaps)});
 
     //  Second pass (collect maps and src).
 
@@ -1927,14 +1904,28 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 materialMaps[ name ].data = texture.sourceFile;
         });
 
-        debugMode && console.log("second pass:", {"materialMaps": materialMaps});
+        debugMode && console.log({"second pass": deepCopy(materialMaps)});
 
+    //  Insert to collection.
 /*
-    //  Third pass (collect the img data).
-        for (var key in imageMaps) {
-            if ( key ==  undefined ) break;
-            materialMaps[ key ] = textures[ key ];
-        }
+        await UserDB.collection("materials")
+        .insert(json, function(err){
+            if (err) throw err;
+        }).catch(function(err){
+            console.error(err);
+        });
+*/
+    //  Upload texture images.
+/*
+        UserDB.collection("materials")
+        .findOne({_id:json._id}, function(err){
+            if (err) throw err;
+        }).then(function(doc){
+
+
+        }).catch(function(err){
+            console.error(err);
+        });
 */
 
 
