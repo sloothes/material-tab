@@ -1838,10 +1838,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         if ( !json.name ) {
             json.name = await new Promise(function(resolve){
+                var stl = "margin:0px;";
+                var ttl = "Name required.";
+                var cls = "alert-icon icon-warning";
+                var msg = "Please type a name for this material";
                 bootbox.prompt({
                     size: "small",
-                    message:"Please type a name for this material",
-                    title: `<div class="alert-icon icon-warning"></div><b>Name required.</b>`,
+                    title: `<div class="${cls}"></div><h2 style="${stl}">${ttl}</h2><h4>${msg}</h4>`,
                     callback: function(name){
                         if ( name ) {
                             resolve(name);
