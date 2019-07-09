@@ -1885,7 +1885,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         debugMode && console.log({"first pass":images});
 
     //  Second pass.
-        
+        maps.forEach(function(map){
+            if ( !json[ map ] ) return;
+        //  It is a "fake" texture, not real one.
+            var texture = json[ map ];
+            var name  = texture.name;
+            images[ name ].push( map );
+        });
+
+        debugMode && console.log({"second pass":images});
+
 
 
 
