@@ -1981,8 +1981,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         var modifier = {$set:{}};
 
                         item.maps.forEach(function(mapkey){
+                            var imagekey = mapkey + ".image";
                             var sourcekey = mapkey + ".sourceFile";
+                            modifier.$set[ imagekey ] = data.link;
                             modifier.$set[ sourcekey ] = data.link;
+
                         //  optional.
                             var metakey = mapkey + ".meta";
                             modifier.$set[ metakey ] = data;
