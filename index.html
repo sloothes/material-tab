@@ -1858,12 +1858,34 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         $(titleTextfield).val( json.name );  // optional!
         debugMode && console.log({"json":json});
 
+    //  Validate json.
 
+        if ( "validator" in window ) {
+            var isValid = await (async function(){
+                var str = JSON.stringify( json );
+                return validator.isJSON(str);
+            })();
+            if (!isValid) throw "json is not valid";
+        }
 
+    //  Find duplicate texture file sources.
 
+        var images = {};
 
+    //  First pass.
+        maps.forEach(function(map){
+            if ( !json[ map ] ) return;
+        //  It is a "fake" texture, not real one.
+            var texture = json[ map ];
+            if ( texture.sourceFile && texture.name ) {
+                images[ texture.name ] = [];
+            }
+        });
 
+        debugMode && console.log({"first pass":images});
 
+    //  Second pass.
+        
 
 
 
