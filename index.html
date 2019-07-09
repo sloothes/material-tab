@@ -1940,6 +1940,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 (function(){
 
                     var item = textureImages[ name ];
+                    debugMode && console.log({"item": item});
 
                     new Promise(function(resolve, reject){
                         var formdata = new FormData();
@@ -1968,8 +1969,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             }
                         };
 
-                    //  xhttp.send(formdata);
-                    //  xhttp = null;
+                        xhttp.send(formdata);
+                        xhttp = null;
 
                     }).then( function( response ){
 
@@ -1981,8 +1982,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         var selector = {_id: doc._id};
 
                         item.maps.forEach(function(mapkey){
-                            var keypath = mapkey + ".sourceFile";
-                            modifier.$set[ keypath ] = data.link;
+                            var sourcekey = mapkey + ".sourceFile";
+                            modifier.$set[ sourcekey ] = data.link;
+                        //  optional.
+                            var metakey = mapkey + ".meta";
+                            modifier.$set[ metakey ] = data;
+
                         });
 
                         debugMode && console.log(modifier);
