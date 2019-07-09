@@ -1878,8 +1878,19 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         await collection.insert(json, function(err){
             if (err) throw err;
         }).catch(function(err){
-            throw err;
             console.error(err);
+            return bootbox.dialog({
+                size: "small",
+                className: "middle",
+                title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
+                message: `<div>Sorry! An error occurred.</div><div>err</div>`,
+                buttons: {
+                    cancel: {
+                        label: 'Close',
+                        className: 'btn-default',
+                    },
+                }
+            });
         });
 
 
@@ -2033,9 +2044,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         }).catch(function(err){
             console.error(err);
-
-        //  error dialog.
-            bootbox.dialog({
+            return bootbox.dialog({
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
