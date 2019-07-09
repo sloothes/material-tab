@@ -1927,13 +1927,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 materialMaps[ name ].data = texture.sourceFile;
         });
 
-        debugMode && console.log("second pass:", {"imageMaps": imageMaps});
+        debugMode && console.log("second pass:", {"materialMaps": materialMaps});
 
 /*
     //  Third pass (collect the img data).
         for (var key in imageMaps) {
             if ( key ==  undefined ) break;
-            imageData[ key ] = textures[ key ];
+            materialMaps[ key ] = textures[ key ];
         }
 */
 
