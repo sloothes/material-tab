@@ -605,10 +605,30 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             option.id = key; 
             option.innerText = key;
 
-            if ( typeof(json[key]) != "boolean" ) {
-                option.value = json[ key ]; 
-            } else {
-                option.value = json[key] || "";
+            switch (key) {
+
+                case "normalScale":
+
+                    if ( typeof(json[key] == "number" ) {
+                        option.value = json[ key ]; break;
+                    }
+
+                //  leading value is the "normalScale.x"
+
+                    if (Array.isArray(json[key]) && json[key].length) {
+                        option.value = json[key][0]; break;
+                    }
+
+                break;
+
+                default:
+                    if ( typeof(json[key]) != "boolean" ) {
+                        option.value = json[ key ]; break;
+                    } else {
+                        option.value = json[key] || ""; break;
+                    }
+                break;
+
             }
 
             $(propDroplist).append(option);
@@ -868,7 +888,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         input.id = "input_normalScale"; input.type = "number"; input.step = 0.01;
                         input.classList.add("form-control", "pull-right", "material-input-number");
 
-                        if ( json.normalScale && json.normalScale instanceof Array ) {
+                        if ( json.normalScale && Array.isArray(json.normalScale) ) {
                             input.value = json.normalScale[0];
                         }
 
