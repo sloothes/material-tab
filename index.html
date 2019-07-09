@@ -1892,37 +1892,39 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     //  Filter duplicate textures.
 
-        var imageMaps = {};
-    //  var imageData = {};
+        var materialMaps = {};
+    //  var imagesData = {};
 
-    //  First pass (collect the img files).
+    //  First pass (collect file names).
 
         maps.forEach(function( key ){
             if ( !json[ key ] ) return;
-        //  It is a "fake" texture, not real one.
             var texture = json[ key ];
+        //  It is a "fake" texture, not real one.
             if ( texture.sourceFile && texture.name ) {
                 var name = texture.name;
-                imageMaps[ name ] = {
-                    map:[],
-                    src:"",
-                };
+                if ( materialMaps[ name ] == undefined ) {
+                    materialMaps[ name ] = { 
+                        maps: [ key ], 
+                        data: texture.sourceFile, 
+                    };
+                }
             }
         });
 
-        debugMode && console.log("first pass:", {
-            "imageMaps": deepCopy(imageMaps)
-        });
+        debugMode && console.log("first pass:", { "materialMaps": deepCopy(materialMaps) });
 
-    //  Second pass (collect the map keys).
+    //  Second pass (collect maps and src).
 
         maps.forEach(function( key ){
             if ( !json[ key ] ) return;
-        //  It is a "fake" texture, not real one.
             var texture = json[ key ];
+        //  It is a "fake" texture, not real one.
             var name = texture.name;
-            imageMaps[ name ].map.push( key );
-            imageMaps[ name ].src = texture.sourceFile;
+            if ( !materialMaps[ name ].maps.includes(key) )
+                materialMaps[ name ].maps.push( key );
+            if ( !materialMaps[ name ].data )
+                materialMaps[ name ].data = texture.sourceFile;
         });
 
         debugMode && console.log("second pass:", {"imageMaps": imageMaps});
