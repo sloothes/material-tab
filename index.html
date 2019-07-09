@@ -1813,12 +1813,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     $(texturesClearBtn).on("click", function(){
 
         $(textureDroplist).children().remove();
-
         var option = document.createElement("option");
         option.value = ""; option.innerText = "Select imported texture:";
         $(textureDroplist).append(option);
 
-        files = {}; textures = {}; // optional!
+    //  files = {}; textures = {}; // optional!
 
     });
 
@@ -1868,35 +1867,77 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (!isValid) throw "json is not valid";
         }
 
-    //  Find duplicate texture file sources.
+    //  Insert to collection.
+/*
+        await UserDB.collection("materials")
+        .insert(json, function(err){
+            if (err) throw err;
+        }).catch(function(err){
+            console.error(err);
+        });
+*/
+    //  Upload texture images.
+/*
+        UserDB.collection("materials")
+        .findOne({_id:json._id}, function(err){
+            if (err) throw err;
+        }).then(function(doc){
 
-        var images = {};
 
-    //  First pass.
-        maps.forEach(function(map){
-            if ( !json[ map ] ) return;
+        }).catch(function(err){
+            console.error(err);
+        });
+*/
+
+
+    //  Filter duplicate textures.
+
+        var imageMaps = {};
+        var imageData = {};
+
+    //  First pass (collect the img files).
+
+        maps.forEach(function( key ){
+            if ( !json[ key ] ) return;
         //  It is a "fake" texture, not real one.
-            var texture = json[ map ];
+            var texture = json[ key ];
             if ( texture.sourceFile && texture.name ) {
-                images[ texture.name ] = [];
+                var name = texture.name;
+                imageMaps[ name ] = [];
+                imageData[ name ] = {};
             }
         });
 
-        debugMode && console.log({"first pass":images});
-
-    //  Second pass.
-        maps.forEach(function(map){
-            if ( !json[ map ] ) return;
-        //  It is a "fake" texture, not real one.
-            var texture = json[ map ];
-            var name  = texture.name;
-            images[ name ].push( map );
+        debugMode && console.log(
+            "first pass:", {
+            "imageMaps": imageMaps,
+            "imageData": imageData,
         });
 
-        debugMode && console.log({"second pass":images});
+    //  Second pass (collect the map keys).
 
+        maps.forEach(function( key ){
+            if ( !json[ key ] ) return;
+        //  It is a "fake" texture, not real one.
+            var texture = json[ key ];
+            var name = texture.name;
+            imageMaps[ name ].push( key );
+            imageData[ name ] = texture.sourceFile;
+        });
 
+        debugMode && console.log(
+            "second pass:", {
+            "imageMaps": imageMaps,
+            "imageData": imageData,
+        });
 
+/*
+    //  Third pass (collect the img data).
+        for (var key in imageMaps) {
+            if ( key ==  undefined ) break;
+            imageData[ key ] = textures[ key ];
+        }
+*/
 
 
 
@@ -1909,4 +1950,26 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 });
 
+//  multiFilter.js
 
+/**
+ * Filters an array of objects with multiple criteria.
+ * source: "https://gist.github.com/jherax/f11d669ba286f21b7a2dcff69621eb72"
+ * @param  {Array}  array: the array to filter
+ * @param  {Object} filters: an object with the filter criteria as the property names
+ * @return {Array}
+ */
+    function multiFilter(array, filters) {
+        const filterKeys = Object.keys(filters);
+    //  filters all elements passing the criteria.
+        return array.filter((item) => {
+        //  dynamically validate all filter criteria.
+            return filterKeys.every(key => {
+            //  ignores an empty filter.
+                if (!filters[key].length) return true;
+                return filters[key].includes(item[key]);
+            });
+        });
+    }
+
+</script>
