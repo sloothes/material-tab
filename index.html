@@ -688,7 +688,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                                 var hex = color.toString("hex").replace(/#/, "0x");
                                 json.color = Number(hex);
                                 propertyValueChanged.dispatch(key, hex);
-                                $(propDroplist).find("option#$color").val( json.color );
+                                $(propDroplist).find("option#color").val( json.color );
                             },
 
                         });
