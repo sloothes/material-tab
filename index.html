@@ -612,12 +612,15 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         $(propDroplist).off();
         $(propDroplist).children().remove();
+
+        $(propControls).slideUp();
         $(propControls).children().remove();
 
-        for ( var key in json ) {
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
 
-            if ( key == undefined ) return;
-
+            var key = sortedKeys[i];
             var option = document.createElement("option");
 
             option.id = key; 
