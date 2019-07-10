@@ -609,6 +609,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json.displacementBias = 0;
         json.displacementScale = 0;
         json.normalScale = [0.1, 0.1];
+        json.color = Number(0xffffff);
+        json.emissive = Number(0x000000);
 
         $(propDroplist).off();
         $(propDroplist).children().remove();
@@ -663,12 +665,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             switch (key) {
 
                 case "color":
-                case "emissive":
 
                     (function(){
 
                         var input = document.createElement("input");
-                        input.type = "hidden"; input.id = "input_" + key;
+                        input.type = "hidden"; input.id = "input_color";
 
                         $(propControls).append(input);
                         $(propControls).css({height:"auto"});
@@ -685,16 +686,56 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                             move: function(color) {
                                 var hex = color.toString("hex").replace(/#/, "0x");
-                                json[ key ] = Number(hex);
+                                json.color = Number(hex);
                                 propertyValueChanged.dispatch(key, hex);
-                                $(propDroplist).find(`option#${key}`).val( json[key] );
+                                $(propDroplist).find("option#$color").val( json.color );
                             },
 
                         });
 
                     //  Colorpicker startup.
 
-                        var hexString = "#" + json[ key ].toString(16);
+                        var hexString = "#" + json.color.toString(16);
+                        $("#sp-scene-background").spectrum( "set", hexString );
+
+                        $(propControls).slideDown();
+
+                    })();
+
+                break;
+
+                case "emissive":
+
+                    (function(){
+
+                        var input = document.createElement("input");
+                        input.type = "hidden"; input.id = "input_emissive";
+
+                        $(propControls).append(input);
+                        $(propControls).css({height:"auto"});
+
+                        $(input).spectrum({
+
+                            preferredFormat: "hex",
+                            color: "#000000",
+                            flat: true,
+                            showInput: true,
+                            showInitial: true,
+                            showButtons: false,
+                            allowEmpty: false,
+
+                            move: function(color) {
+                                var hex = color.toString("hex").replace(/#/, "0x");
+                                json.emissive = Number(hex);
+                                propertyValueChanged.dispatch(key, hex);
+                                $(propDroplist).find("option#emissive").val( json.emissive );
+                            },
+
+                        });
+
+                    //  Colorpicker startup.
+
+                        var hexString = "#" + json.emissive.toString(16);
                         $("#sp-scene-background").spectrum( "set", hexString );
 
                         $(propControls).slideDown();
@@ -712,7 +753,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         button.id = "button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
 
                         var input = document.createElement("input");
-                        input.id = "input_id"; input.type = "text";
+                        input.id = "input_id"; input.type = "text"; input.readOnly = true;
                         input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
 
                         if (json._id) input.value = json._id;
