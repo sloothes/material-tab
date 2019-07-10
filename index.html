@@ -2096,22 +2096,22 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             cache.add(data.link);
                         });
 
+                    }).catch(function(err){
+                        bootbox.dialog({
+                            size: "small",
+                            className: "middle",
+                            title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
+                            message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
+                            buttons: {
+                                cancel: {
+                                    label: 'Close',
+                                    className: 'btn-default',
+                                },
+                            },
+                        });
+                        console.error(err);
                     });
 
-                }).catch(function(err){
-                    bootbox.dialog({
-                        size: "small",
-                        className: "middle",
-                        title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                        message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
-                        buttons: {
-                            cancel: {
-                                label: 'Close',
-                                className: 'btn-default',
-                            },
-                        },
-                    });
-                    console.error(err);
                 });
             }
 
