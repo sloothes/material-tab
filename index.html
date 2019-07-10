@@ -2067,6 +2067,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         //  Third pass (upload images in background).
 
+            if ( !navigator.onLine ) return;
+
             var uploads = [];
 
             for (var name in textureImages ) {
