@@ -356,6 +356,7 @@
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     var files = {};
+    var uploads = [];
     var textures = {};
 
     const viewer = document.getElementById("viewer");
@@ -2067,7 +2068,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         //  Third pass (upload images in background).
 
-            var uploads = [];
+        //  var uploads = []; // moved on the root.
 
             for (var name in textureImages ) {
 
