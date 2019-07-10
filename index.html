@@ -1920,6 +1920,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
     //  Insert to collection.
+
         var collection = UserDB.collection("materials");
 
         await collection.insert(json, function(err){
@@ -1939,11 +1940,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     },
                 },
             });
-            throw err;
+        //  escape from save proccess.
+            throw err;  //  important!
         });
 
 
-    //  Upload texture images.
+    //  Upload texture images (in background).
 
         var selector = {_id:json._id};
 
@@ -1951,7 +1953,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (err) throw err;
         }).then(function(doc){
 
-            if (!doc) throw "material can not be found!";
+            if (!doc) throw "material could not be found!";
 
         //  Success.
             bootbox.dialog({
@@ -1962,19 +1964,24 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 buttons: {
                     success: {
                         label: 'Close',
-                        className: 'btn-default',
+                        className: 'btn-success',
                     }
                 },
             });
 
+            return doc;
+
+        }).then(function(doc){
+
             var textureImages = {};
 
         //  Filter duplicate textures.
+
             var textureMaps = maps.filter(function(map){
                 return ( doc[ map ] != undefined );
             });
 
-            debugMode && console.log({"textureMaps": textureMaps});
+            debugMode && console.log("textureMaps:", textureMaps);
 
         //  First pass (collect data).
 
@@ -2010,17 +2017,17 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             debugMode && console.log( "second pass:", textureImages );
 
-        //  Third pass (upload images).
+        //  Third pass (upload images in background).
 
             var uploads = [];
 
             for (var name in textureImages ) {
+
+                var item = textureImages[ name ];
+            //  debugMode && console.log({"item": item});
+
                 uploads.push( function(){
-
-                    var item = textureImages[ name ];
-                //  debugMode && console.log({"item": item});
-
-                    return new Promise(function(resolve, reject){
+                    new Promise(function(resolve, reject){
 
                         var formdata = new FormData();
                         formdata.append("type",  item.type);
@@ -2042,6 +2049,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                                 } else {
                                     var err = JSON.parse(this.responseText).data.error;
                                     console.error( err.type, err );
+                                    throw err;
                                 }
                             }
                         };
@@ -2076,6 +2084,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             if (err) throw err;
                         }).catch(function(err){
                             console.error(err);
+                            throw err;
                         });
 
                         return data;
@@ -2089,6 +2098,20 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                     });
 
+                }).catch(function(err){
+                    bootbox.dialog({
+                        size: "small",
+                        className: "middle",
+                        title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
+                        message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
+                        buttons: {
+                            cancel: {
+                                label: 'Close',
+                                className: 'btn-default',
+                            },
+                        },
+                    });
+                    console.error(err);
                 });
             }
 
