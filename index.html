@@ -2067,8 +2067,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         //  Third pass (upload images in background).
 
-            if ( !navigator.onLine ) return;
-
             var uploads = [];
 
             for (var name in textureImages ) {
@@ -2167,9 +2165,23 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             debugMode && console.log("uploads:", uploads);
 
-            while( uploads.length ){
-                uploads.shift().call();
+            if ( !navigator.onLine ) {
+
+                $(window).one("online", function(){
+                    while( uploads.length ){
+                        uploads.shift().call();
+                    }
+                });
+
+            } else {
+
+                while( uploads.length ){
+                    uploads.shift().call();
+                }
+
             }
+
+            return;
 
         }).catch(function(err){
         //  Error.
