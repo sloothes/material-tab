@@ -154,7 +154,7 @@
 <div style="height:35px;margin-bottom:10px;">
     <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
         <div style="width:40%;display:inline-block;float:right;">
-            <select id="outifit-slot" class="form-control outfit-slot-droplist" readonly>
+            <select id="outfit-slot" class="form-control outfit-slot-droplist" readonly>
                 <option value="">Select slot:</option>
                 <option value="body">body</option>
                 <option value="eyes">eyes</option>
@@ -362,7 +362,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const viewer = document.getElementById("viewer");
     const propControls = document.getElementById("material-property-controls");
     const genderDroplist = document.getElementById("material-gender-droplist");
-    const slotDroplist = $("select#outifit-slot").get(0);
+    const slotDroplist = $("select#outfit-slot").get(0);
     const typeDroplist = $("select#material-type").get(0);
     const propDroplist = $("select#material-property").get(0);
     const titleTextfield = $("input#material-title").get(0);
