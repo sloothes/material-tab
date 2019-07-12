@@ -2101,17 +2101,17 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             for (var name in textureImages ) {
 
-                var item = textureImages[ name ];
-            //  debugMode && console.log({"item": item});
+                var image = textureImages[ name ];
+            //  debugMode && console.log({"image": image});
 
                 uploads.push( function(){
                     new Promise(function(resolve, reject){
 
                         var formdata = new FormData();
-                        formdata.append("type",  item.type);
-                        formdata.append("image", item.data);
-                        formdata.append("name",  item.name);
-                        formdata.append("title", item.name);
+                        formdata.append("type",  image.type);
+                        formdata.append("image", image.data);
+                        formdata.append("name",  image.name);
+                        formdata.append("title", image.name);
 
                         var clientid = "95e1ecaf14ca5e6";
                         var endpoint = "https://api.imgur.com/3/image";
@@ -2145,16 +2145,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         var modifier = {$set:{}};
 
-                        item.maps.forEach(function(mapkey){
+                        image.maps.forEach(function(mapkey){
 
                             var imagekey = mapkey + ".image";
                             var sourcekey = mapkey + ".sourceFile";
                             modifier.$set[ imagekey ] = data.link;
                             modifier.$set[ sourcekey ] = data.link;
-
-                        //  material metadata.
-                            var mtlMetakey = "meta." + mapkey;
-                            modifier.$set[ mtlMetakey ] = data;
 
                         //  texture matadata. (optional).
                             var mapMetakey = mapkey + ".meta";
@@ -2219,7 +2215,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             }
 
             debugMode && console.log("uploads:", uploads);
-
+        /*
             if ( navigator.onLine ) {
 
                 while( uploads.length ){
@@ -2235,7 +2231,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 });
 
             }
-
+        */
             return;
 
         }).catch(function(err){
