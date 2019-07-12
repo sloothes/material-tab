@@ -4,7 +4,7 @@
         var component_ID = {
             type: "tab",
             demo: true,
-            version: 1.5,
+            version: 1.6,
             kind: "component",
             name: "material-tab.html",
             description: "creates outfit material in zangoDB.",
@@ -1971,6 +1971,15 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         $("option#name").val( json.name );   // optional!
         $(titleTextfield).val( json.name );  // optional!
+
+
+    //  Material metadata.
+
+        json.meta = {};
+
+        json.meta.slot = slotDroplist.value;
+        json.meta.gender = genderDroplist.value;
+
         debugMode && console.log({"json":json});
 
 
@@ -2137,14 +2146,20 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         var modifier = {$set:{}};
 
                         item.maps.forEach(function(mapkey){
+
                             var imagekey = mapkey + ".image";
                             var sourcekey = mapkey + ".sourceFile";
                             modifier.$set[ imagekey ] = data.link;
                             modifier.$set[ sourcekey ] = data.link;
 
-                        //  optional.
-                            var metakey = mapkey + ".meta";
-                            modifier.$set[ metakey ] = data;
+                        //  material metadata.
+                            var mtlMetakey = "meta." + mapkey;
+                            modifier.$set[ mtlMetakey ] = data;
+
+                        //  texture matadata. (optional).
+                            var mapMetakey = mapkey + ".meta";
+                            modifier.$set[ mapMetakey ] = data;
+
                         });
 
                         debugMode && console.log(modifier);
