@@ -1956,6 +1956,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     title: `<div class="alert-icon icon-warning"></div>`
                          + `<h2 style="margin:auto;">Canceled</h2>`,
                     message: `<div>Save canceled by the user.</div>`,
+                    buttons: {
+                        cancel: {
+                            label: 'Close',
+                            className: 'btn-default',
+                        },
+                    },
                 });
             //  escape from save proccess.
                 throw err;  //  important!
