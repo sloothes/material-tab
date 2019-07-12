@@ -2155,6 +2155,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         //  texture matadata. (optional).
                             var mapMetakey = mapkey + ".meta";
                             modifier.$set[ mapMetakey ] = data;
+                            var mtlMetakey = "meta." + mapkey;
+                            modifier.$set[ mtlMetakey ] = data;
 
                         });
 
