@@ -1949,6 +1949,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         }
                     },
                 });
+            }).catch(function(err){
+                bootbox.dialog({
+                    size: "small",
+                    className: "middle",
+                    title: `<div class="alert-icon icon-warning"></div>`
+                         + `<h2 style="margin:auto;">Canceled</h2>`,
+                    message: `<div>Save canceled by the user.</div>`,
+                });
+            //  escape from save proccess.
+                throw err;  //  important!
             });
         }
 
@@ -1980,8 +1990,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             bootbox.dialog({
                 size: "small",
                 className: "middle",
-                title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
+                title: `<div class="alert-icon icon-error"></div>`
+                     + `<h2 style="margin:auto;">Error!</h2>`,
+                message: `<div>Sorry! An error occurred.</div>`
+                       + `<div>${err}</div>`,
                 buttons: {
                     cancel: {
                         label: 'Close',
@@ -2008,7 +2020,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             bootbox.dialog({
                 size: "small",
                 className: "middle",
-                title: `<div class="alert-icon icon-success"></div><h2 style="margin:auto;">Success</h2>`,
+                title: `<div class="alert-icon icon-success"></div>`
+                     + `<h2 style="margin:auto;">Success</h2>`,
                 message: `<div>Material ${json.name} has been saved!</div>`,
                 buttons: {
                     success: {
@@ -2137,7 +2150,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             bootbox.dialog({
                                 size: "small",
                                 className: "middle",
-                                title: `<div class="alert-icon icon-success"></div><h2 style="margin:auto;">Success</h2>`,
+                                title: `<div class="alert-icon icon-success"></div>`
+                                     + `<h2 style="margin:auto;">Success</h2>`,
                                 message: `<div>Texture ${data.name} uploaded successfully!</div>`,
                                 buttons: {
                                     success: {
@@ -2165,8 +2179,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         bootbox.dialog({
                             size: "small",
                             className: "middle",
-                            title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                            message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
+                            title: `<div class="alert-icon icon-error"></div>`
+                                 + `<h2 style="margin:auto;">Error!</h2>`,
+                            message: `<div>Sorry! An error occurred.</div>'
+                                   + '<div>${err}</div>`,
                             buttons: {
                                 cancel: {
                                     label: 'Close',
@@ -2205,8 +2221,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             bootbox.dialog({
                 size: "small",
                 className: "middle",
-                title: `<div class="alert-icon icon-error"></div><h2 style="margin:auto;">Error!</h2>`,
-                message: `<div>Sorry! An error occurred.</div><div>${err}</div>`,
+                title: `<div class="alert-icon icon-error"></div>`
+                     + `<h2 style="margin:auto;">Error!</h2>`,
+                message: `<div>Sorry! An error occurred.</div>`
+                       + `<div>${err}</div>`,
                 buttons: {
                     cancel: {
                         label: 'Close',
@@ -2230,6 +2248,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
  * @param  {Object} filters: an object with the filter criteria as the property names
  * @return {Array}
  */
+/*
     function multiFilter(array, filters) {
         const filterKeys = Object.keys(filters);
     //  filters all elements passing the criteria.
@@ -2242,5 +2261,5 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             });
         });
     }
-
+*/
 </script>
