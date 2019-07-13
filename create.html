@@ -1908,9 +1908,14 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     $(textureUploadBtn).on("click", function(){
         if ( !navigator.onLine ) return;
 
-        while( uploads.length ){
-            uploads.shift().call();
-        }
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+
+            while( uploads.length ){
+                uploads.shift().call();
+            }
+
+        }, 250 );
 
     });
 
@@ -1919,12 +1924,15 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     $(texturesClearBtn).on("click", function(){
 
-        files = {}; textures = {}; // optional!
-        $(textureDroplist).children().remove();
-        var option = document.createElement("option");
-        option.value = ""; option.innerText = "Select imported texture:";
-        $(textureDroplist).append(option);
-        $(textureControlSelector).slideUp();
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+            files = {}; textures = {}; // optional!
+            $(textureDroplist).children().remove();
+            var option = document.createElement("option");
+            option.value = ""; option.innerText = "Select imported texture:";
+            $(textureDroplist).append(option);
+            $(textureControlSelector).slideUp();
+        }, 250 );
 
     });
 
