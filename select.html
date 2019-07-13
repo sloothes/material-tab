@@ -218,11 +218,13 @@ loadjs(["/three/three.js"], function(){
 
     $(".get-prev-btn").on("click", function(){
         if ( skip - limit > -1 ) skip -= limit;
+        debugMode && console.log({"skip":skip});
     });
 
     $(".get-next-btn").on("click", function(){
         count().then(function(k){
             if ( skip + limit < k + 1 ) skip += limit;
+            debugMode && console.log({"skip":skip});
         });
     });
 
