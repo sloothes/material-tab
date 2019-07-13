@@ -356,7 +356,7 @@
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     var files = {};
-//  var uploads = [];
+    var uploads = [];
     var textures = {};
 
     const viewer = document.getElementById("viewer");
@@ -2097,148 +2097,145 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         //  Third pass (upload images in background).
 
-            var uploads = []; // moved on the root?
+            var uploads = [];
 
             for (var name in textureImages ) {
 
                 var imgItem = textureImages[ name ];
             //  debugMode && console.log({"item": item});
 
-                uploads.push( function(){
-                    new Promise(function(resolve, reject){
+            //  uploads.push( function(){
+                new Promise(function(resolve, reject){
 
-                        var formdata = new FormData();
-                        formdata.append("type",  imgItem.type);
-                        formdata.append("image", imgItem.data);
-                        formdata.append("name",  imgItem.name);
-                        formdata.append("title", imgItem.name);
+                    var formdata = new FormData();
+                    formdata.append("type",  imgItem.type);
+                    formdata.append("image", imgItem.data);
+                    formdata.append("name",  imgItem.name);
+                    formdata.append("title", imgItem.name);
 
-                        var clientid = "95e1ecaf14ca5e6";
-                        var endpoint = "https://api.imgur.com/3/image";
-                        var xhttp = new XMLHttpRequest();
-                        xhttp.open('POST', endpoint, true);
-                        xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
-                        xhttp.onreadystatechange = function () {
-                            if (this.readyState === 4) {
-                                var response = "";
-                                if (this.status >= 200 && this.status < 300) {
-                                    response = JSON.parse(this.responseText);
-                                    resolve( response ); // resolve promise.
-                                } else {
-                                    var err = JSON.parse(this.responseText).data.error;
-                                    console.error( err.type, err );
-                                    throw err;
-                                }
+                    var clientid = "95e1ecaf14ca5e6";
+                    var endpoint = "https://api.imgur.com/3/image";
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.open('POST', endpoint, true);
+                    xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState === 4) {
+                            var response = "";
+                            if (this.status >= 200 && this.status < 300) {
+                                response = JSON.parse(this.responseText);
+                                resolve( response ); // resolve promise.
+                            } else {
+                                var err = JSON.parse(this.responseText).data.error;
+                                console.error( err.type, err );
+                                throw err;
                             }
-                        };
+                        }
+                    };
 
-                        xhttp.send(formdata);
-                        xhttp = null;
+                    xhttp.send(formdata);
+                    xhttp = null;
 
-                    }).then( function( response ){
+                }).then( function( response ){
 
-                        var data = response.data;
+                    var data = response.data;
 
-                        //  var link = data.link;
-                        //  var selector = {_id: doc._id};
-                        //  debugMode && console.log({"data": data});
+                    //  var link = data.link;
+                    //  var selector = {_id: doc._id};
+                    //  debugMode && console.log({"data": data});
 
-                        var modifier = {$set:{}};
+                    var modifier = {$set:{}};
 
-                        imgItem.maps.forEach(function(mapkey){
+                    imgItem.maps.forEach(function(mapkey){
 
-                            var imagekey = mapkey + ".image";
-                            var sourcekey = mapkey + ".sourceFile";
-                            modifier.$set[ imagekey ] = data.link;
-                            modifier.$set[ sourcekey ] = data.link;
+                        var imagekey = mapkey + ".image";
+                        var sourcekey = mapkey + ".sourceFile";
+                        modifier.$set[ imagekey ] = data.link;
+                        modifier.$set[ sourcekey ] = data.link;
 
-                        //  texture matadata. (optional).
-                            var mapMetakey = mapkey + ".meta";
-                            modifier.$set[ mapMetakey ] = data;
-                            var mtlMetakey = "meta." + mapkey;
-                            modifier.$set[ mtlMetakey ] = data;
+                    //  texture matadata. (optional).
+                        var mapMetakey = mapkey + ".meta";
+                        modifier.$set[ mapMetakey ] = data;
+                        var mtlMetakey = "meta." + mapkey;
+                        modifier.$set[ mtlMetakey ] = data;
 
-                        });
+                    });
 
-                        debugMode && console.log(modifier);
+                    debugMode && console.log(modifier);
 
-                        collection.update(selector, modifier, function(err){
-                            if (err) throw err;
-                        }).then( function(){
+                    collection.update(selector, modifier, function(err){
+                        if (err) throw err;
+                    }).then( function(){
 
-                        //  Success.
-                            bootbox.dialog({
-                                size: "small",
-                                className: "middle",
-                                title: `<div class="alert-icon icon-success"></div>`
-                                     + `<h2 style="margin:auto;">Success</h2>`,
-                                message: `<div>Texture ${data.name} uploaded successfully!</div>`,
-                                buttons: {
-                                    success: {
-                                        label: 'Close',
-                                        className: 'btn-success',
-                                    }
-                                },
-                            });
-
-                        }).catch(function(err){
-                            console.error(err);
-                            throw err;
-                        });
-
-                        return data;
-
-                    }).then( function( data ){
-
-                    //  Add to cache.
-                        caches.open("textures").then(function(cache){
-                            cache.add(data.link);
-                        });
-
-                    }).catch(function(err){
+                    //  Success.
                         bootbox.dialog({
                             size: "small",
                             className: "middle",
-                            title: `<div class="alert-icon icon-error"></div>`
-                                 + `<h2 style="margin:auto;">Error!</h2>`,
-                            message: `<div>Sorry! An error occurred.</div>'
-                                   + '<div>${err}</div>`,
+                            title: `<div class="alert-icon icon-success"></div>`
+                                 + `<h2 style="margin:auto;">Success</h2>`,
+                            message: `<div>Texture ${data.name} uploaded successfully!</div>`,
                             buttons: {
-                                cancel: {
+                                success: {
                                     label: 'Close',
-                                    className: 'btn-default',
-                                },
+                                    className: 'btn-success',
+                                }
                             },
                         });
+
+                    }).catch(function(err){
                         console.error(err);
+                        throw err;
                     });
 
+                    return data;
+
+                }).then( function( data ){
+
+                //  Add to cache.
+                    caches.open("textures").then(function(cache){
+                        cache.add(data.link);
+                    });
+
+                }).catch(function(err){
+                    bootbox.dialog({
+                        size: "small",
+                        className: "middle",
+                        title: `<div class="alert-icon icon-error"></div>`
+                             + `<h2 style="margin:auto;">Error!</h2>`,
+                        message: `<div>Sorry! An error occurred.</div>'
+                               + '<div>${err}</div>`,
+                        buttons: {
+                            cancel: {
+                                label: 'Close',
+                                className: 'btn-default',
+                            },
+                        },
+                    });
+                    console.error(err);
                 });
+
+            //  }); end of push.
+
             }
 
+        /*
             debugMode && console.log("uploads:", uploads);
 
-            /*
-                if ( navigator.onLine ) {
+            if ( navigator.onLine ) {
 
+                while( uploads.length ){
+                    uploads.shift().call();
+                }
+
+            } else {
+
+                $(window).one("online", function(){
                     while( uploads.length ){
                         uploads.shift().call();
                     }
+                });
 
-                } else {
-
-                    $(window).one("online", function(){
-                        while( uploads.length ){
-                            uploads.shift().call();
-                        }
-                    });
-
-                }
-            */
-
-            while( uploads.length ){
-                uploads.shift().call();
             }
+        */
 
             return;
 
