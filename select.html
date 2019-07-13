@@ -15,13 +15,18 @@
 
     .helpers-header h3 { cursor:pointer; }
 
-    #collection-items  {
+    #collection-items {
         max-width:475px;
         max-height:660px;
         color:#fff;
         border:none;
         padding:0px;
         background-color:#fff0;
+    }
+
+    #display-documents {
+        max-height:340px;
+        overflow:auto;
     }
 
     .page-btn {
@@ -174,6 +179,7 @@ loadjs(["/three/three.js"], function(){
 
             docs.forEach(function(json){
                 var element = document.createElement("div");
+                element.style.cursor = "pointer";
                 element.classList.add("form-control", "material-item");
                 element.id = json._id; element.innerText = element.title = json.name;
 
@@ -209,6 +215,16 @@ loadjs(["/three/three.js"], function(){
         });
         return k;
     }
+
+    $(".get-prev-btn").on("click", function(){
+        if ( skip - limit > -1 ) skip -= limit;
+    });
+
+    $(".get-next-btn").on("click", function(){
+        count().then(function(k){
+            if ( skip + limit < k + 1 ) skip += limit;
+        });
+    });
 
 });
 
