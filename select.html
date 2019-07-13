@@ -131,6 +131,7 @@ loadjs(["/three/three.js"], function(){
     });
 
     var skip = 0;
+    var page = 1;
     const limit = 10;
     const collection = DB.collection("materials");
 
@@ -217,15 +218,11 @@ loadjs(["/three/three.js"], function(){
     }
 
     $(".get-prev-btn").on("click", function(){
-        if ( skip - limit > -1 ) skip -= limit;
-        debugMode && console.log({"skip":skip});
+        debugMode && console.log({"page":--page});
     });
 
     $(".get-next-btn").on("click", function(){
-        count().then(function(k){
-            if ( skip + limit < k + 1 ) skip += limit;
-            debugMode && console.log({"skip":skip});
-        });
+        debugMode && console.log({"page":++page});
     });
 
 });
