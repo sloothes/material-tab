@@ -601,6 +601,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json = materialtoJSON(material);
 
         json._id = ObjectId();  //  important!
+    //  json.uuid = THREE.Math.generateUUID();
 
     //  Settings.
         json.skinning = true;
@@ -2044,6 +2045,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     success: {
                         label: 'Close',
                         className: 'btn-success',
+                        callback: function(){ 
+                            updateMaterialPropertiesDroplist();
+                        });
                     }
                 },
             });
