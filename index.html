@@ -356,7 +356,7 @@
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     var files = {};
-    uploads = [];
+//  var uploads = [];
     var textures = {};
 
     const viewer = document.getElementById("viewer");
@@ -2097,21 +2097,21 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         //  Third pass (upload images in background).
 
-        //  var uploads = []; // moved on the root.
+            var uploads = []; // moved on the root?
 
             for (var name in textureImages ) {
 
-                var image = textureImages[ name ];
-            //  debugMode && console.log({"image": image});
+                var imgItem = textureImages[ name ];
+            //  debugMode && console.log({"item": item});
 
                 uploads.push( function(){
                     new Promise(function(resolve, reject){
 
                         var formdata = new FormData();
-                        formdata.append("type",  image.type);
-                        formdata.append("image", image.data);
-                        formdata.append("name",  image.name);
-                        formdata.append("title", image.name);
+                        formdata.append("type",  imgItem.type);
+                        formdata.append("image", imgItem.data);
+                        formdata.append("name",  imgItem.name);
+                        formdata.append("title", imgItem.name);
 
                         var clientid = "95e1ecaf14ca5e6";
                         var endpoint = "https://api.imgur.com/3/image";
@@ -2145,7 +2145,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         var modifier = {$set:{}};
 
-                        image.maps.forEach(function(mapkey){
+                        imgItem.maps.forEach(function(mapkey){
 
                             var imagekey = mapkey + ".image";
                             var sourcekey = mapkey + ".sourceFile";
@@ -2217,23 +2217,29 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             }
 
             debugMode && console.log("uploads:", uploads);
-        /*
-            if ( navigator.onLine ) {
 
-                while( uploads.length ){
-                    uploads.shift().call();
-                }
+            /*
+                if ( navigator.onLine ) {
 
-            } else {
-
-                $(window).one("online", function(){
                     while( uploads.length ){
                         uploads.shift().call();
                     }
-                });
 
+                } else {
+
+                    $(window).one("online", function(){
+                        while( uploads.length ){
+                            uploads.shift().call();
+                        }
+                    });
+
+                }
+            */
+
+            while( uploads.length ){
+                uploads.shift().call();
             }
-        */
+
             return;
 
         }).catch(function(err){
