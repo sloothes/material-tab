@@ -134,6 +134,7 @@ loadjs(["/three/three.js"], function(){
     var page = 1;
     var max = 100;
 
+    const min = 0;
     const limit = 10;
     const collection = DB.collection("materials");
 
@@ -220,7 +221,7 @@ loadjs(["/three/three.js"], function(){
     }
 
     $(".get-prev-btn").on("click", function(){
-        if ( page - 1 > 0 ) --page;
+        if ( page - 1 > min ) --page;
         debugMode && console.log({"page":page});
     });
 
