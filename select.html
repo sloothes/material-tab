@@ -6,7 +6,7 @@
             version: 1.0,
             kind: "component",
             name: "select-material-tab.html",
-            description: "edit outfit material in zangoDB.",
+            description: "select (read) outfit material in zangoDB.",
         };
     });
 </script>
@@ -35,7 +35,7 @@
     <h3>Select material:</h3>
 </div>
 
-<div id="select-material" class="tab-content">
+<div id="display-materials" class="tab-content">
 
     <div class="helpers-header gender-header">
         <h4 style="margin-bottom:30px;">
@@ -109,11 +109,99 @@
 
 <hr/>
 
+<script>
 
+loadjs(["/three/three.js"], function(){
 
+    const DB = new zango.Db( "USER", {
+        materials:  true,
+    });
 
+    DB.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${DB.name} (v${DB.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
 
+    var skip = 0;
+    const limit = 10;
+    const collection = DB.collection("materials");
 
+    const viewer = document.getElementById("viewer");
+    const slotDroplist = $("#display-materials").find("#outfit-slot-droplist").get(0);
+    const genderDroplist = $("#display-materials").find("#outfit-gender-droplist").get(0);
+    const displayObjects = $("#display-materials").find("#display-documents").get(0);
 
+    var Signal = signals.Signal;
+    var droplistChanged = new Signal();
+    var materialSelected = new Signal();
 
+    droplistChanged.add(function(){
 
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        var selectors = { 
+            "meta.slot": slot,
+            "meta.gender": gender,
+        };
+
+        collection.find().skip(skip).limit(limit)
+        .toArray(function(err){
+            if (err) throw err;
+        }).then(function(docs){
+
+            $(displayObjects).children().remove();
+            debugMode && console.log({"docs":docs});
+
+            docs.forEach(function(json){
+                var element = document.createElement("div");
+                element.id = json._id;  element.title = json.name;
+                element.classList.add("form-control", "material-item");
+
+                $(element).on("click", function(){
+                    clearTimeout(this.interval);
+                    this.interval = setTimeout( function(){
+                        materialSelected.dispatch(json);
+                    }, 250 );
+                });
+
+                $(displayObjects).append( element );
+            });
+
+        }).catch(function(err){
+            console.error(err);
+        });
+
+    });
+
+    materialSelected.add(function(json){
+
+        var data = {
+            material: json,
+            slot: json.meta.slot,
+            gender: json.meta.gender,
+        };
+
+        if ( window.socket ) {
+            socket.publish(localPlayerMaterialChannel, data); // demo!
+        } else {
+            viewer.contentWindow.localPlayerApplyMaterial(data);
+        }
+
+    });
+
+    async function count(){
+        var k = 0; 
+        await collection.find()
+        .forEach(async function(){
+            ++k;
+        });
+        return k;
+    }
+
+});
+
+</script>
