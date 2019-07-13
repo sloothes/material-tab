@@ -174,8 +174,8 @@ loadjs(["/three/three.js"], function(){
 
             docs.forEach(function(json){
                 var element = document.createElement("div");
-                element.id = json._id;  element.title = json.name;
                 element.classList.add("form-control", "material-item");
+                element.id = json._id; element.innerText = element.title = json.name;
 
                 $(element).on("click", function(){
                     clearTimeout(this.interval);
