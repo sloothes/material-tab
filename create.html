@@ -1905,7 +1905,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     $(texturesClearBtn).on("click", function(){
 
-    //  files = {}; textures = {}; // optional!
+        files = {}; textures = {}; // optional!
         $(textureDroplist).children().remove();
         var option = document.createElement("option");
         option.value = ""; option.innerText = "Select imported texture:";
