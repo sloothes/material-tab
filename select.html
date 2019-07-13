@@ -164,8 +164,8 @@ loadjs(["/three/three.js"], function(){
             "meta.gender": gender,
         };
 
-        collection.find().skip(skip).limit(limit)
-        .toArray(function(err){
+        collection.find(selectors).skip(skip)
+        .limit(limit).toArray(function(err){
             if (err) throw err;
         }).then(function(docs){
 
