@@ -138,6 +138,22 @@ loadjs(["/three/three.js"], function(){
     var droplistChanged = new Signal();
     var materialSelected = new Signal();
 
+    materialSelected.add(function(json){
+
+        var data = {
+            material: json,
+            slot: json.meta.slot,
+            gender: json.meta.gender,
+        };
+
+        if ( window.socket ) {
+            socket.publish(localPlayerMaterialChannel, data); // demo!
+        } else {
+            viewer.contentWindow.localPlayerApplyMaterial(data);
+        }
+
+    });
+
     droplistChanged.add(function(){
 
         var slot = slotDroplist.value;
@@ -177,20 +193,12 @@ loadjs(["/three/three.js"], function(){
 
     });
 
-    materialSelected.add(function(json){
+    $(slotDroplist).on("change", function(){
+        droplistChanged.dispatch();
+    });
 
-        var data = {
-            material: json,
-            slot: json.meta.slot,
-            gender: json.meta.gender,
-        };
-
-        if ( window.socket ) {
-            socket.publish(localPlayerMaterialChannel, data); // demo!
-        } else {
-            viewer.contentWindow.localPlayerApplyMaterial(data);
-        }
-
+    $(genderDroplist).on("change", function(){
+        droplistChanged.dispatch();
     });
 
     async function count(){
