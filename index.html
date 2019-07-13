@@ -1909,6 +1909,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         var option = document.createElement("option");
         option.value = ""; option.innerText = "Select imported texture:";
         $(textureDroplist).append(option);
+        $(textureControlSelector).slideUp();
 
     });
 
