@@ -355,8 +355,8 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
+    uploads = [];
     var files = {};
-    var uploads = [];
     var textures = {};
 
     const viewer = document.getElementById("viewer");
@@ -2247,13 +2247,14 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 });
 
             }
-        */
 
         //  or immidiatly...
 
             while( uploads.length ){
                 uploads.shift().call();
             }
+
+        */
 
             return;
 
