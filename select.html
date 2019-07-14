@@ -231,9 +231,14 @@ loadjs(["/three/three.js"], function(){
         currentpage = parseInt( skip / limit ) + 1;
         currentindex = parseInt( skip / limit ) % pageslength;
 
-        $(materialCounter).find("#from").text(skip + 1);
-        $(materialCounter).find("#upto").text(skip + limit);
+
         $(materialCounter).find("#count").text(max);
+        $(materialCounter).find("#from").text(skip + 1);
+
+        if ( skip + limit > max )
+            $(materialCounter).find("#upto").text( max );
+        else
+            $(materialCounter).find("#upto").text(skip + limit);
 
         debugMode && console.log({"max":max, "skip":skip});
 
