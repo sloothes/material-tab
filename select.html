@@ -90,7 +90,7 @@
         </h4>
     </div>
 
-    <div id="collection-items" class="well">
+    <div id="material-items" class="well">
 
         <h4>Choose material:
             <div id="counter" class="pull-right small" style="margin-top:4px;color:#ddd;">
@@ -100,7 +100,7 @@
             </div>
         </h4>
 
-        <div class="pager">
+        <div id="material-pager" class="pager">
             <div style="margin:10px 0px 10px;height:35px;">
                 <li class="btn btn-primary get-prev-btn pull-left">&#9668;</li>
                 <div class="pager-buttons-holder" style="display:inline;">
@@ -169,9 +169,11 @@ loadjs(["/three/three.js"], function(){
     const collection = DB.collection("materials");
 
     const viewer = document.getElementById("viewer");
+    const materialPager = $("#material-pager").get(0);
+    const materialCounter = $("#material-items").find("#counter").get(0);
+    const displayObjects = $("#display-materials").find("#display-documents").get(0);
     const slotDroplist = $("#display-materials").find("#outfit-slot-droplist").get(0);
     const genderDroplist = $("#display-materials").find("#outfit-gender-droplist").get(0);
-    const displayObjects = $("#display-materials").find("#display-documents").get(0);
 
 //  Signals.
 
@@ -229,7 +231,10 @@ loadjs(["/three/three.js"], function(){
         currentpage = parseInt( skip / limit ) + 1;
         currentindex = parseInt( skip / limit ) % pageslength;
 
-        $("#count").text(max);
+        $(materialCounter).find("#from").text(skip + 1);
+        $(materialCounter).find("#upto").text(skip + limit);
+        $(materialCounter).find("#count").text(max);
+
         debugMode && console.log({"max":max, "skip":skip});
 
     });
@@ -262,13 +267,11 @@ loadjs(["/three/three.js"], function(){
 
                     $(element).on("click", function(){
 
-                        $("#display-documents")
-                        .find(".material-item")
-                        .removeClass("selected");
-                        $(this).addClass("selected");
+                        $(displayObjects).find(".material-item").removeClass("selected");
+                        $(element).addClass("selected");
 
                         clearTimeout(this.interval);
-                        this.interval = setTimeout( function(){
+                        element.interval = setTimeout( function(){
                             materialSelected.dispatch(json);
                         }, 250 );
 
@@ -287,8 +290,6 @@ loadjs(["/three/three.js"], function(){
 
 //  Event listeners.
 
-    //  Selectors.
-
     $(slotDroplist).on("change", function(){
         resetPager();
         droplistChanged.dispatch();
@@ -301,18 +302,18 @@ loadjs(["/three/three.js"], function(){
 
     //  Pager Controls.
 
-    $(".first-page-btn").on("click", function(){
+    $(materialPager).find(".first-page-btn").on("click", function(){
         skip = 0;
         droplistChanged.dispatch();
     });
 
-    $(".last-page-btn").on("click", function(){
+    $(materialPager).find(".last-page-btn").on("click", function(){
         lastpage = parseInt(max / limit);
         skip = limit * parseInt(max / limit);  // limit * lastpage;
         droplistChanged.dispatch();
     });
 
-    $(".get-prev-btn").on("click", function(){
+    $(materialPager).find(".get-prev-btn").on("click", function(){
 
         if ( skip - limit < 0 ) 
             skip = 0;
@@ -323,7 +324,7 @@ loadjs(["/three/three.js"], function(){
 
     });
 
-    $(".get-next-btn").on("click", function(){
+    $(materialPager).find(".get-next-btn").on("click", function(){
 
         if ( skip + limit > max )
             skip = limit * parseInt(max / limit);  // limit * lastpage;
