@@ -15,6 +15,13 @@
 
     .helpers-header h3 { cursor:pointer; }
 
+    .material-item {
+        padding: 4px 15px;
+        text-align: left;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
     .selected {
         color:#fff;
         background-color:#73b8f3;
@@ -30,8 +37,10 @@
     }
 
     #display-documents {
-        max-height:340px;
         overflow:auto;
+        max-height:260px;
+        background:none;
+        border-radius:8px;
     }
 
     .page-btn {
@@ -103,7 +112,7 @@
                 <li class="btn btn-primary get-next-btn pull-right">&#9658;</li>
             </div>
 
-            <div id="display-documents" class="panel-container"></div>
+            <div id="display-documents" class="well"></div>
 
             <div style="margin:10px 0px 20px;">
                 <li class="btn btn-primary btn-white-outline first-page-btn pull-left" style="margin-right:5px;">First</li>
@@ -188,9 +197,8 @@ loadjs(["/three/three.js"], function(){
 
             docs.forEach(function(json){
                 var element = document.createElement("div");
-                element.style.cursor = "pointer";
-                element.classList.add("material-item");
-                element.id = json._id; element.innerText = element.title = json.name;
+                element.innerText = element.title = json.name;
+                element.id = json._id; element.classList.add("material-item");
 
                 $(element).on("click", function(){
 
