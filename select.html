@@ -134,16 +134,16 @@ loadjs(["/three/three.js"], function(){
 
 //  Pager.
 
-    var max;
+    var max = 0;
     var skip = 0;
-    var lastpage;
+    var lastpage = 0;
     var currentpage = 1;
     var currentindex = 0;
 
     function resetPager(){
-        max = undefined;
+        max = 0;
         skip = 0;
-        lastpage = undefined;
+        lastpage = 0;
         currentpage = 1;
         currentindex = 0;
     }
