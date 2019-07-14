@@ -101,7 +101,7 @@
         </h4>
 
         <div class="pager">
-            <div style="margin:10px 0px 10px;">
+            <div style="margin:10px 0px 10px;height:35px;">
                 <li class="btn btn-primary get-prev-btn pull-left">&#9668;</li>
                 <div class="pager-buttons-holder" style="display:inline;">
                     <a class="btn btn-default page-btn">1</a>
@@ -114,7 +114,7 @@
 
             <div id="display-documents" class="well"></div>
 
-            <div style="margin:10px 0px 20px;">
+            <div style="margin:10px 0px 10px;height:35px;">
                 <li class="btn btn-primary btn-white-outline first-page-btn pull-left" style="margin-right:5px;">First</li>
                 <li class="btn btn-primary btn-white-outline get-prev-group-btn pull-left">&#9668;&#9668;</li>
                 <li class="btn btn-primary btn-white-outline last-page-btn pull-right" style="margin-left:5px;">Last</li>
@@ -147,10 +147,10 @@ loadjs(["/three/three.js"], function(){
     var max;
     var skip = 0;
     var lastpage;
+    var pageindex = 0;
     var currentpage = 1;
-    var grouplength = $("#collection-items").find("page-btn").length;
+    var pageslength = $("#collection-items").find("page-btn").length;
 
-    const min = 0;
     const limit = 5;
     const collection = DB.collection("materials");
 
@@ -190,18 +190,19 @@ loadjs(["/three/three.js"], function(){
         };
 
         async function count(){
-            var k = 0; 
+            var k = skip; 
             await collection.find(selectors)
-            .forEach(async function(){
+            skip(skip).forEach(async function(){
                 ++k;
             });
             return k;
         }
 
         count().then(function(k){
-            max = k;
+            max = k; $("#count").text(max);
             lastpage = parseInt(max / limit);
-            $("#count").text(k);
+            currentpage = parseInt( skip / limit ) + 1;
+            debugMode && console.log({"max":max, "skip":skip});
         });
 
         collection.find(selectors).skip(skip)
@@ -259,19 +260,26 @@ loadjs(["/three/three.js"], function(){
         droplistChanged.dispatch();
     });
 
-
-
-/*
     $(".get-prev-btn").on("click", function(){
-        if ( page - 1 > min ) --page;
-        debugMode && console.log({"page":page});
+
+        if ( skip - limit < 0 ) 
+            skip = 0;
+        else 
+            skip -= limit;
+
+        droplistChanged.dispatch();
     });
 
     $(".get-next-btn").on("click", function(){
-        if ( page + 1 < max ) ++page;
-        debugMode && console.log({"page":page});
+
+        if ( skip + limit > max )
+            skip = limit * parseInt(max / limit);  // limit * lastpage;
+        else
+            skip += limit;
+
+        droplistChanged.dispatch();
     });
-*/
+
 
 
 
