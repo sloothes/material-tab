@@ -137,15 +137,15 @@ loadjs(["/three/three.js"], function(){
     var max;
     var skip = 0;
     var lastpage;
-    var pageindex = 0;
     var currentpage = 1;
+    var currentindex = 0;
 
     function resetPager(){
         max = undefined;
         skip = 0;
         lastpage = undefined;
-        pageindex = 0;
         currentpage = 1;
+        currentindex = 0;
     }
 
     var interval;
@@ -195,7 +195,18 @@ loadjs(["/three/three.js"], function(){
 
     });
 
-    droplistChanged.add(function(){
+    /*
+        async function count(){
+            var k = skip; 
+            await collection.find(selectors)
+            .skip(skip).forEach(async function(){
+                ++k;
+            });
+            return k;
+        }
+    */
+
+    droplistChanged.add(async function(){
 
         var slot = slotDroplist.value;
         var gender = genderDroplist.value;
@@ -205,25 +216,33 @@ loadjs(["/three/three.js"], function(){
             "meta.gender": gender,
         };
 
-        async function count(){
-            var k = skip; 
-            await collection.find(selectors)
-            .skip(skip).forEach(async function(){
-                ++k;
-            });
-            return k;
-        }
+    //  count.
 
-        count().then(function(k){
-            max = k; $("#count").text(max);
-            lastpage = parseInt(max / limit);
-            currentpage = parseInt( skip / limit ) + 1;
-            debugMode && console.log({"max":max, "skip":skip});
+        var k = skip; 
+        await collection.find(selectors)
+        .skip(skip).forEach(async function(){
+            ++k;
         });
+
+        max = k; 
+        lastpage = parseInt(max / limit);
+        currentpage = parseInt( skip / limit ) + 1;
+        currentindex = parseInt( skip / limit ) % pageslength;
+
+        $("#count").text(max);
+        debugMode && console.log({"max":max, "skip":skip});
 
     });
 
     droplistChanged.add(function(){
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        var selectors = { 
+            "meta.slot": slot,
+            "meta.gender": gender,
+        };
 
         clearTimeout(interval);
         interval = setTimeout(function(){
