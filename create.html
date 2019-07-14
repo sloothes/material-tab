@@ -2202,6 +2202,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                             }).then( function(){
 
                             //  Success.
+                        /*
                                 bootbox.dialog({
                                     size: "small",
                                     className: "middle",
@@ -2215,6 +2216,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                                         }
                                     },
                                 });
+                        */
+                                console.log(`Texture ${data.name} uploaded successfully!`);
 
                             }).catch(function(err){
                                 console.error(err);
