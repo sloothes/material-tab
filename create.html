@@ -2256,30 +2256,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             debugMode && console.log("uploads:", uploads);
 
-        /*
             if ( navigator.onLine ) {
 
                 while( uploads.length ){
                     uploads.shift().call();
                 }
 
-            } else {
-
-                $(window).one("online", function(){
-                    while( uploads.length ){
-                        uploads.shift().call();
-                    }
-                });
-
-            }
-
-        //  or immidiatly...
-
-            while( uploads.length ){
-                uploads.shift().call();
-            }
-
-        */
+            } 
 
             return;
 
