@@ -132,6 +132,28 @@
 
 loadjs(["/three/three.js"], function(){
 
+//  Pager.
+
+    var max;
+    var skip = 0;
+    var lastpage;
+    var pageindex = 0;
+    var currentpage = 1;
+
+    function resetPager(){
+        max = undefined;
+        skip = 0;
+        lastpage = undefined;
+        pageindex = 0;
+        currentpage = 1;
+    }
+
+    var interval;
+    const limit = 5;
+    const pageslength = $("#collection-items").find("page-btn").length;
+
+//  Collection.
+
     const DB = new zango.Db( "USER", {
         materials:  true,
     });
@@ -144,20 +166,14 @@ loadjs(["/three/three.js"], function(){
         console.error(err);
     });
 
-    var max;
-    var skip = 0;
-    var lastpage;
-    var pageindex = 0;
-    var currentpage = 1;
-    var pageslength = $("#collection-items").find("page-btn").length;
-
-    const limit = 5;
     const collection = DB.collection("materials");
 
     const viewer = document.getElementById("viewer");
     const slotDroplist = $("#display-materials").find("#outfit-slot-droplist").get(0);
     const genderDroplist = $("#display-materials").find("#outfit-gender-droplist").get(0);
     const displayObjects = $("#display-materials").find("#display-documents").get(0);
+
+//  Signals.
 
     var Signal = signals.Signal;
     var droplistChanged = new Signal();
@@ -205,49 +221,66 @@ loadjs(["/three/three.js"], function(){
             debugMode && console.log({"max":max, "skip":skip});
         });
 
-        collection.find(selectors).skip(skip)
-        .limit(limit).toArray(function(err){
-            if (err) throw err;
-        }).then(function(docs){
+    });
 
-            $(displayObjects).children().remove();
-            debugMode && console.log({"docs":docs});
+    droplistChanged.add(function(){
 
-            docs.forEach(function(json){
-                var element = document.createElement("div");
-                element.innerText = element.title = json.name;
-                element.id = json._id; element.classList.add("material-item");
+        clearTimeout(interval);
+        interval = setTimeout(function(){
 
-                $(element).on("click", function(){
+            collection.find(selectors).skip(skip)
+            .limit(limit).toArray(function(err){
+                if (err) throw err;
+            }).then(function(docs){
 
-                    $("#display-documents")
-                    .find(".material-item")
-                    .removeClass("selected");
-                    $(this).addClass("selected");
+                $(displayObjects).children().remove();
+                debugMode && console.log({"docs":docs});
 
-                    clearTimeout(this.interval);
-                    this.interval = setTimeout( function(){
-                        materialSelected.dispatch(json);
-                    }, 250 );
+                docs.forEach(function(json){
+                    var element = document.createElement("div");
+                    element.innerText = element.title = json.name;
+                    element.id = json._id; element.classList.add("material-item");
 
+                    $(element).on("click", function(){
+
+                        $("#display-documents")
+                        .find(".material-item")
+                        .removeClass("selected");
+                        $(this).addClass("selected");
+
+                        clearTimeout(this.interval);
+                        this.interval = setTimeout( function(){
+                            materialSelected.dispatch(json);
+                        }, 250 );
+
+                    });
+
+                    $(displayObjects).append( element );
                 });
 
-                $(displayObjects).append( element );
+            }).catch(function(err){
+                console.error(err);
             });
 
-        }).catch(function(err){
-            console.error(err);
-        });
+        }, 250});
 
+    });
+
+//  Event listeners.
+
+    //  Selectors.
+
+    $(slotDroplist).on("change", function(){
+        resetPager();
+        droplistChanged.dispatch();
     });
 
     $(genderDroplist).on("change", function(){
+        resetPager();
         droplistChanged.dispatch();
     });
 
-    $(slotDroplist).on("change", function(){
-        droplistChanged.dispatch();
-    });
+    //  Pager Controls.
 
     $(".first-page-btn").on("click", function(){
         skip = 0;
@@ -256,7 +289,7 @@ loadjs(["/three/three.js"], function(){
 
     $(".last-page-btn").on("click", function(){
         lastpage = parseInt(max / limit);
-        skip = lastpage * limit;
+        skip = limit * parseInt(max / limit);  // limit * lastpage;
         droplistChanged.dispatch();
     });
 
@@ -268,6 +301,7 @@ loadjs(["/three/three.js"], function(){
             skip -= limit;
 
         droplistChanged.dispatch();
+
     });
 
     $(".get-next-btn").on("click", function(){
@@ -278,10 +312,12 @@ loadjs(["/three/three.js"], function(){
             skip += limit;
 
         droplistChanged.dispatch();
+
     });
 
 
 
+});
 
 
 /*
@@ -295,6 +331,5 @@ loadjs(["/three/three.js"], function(){
     }
 */
 
-});
 
 </script>
