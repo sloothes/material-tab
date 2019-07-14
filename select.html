@@ -144,12 +144,14 @@ loadjs(["/three/three.js"], function(){
         console.error(err);
     });
 
+    var max;
     var skip = 0;
-    var page = 1;
-    var max = 100;
+    var lastpage;
+    var currentpage = 1;
+    var grouplength = $("#collection-items").find("page-btn").length;
 
     const min = 0;
-    const limit = 10;
+    const limit = 5;
     const collection = DB.collection("materials");
 
     const viewer = document.getElementById("viewer");
@@ -187,6 +189,21 @@ loadjs(["/three/three.js"], function(){
             "meta.gender": gender,
         };
 
+        async function count(){
+            var k = 0; 
+            await collection.find(selectors)
+            .forEach(async function(){
+                ++k;
+            });
+            return k;
+        }
+
+        count().then(function(k){
+            max = k;
+            lastpage = parseInt(max / limit);
+            $("#count").text(k);
+        });
+
         collection.find(selectors).skip(skip)
         .limit(limit).toArray(function(err){
             if (err) throw err;
@@ -223,23 +240,28 @@ loadjs(["/three/three.js"], function(){
 
     });
 
-    $(slotDroplist).on("change", function(){
-        droplistChanged.dispatch();
-    });
-
     $(genderDroplist).on("change", function(){
         droplistChanged.dispatch();
     });
 
-    async function count(){
-        var k = 0; 
-        await collection.find()
-        .forEach(async function(){
-            ++k;
-        });
-        return k;
-    }
+    $(slotDroplist).on("change", function(){
+        droplistChanged.dispatch();
+    });
 
+    $(".first-page-btn").on("click", function(){
+        skip = 0;
+        droplistChanged.dispatch();
+    });
+
+    $(".last-page-btn").on("click", function(){
+        lastpage = parseInt(max / limit);
+        skip = lastpage * limit;
+        droplistChanged.dispatch();
+    });
+
+
+
+/*
     $(".get-prev-btn").on("click", function(){
         if ( page - 1 > min ) --page;
         debugMode && console.log({"page":page});
@@ -249,6 +271,20 @@ loadjs(["/three/three.js"], function(){
         if ( page + 1 < max ) ++page;
         debugMode && console.log({"page":page});
     });
+*/
+
+
+
+
+
+    async function count(){
+        var k = 0; 
+        await collection.find()
+        .forEach(async function(){
+            ++k;
+        });
+        return k;
+    }
 
 });
 
