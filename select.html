@@ -184,14 +184,21 @@ loadjs(["/three/three.js"], function(){
             docs.forEach(function(json){
                 var element = document.createElement("div");
                 element.style.cursor = "pointer";
-                element.classList.add("form-control", "material-item");
+                element.classList.add("material-item");
                 element.id = json._id; element.innerText = element.title = json.name;
 
                 $(element).on("click", function(){
+
+                    $("#display-documents")
+                    .find(".material-item")
+                    .removeClass("selected");
+                    $(this).addClass("selected");
+
                     clearTimeout(this.interval);
                     this.interval = setTimeout( function(){
                         materialSelected.dispatch(json);
                     }, 250 );
+
                 });
 
                 $(displayObjects).append( element );
