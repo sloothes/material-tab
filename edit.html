@@ -216,6 +216,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     //  Clear json anyway.
         json = undefined;
+    //  Clear droplist & controls.
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
 
     //  Get gender.
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
