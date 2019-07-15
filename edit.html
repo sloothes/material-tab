@@ -187,7 +187,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         + "Do you want to save before continue?";
 
         if ( json && confirm(msg)) {
-            console.log("TODO: Save()");
+        //  TODO: function save(){}
+            debugMode && console.log("json:", json);
         }
 
     //  Clear json anyway.
