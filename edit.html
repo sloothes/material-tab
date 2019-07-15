@@ -229,10 +229,25 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         if ( !slot ) return;
         if ( !gender ) return;
 
-        var material = viewer.contentWindow[ gender ][ slot ].material;
-        json = viewer.contentWindow.materialtoJSON( material );
+    //  json = viewer.contentWindow.materialtoJSON( material );
+    //  if (json) updateMaterialPropertiesDroplist();
 
-        if (json) updateMaterialPropertiesDroplist();
+/*
+        var collection = DB.collection( gender );
+        var selector = {uuid: viewer.contentWindow[ gender ][ slot ].uuid};
+        collection.findOne(selector, function(err){
+            if (err) throw err;
+        }).then(function(doc){
+            json = doc.material;
+            debugMode && console.log({"gender":gender, "json":json});
+        }).then(function(){
+            updateMaterialPropertiesDroplist();
+        }).catch(function(err){
+            console.error(err);
+        });
+*/
+
+
 
     });
 
