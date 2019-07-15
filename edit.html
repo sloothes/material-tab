@@ -212,13 +212,47 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     function updateMaterialPropertiesDroplist(){
 
+        $(propDroplist).off();
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
 
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
 
+            var key = sortedKeys[i];
+            var option = document.createElement("option");
+            option.id = option.innerText = key;
 
+        //  values.
+            switch (key) {
 
+                case "normalScale":
 
+                    if ( typeof(json[key]) == "number" ) {
+                        option.value = json[ key ];  break;
+                    }
 
+                //  leading value is the "normalScale.x"
+                    if (Array.isArray(json[key]) && json[key].length) {
+                        option.value = json[key][0]; break;
+                    }
 
+                break;
+
+                default:
+
+                    if ( typeof(json[key]) != "boolean" ) {
+                        option.value = json[ key ]; break;
+                    } else {
+                        option.value = json[ key ] || ""; break;
+                    }
+
+                break;
+            }
+
+            $(propDroplist).append(option);
+        }
 
     }
 
