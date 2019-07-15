@@ -182,8 +182,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
     $(slotDroplist).on("change", function(){
+
         if ( json ) {
-            return bootbox.dialog({
+            bootbox.dialog({
                 size: "small",
                 className: "middle",
                 title: `<div class="alert-icon icon-warning"></div>`
@@ -201,15 +202,14 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         className: 'btn-danger',
                         callback: function(){
                             json = undefined;
+                            return;
                         },
                     },
                 },
             });
         }
-        debugMode && console.log({"json":json});
-    });
 
-    $(slotDroplist).on("change", function(){
+        debugMode && console.log({"json":json});
 
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
 
