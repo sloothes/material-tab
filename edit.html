@@ -223,24 +223,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         $(propDroplist).append(`<option value="">Select key:</option>`);
 
     //  Get gender.
+        var slot = this.value;
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
 
+        if ( !slot ) return;
         if ( !gender ) return;
-        if ( !this.value ) return;
 
-        var selector = {_id: this.value};
-        var collection = DB.collection( gender );
+        var material = viewer.contentWindow[ gender ][ slot ].material;
+        json = viewer.contentWindow.materialtoJSON( material );
 
-        collection.findOne(selector, function(err){
-            if (err) throw err;
-        }).then(function(doc){
-            json = doc.material;
-            debugMode && console.log({"gender":gender, "json":json});
-        }).then(function(){
-            updateMaterialPropertiesDroplist();
-        }).catch(function(err){
-            console.error(err);
-        });
+        if (json) updateMaterialPropertiesDroplist();
 
     });
 
@@ -453,6 +445,25 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
 <script>
+/*
+//  This takes the material direct from the
+//  database, but we should take the material
+//  from the outfit at current moment.
+
+    var selector = {_id: this.value};
+    var collection = DB.collection( gender );
+
+    collection.findOne(selector, function(err){
+        if (err) throw err;
+    }).then(function(doc){
+        json = doc.material;
+        debugMode && console.log({"gender":gender, "json":json});
+    }).then(function(){
+        updateMaterialPropertiesDroplist();
+    }).catch(function(err){
+        console.error(err);
+    });
+*/
 
 /*
 //  values.
