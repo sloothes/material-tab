@@ -261,8 +261,8 @@
     <h2 style="margin-bottom:20px;">Textures:</h2>
 </div>
 
-<div id="texture-preview" style="width:100%;text-align:center;margin-bottom:20px;">
-    <img id="texture-image" width="290" height="290" style="margin:auto;">
+<div id="texture-viewer" style="width:100%;text-align:center;margin-bottom:20px;">
+    <img id="texture-preview" width="290" height="290" style="margin:auto;">
 </div>
 
 <div style="height:45px;margin-bottom:10px;">
@@ -1845,6 +1845,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     $(textureDroplist).on("change", function(){
 
         $(textureCheckboxSelector).attr({checked:false});
+
+        if ( this.value ) {
+            var src = textures[ this.value ].sourceFile;
+            $("img#texture-preview").src = src;
+        }
 
         if ( this.value ) {
             $(textureControlSelector).slideDown();
