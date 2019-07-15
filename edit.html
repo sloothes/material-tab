@@ -6,7 +6,7 @@
             version: 1.7,
             kind: "component",
             name: "edit-material-tab.html",
-            description: "edit outfit material alive.",
+            description: "edit and update materials of male/female collections in AW3D database.",
         };
     });
 </script>
@@ -142,9 +142,9 @@
     <div id="material-property-controls" class="well"></div>
 
     <div style="margin-bottom:10px;height:35px;">
-        <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:49%;">Save</div>
-    <!-- div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div -->
-        <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:49%;">Reset</div>
+        <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:24%;">Save</div>
+        <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div>
+        <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Reset</div>
     </div>
 
 </div>
@@ -156,7 +156,8 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
-    var gender, material;
+    var json;
+//  var gender, material;
 
     const viewer = document.getElementById("viewer");
     const materialEditorPanel = document.getElementById("material-editor-panel");
@@ -164,14 +165,62 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const propDroplist = $(materialEditorPanel).find("select#material-property").get(0);
     const propControls = $(materialEditorPanel).find("#material-property-controls").get(0);
 
-    $(slotDroplist).on("change", function(){
+//  Open database only with 
+//  collections that will be used.
 
-        gender = viewer.contentWindow.localPlayer.outfit.getGender();
-        material = viewer.contentWindow[ gender ][this.value].material;
-        debugMode && console.log({"gender":gender, "material":material});
+    const DB = new zango.Db( "AW3D", {
+        male:   true,
+        female: true,
+    });
+
+    DB.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${DB.name} (v${DB.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+
+    $(slotDroplist).on("change", async function(){
+        json = undefined;
+        debugMode && console.log({"json":json});
+    });
+
+    $(slotDroplist).on("change", async function(){
+
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+
+        if ( !gender ) return;
+        if ( !this.value ) return;
+
+        var selector = {_id: this.value};
+        var collection = DB.collection( gender );
+
+        json = await collection.findOne(selector, function(err){
+            if (err) throw err;
+        }).then(function(doc){
+            return doc.material;
+        }).catch(function(err){
+            console.error(err);
+        });
+
+        debugMode && console.log({"gender":gender, "json":json});
+
+        updateMaterialPropertiesDroplist();
 
     });
 
+    function updateMaterialPropertiesDroplist(){
+
+
+
+
+
+
+
+
+
+    }
 
 });
 
