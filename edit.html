@@ -273,19 +273,65 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         switch (key) {
 
             case "color":
-                $(propControls).css({height:"auto"});
-                $(propControls).append(colorControl());
-            //  Colorpicker startup.
-                var hexString = "#" + json.color.toString(16);
-                $("#sp-scene-background").spectrum( "set", hexString );
+                (function(){
+
+                    var input = document.createElement("input");
+                    input.type = "hidden"; input.id = "color-control";
+
+                    $(propControls).append(input);
+                    $(propControls).css({height:"auto"});
+
+                    $(input).spectrum({
+                        preferredFormat: "hex",
+                        color: "#ffffff",
+                        flat: true,
+                        showInput: true,
+                        showInitial: true,
+                        showButtons: false,
+                        allowEmpty: false,
+                        move: function(color) {
+                            var hex = color.toString("hex").replace(/#/, "0x");
+                            json.color = Number(hex);
+                            propertyValueChanged.dispatch(key, hex);
+                        },
+                    });
+
+                //  Colorpicker startup.
+                    var hexString = "#" + json.color.toString(16);
+                    $("#sp-scene-background").spectrum( "set", hexString );
+
+                })();
             break;
 
             case "emissive":
-                $(propControls).css({height:"auto"});
-                $(propControls).append(emissiveControl());
-            //  Colorpicker startup.
-                var hexString = "#" + json.emissive.toString(16);
-                $("#sp-scene-background").spectrum( "set", hexString );
+                (function(){
+
+                    var input = document.createElement("input");
+                    input.type = "hidden"; input.id = "emissive-control";
+
+                    $(propControls).append(input());
+                    $(propControls).css({height:"auto"});
+
+                    $(input).spectrum({
+                        preferredFormat: "hex",
+                        color: "#000000",
+                        flat: true,
+                        showInput: true,
+                        showInitial: true,
+                        showButtons: false,
+                        allowEmpty: false,
+                        move: function(color) {
+                            var hex = color.toString("hex").replace(/#/, "0x");
+                            json.emissive = Number(hex);
+                            propertyValueChanged.dispatch(key, hex);
+                        },
+                    });
+
+                //  Colorpicker startup.
+                    var hexString = "#" + json.emissive.toString(16);
+                    $("#sp-scene-background").spectrum( "set", hexString );
+                })();
+
             break;
 
 
@@ -316,47 +362,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
 
-//  Material properties controls.
+//  Material controls.
 
-    function colorControl(){
-        var input = document.createElement("input");
-        input.type = "hidden"; input.id = "color-control";
-
-        return $(input).spectrum({
-            preferredFormat: "hex",
-            color: "#ffffff",
-            flat: true,
-            showInput: true,
-            showInitial: true,
-            showButtons: false,
-            allowEmpty: false,
-            move: function(color) {
-                var hex = color.toString("hex").replace(/#/, "0x");
-                json.color = Number(hex);
-                propertyValueChanged.dispatch(key, hex);
-            },
-        });
-    }
-
-    function emissiveControl(){
-        var input = document.createElement("input");
-        input.type = "hidden"; input.id = "emissive-control";
-
-        return $(input).spectrum({
-            preferredFormat: "hex",
-            color: "#000000",
-            flat: true,
-            showInput: true,
-            showInitial: true,
-            showButtons: false,
-            allowEmpty: false,
-            move: function(color) {
-                var hex = color.toString("hex").replace(/#/, "0x");
-                json.emissive = Number(hex);
-                propertyValueChanged.dispatch(key, hex);
-            },
-        });
-    }
 
 
 
