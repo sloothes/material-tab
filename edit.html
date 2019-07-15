@@ -181,12 +181,35 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         console.error(err);
     });
 
-    $(slotDroplist).on("change", async function(){
-        json = undefined;
+    $(slotDroplist).on("change", function(){
+        if ( json ) {
+            return bootbox.dialog({
+                size: "small",
+                className: "middle",
+                title: `<div class="alert-icon icon-warning"></div>`
+                     + `<h2 style="margin:auto;">Warning</h2>`,
+                message: `<div>You have unsaved changes!</div>`
+                       + `<div>Do you want to save before continue?</div>`,
+                buttons: {
+                    save: {
+                        label: 'Save',
+                        className: 'btn-success',
+                        callback: function save(){},
+                    },
+                    cancel: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function(){
+                            json = undefined;
+                        },
+                    },
+                },
+            });
+        }
         debugMode && console.log({"json":json});
     });
 
-    $(slotDroplist).on("change", async function(){
+    $(slotDroplist).on("change", function(){
 
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
 
@@ -196,17 +219,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         var selector = {_id: this.value};
         var collection = DB.collection( gender );
 
-        json = await collection.findOne(selector, function(err){
+        collection.findOne(selector, function(err){
             if (err) throw err;
         }).then(function(doc){
-            return doc.material;
+            json = doc.material;
+            updateMaterialPropertiesDroplist();
         }).catch(function(err){
             console.error(err);
         });
 
         debugMode && console.log({"gender":gender, "json":json});
-
-        updateMaterialPropertiesDroplist();
 
     });
 
