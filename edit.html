@@ -181,6 +181,29 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         console.error(err);
     });
 
+
+    function updateMaterialPropertiesDroplist(){
+
+    //  $(propDroplist).off();
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
+
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
+
+            var key = sortedKeys[i];
+            var option = document.createElement("option");
+            option.id = option.value = option.innerText = key;
+            $(propDroplist).append(option);
+
+        }
+
+    //  Trigger selected option.
+        $(propDroplist).change();
+
+    }
+
     $(slotDroplist).on("change", function(){
 
         var msg = "You have unsaved changes!\n"
@@ -216,51 +239,130 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     });
 
-    function updateMaterialPropertiesDroplist(){
 
-        $(propDroplist).off();
-        $(propDroplist).children().remove();
-        $(propControls).children().remove();
+//  Signals.
 
-    //  Sort json keys.
-        var sortedKeys = Object.keys(json).sort();
-        for ( var i = 0; i < sortedKeys.length; i++ ) {
+    var Signal = signals.Signal;
+    var propertyValueChanged = new Signal();
+    var propertiesDroplistChanged = new Signal();
 
-            var key = sortedKeys[i];
-            var option = document.createElement("option");
-            option.id = option.innerText = key;
+    propertyValueChanged.add( function(key, value){
 
-        //  values.
-            switch (key) {
+        if ( key == undefined ) return;
 
-                case "normalScale":
+        var slot = $(slotDroplist).val();
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        
+        if ( !slot ) return;
+        if ( !gender ) return;
 
-                    if ( typeof(json[key]) == "number" ) {
-                        option.value = json[ key ];  break;
-                    }
+        var data = {};
+        data.key    = key;
+        data.value  = value;
+        data.slot   = slot;
+        data.gender = gender;
 
-                //  leading value is the "normalScale.x"
-                    if (Array.isArray(json[key]) && json[key].length) {
-                        option.value = json[key][0]; break;
-                    }
+        viewer.contentWindow.localPlayerMaterialHandler(data);
 
-                break;
+    });
 
-                default:
 
-                    if ( typeof(json[key]) != "boolean" ) {
-                        option.value = json[ key ]; break;
-                    } else {
-                        option.value = json[ key ] || ""; break;
-                    }
+    propertiesDroplistChanged.add( function( key ){
 
-                break;
-            }
+        switch (key) {
 
-            $(propDroplist).append(option);
+            case "color":
+                $(propControls).css({height:"auto"});
+                $(propControls).append(colorControl());
+            //  Colorpicker startup.
+                var hexString = "#" + json.color.toString(16);
+                $("#sp-scene-background").spectrum( "set", hexString );
+            break;
+
+            case "emissive":
+                $(propControls).css({height:"auto"});
+                $(propControls).append(emissiveControl());
+            //  Colorpicker startup.
+                var hexString = "#" + json.emissive.toString(16);
+                $("#sp-scene-background").spectrum( "set", hexString );
+            break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
+        $(propControls).slideDown();
+
+    });
+
+    $(propDroplist).on("change", function(){
+        $(propControls).css({height:""});
+        $(propControls).children().remove();
+        propertiesDroplistChanged.dispatch( this.value );
+    });
+
+
+//  Material properties controls.
+
+    function colorControl(){
+        var input = document.createElement("input");
+        input.type = "hidden"; input.id = "color-control";
+
+        $(input).spectrum({
+            preferredFormat: "hex",
+            color: "#ffffff",
+            flat: true,
+            showInput: true,
+            showInitial: true,
+            showButtons: false,
+            allowEmpty: false,
+            move: function(color) {
+                var hex = color.toString("hex").replace(/#/, "0x");
+                json.color = Number(hex);
+                propertyValueChanged.dispatch(key, hex);
+            },
+        });
+
+        return input;
     }
+
+    function emissiveControl(){
+        var input = document.createElement("input");
+        input.type = "hidden"; input.id = "emissive-control";
+
+        $(input).spectrum({
+            preferredFormat: "hex",
+            color: "#000000",
+            flat: true,
+            showInput: true,
+            showInitial: true,
+            showButtons: false,
+            allowEmpty: false,
+            move: function(color) {
+                var hex = color.toString("hex").replace(/#/, "0x");
+                json.emissive = Number(hex);
+                propertyValueChanged.dispatch(key, hex);
+            },
+        });
+
+        return input;
+    }
+
+
+
 
 });
 
@@ -297,6 +399,36 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
 <script>
+
+/*
+//  values.
+    switch (key) {
+
+        case "normalScale":
+
+            if ( typeof(json[key]) == "number" ) {
+                option.value = json[ key ];  break;
+            }
+
+        //  leading value is the "normalScale.x"
+            if (Array.isArray(json[key]) && json[key].length) {
+                option.value = json[key][0]; break;
+            }
+
+        break;
+
+        default:
+
+            if ( typeof(json[key]) != "boolean" ) {
+                option.value = json[ key ]; break;
+            } else {
+                option.value = json[ key ] || ""; break;
+            }
+
+        break;
+    }
+*/
+
 /*
     bootbox.dialog({
         size: "small",
