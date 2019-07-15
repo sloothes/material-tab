@@ -339,11 +339,23 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             break;
 
+            case "_id":
+            case "uuid":
+                (function(){
+                    var input = document.createElement("input");
+                    input.value = json[key]; input.type = "text"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "uuid-material-textfield");
+                    $(propControls).append( input );
+                })();
+            break;
+
             case "name":
                 $(propControls).append( nameControl() );
             break;
 
-
+            case "type":
+                $(propControls).append( typeDisplay() );
+            break;
 
 
 
@@ -381,16 +393,30 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         input.id = "name-control"; input.type = "text"; input.value = json.name;
         input.classList.add("form-control", "pull-right", "material-textfield");
 
-        $(input).on("input", function(){
+        $(input).on("change", function(){
             if (this.value) json.name = this.value;
+            debugMode && console.log({"name":json.name});
         });
 
         $(div).append(span, input);
         return div;
     }
 
+    function typeDisplay(){
+        var div = document.createElement("div");
 
+        var span = document.createElement("span");
+        span.innerText = "type"; span.style.cssText = "vertical-align:-0.7rem;";
 
+        var input = document.createElement("input"); 
+        input.id = "type-control"; input.type = "text"; input.readOnly = true;
+        input.classList.add("form-control", "pull-right", "material-textfield");
+
+        input.value = json.type;
+
+        $(div).append(span, input);
+        return div;
+    }
 
 });
 
