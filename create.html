@@ -706,7 +706,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     //  Colorpicker startup.
 
                         var hexString = "#" + json.color.toString(16);
-                        $("#sp-scene-background").spectrum( "set", hexString );
+                        $("#input_color").spectrum( "set", hexString );
 
                         $(propControls).slideDown();
 
@@ -746,7 +746,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     //  Colorpicker startup.
 
                         var hexString = "#" + json.emissive.toString(16);
-                        $("#sp-scene-background").spectrum( "set", hexString );
+                        $("#input_emissive").spectrum( "set", hexString );
 
                         $(propControls).slideDown();
 
