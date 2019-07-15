@@ -183,34 +183,17 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     $(slotDroplist).on("change", function(){
 
-        if ( json ) {
-            bootbox.dialog({
-                size: "small",
-                className: "middle",
-                title: `<div class="alert-icon icon-warning"></div>`
-                     + `<h2 style="margin:auto;">Warning</h2>`,
-                message: `<div>You have unsaved changes!</div>`
-                       + `<div>Do you want to save before continue?</div>`,
-                buttons: {
-                    cancel: {
-                        label: 'Discard',
-                        className: 'btn-danger',
-                        callback: function(){
-                            json = undefined;
-                            return;
-                        },
-                    },
-                    save: {
-                        label: 'Save',
-                        className: 'btn-success',
-                        callback: function save(){},
-                    },
-                },
-            });
+        var msg = "You have unsaved changes!\n"
+        + "Do you want to save before continue?";
+
+        if ( json && confirm(msg)) {
+            console.log("TODO: Save()");
         }
 
-        debugMode && console.log({"json":json});
+    //  Clear json anyway.
+        json = undefined;
 
+    //  Get gender.
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
 
         if ( !gender ) return;
@@ -284,4 +267,62 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+/*
+    bootbox.dialog({
+        size: "small",
+        className: "middle",
+        title: `<div class="alert-icon icon-warning"></div>`
+             + `<h2 style="margin:auto;">Warning</h2>`,
+        message: `<div>You have unsaved changes!</div>`
+               + `<div>Do you want to save before continue?</div>`,
+        buttons: {
+            cancel: {
+                label: 'Discard',
+                className: 'btn-danger',
+                callback: function(){
+                    json = undefined;
+                    debugMode && console.log({"json":json});
+                    return;
+                },
+            },
+            save: {
+                label: 'Save',
+                className: 'btn-success',
+                callback: function save(){
+                    debugMode && console.log({"json":json});
+                },
+            },
+        },
+    });
+*/
+</script>
 
