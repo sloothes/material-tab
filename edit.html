@@ -188,7 +188,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         if ( json && confirm(msg)) {
         //  TODO: function save(){}
-            debugMode && console.log("json:", json);
+            debugMode && console.log(json);
         }
 
     //  Clear json anyway.
@@ -207,12 +207,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (err) throw err;
         }).then(function(doc){
             json = doc.material;
+            debugMode && console.log({"gender":gender, "json":json});
+        }).then(function(){
             updateMaterialPropertiesDroplist();
         }).catch(function(err){
             console.error(err);
         });
-
-        debugMode && console.log({"gender":gender, "json":json});
 
     });
 
