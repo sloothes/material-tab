@@ -298,7 +298,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 //  Colorpicker startup.
                     var hexString = "#" + json.color.toString(16);
-                    $("#sp-scene-background").spectrum( "set", hexString );
+                    $("#color-control").spectrum( "set", hexString );
 
                 })();
             break;
@@ -309,7 +309,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     var input = document.createElement("input");
                     input.type = "hidden"; input.id = "emissive-control";
 
-                    $(propControls).append(input());
+                    $(propControls).append(input);
                     $(propControls).css({height:"auto"});
 
                     $(input).spectrum({
@@ -329,7 +329,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 //  Colorpicker startup.
                     var hexString = "#" + json.emissive.toString(16);
-                    $("#sp-scene-background").spectrum( "set", hexString );
+                    $("#emissive-control").spectrum( "set", hexString );
                 })();
 
             break;
