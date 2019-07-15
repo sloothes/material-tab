@@ -214,11 +214,13 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             debugMode && console.log(json);
         }
 
-    //  Clear json anyway.
+    //  Clear json.
         json = undefined;
+
     //  Clear droplist & controls.
         $(propDroplist).children().remove();
         $(propControls).children().remove();
+        $(propDroplist).append(`<option value="">Select key:</option>`);
 
     //  Get gender.
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
@@ -337,7 +339,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             break;
 
-
+            case "name":
+                $(propControls).append( nameControl() );
+            break;
 
 
 
@@ -367,6 +371,23 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 //  Material controls.
 
+    function nameControl(){
+        var div = document.createElement("div");
+
+        var span = document.createElement("span");
+        span.innerText = "name"; span.style.cssText = "vertical-align:-0.7rem;";
+
+        var input = document.createElement("input"); 
+        input.id = "name-control"; input.type = "text"; input.value = json.name;
+        input.classList.add("form-control", "pull-right", "material-textfield");
+
+        $(input).on("input", function(){
+            if (this.value) json.name = this.value;
+        });
+
+        $(div).append(span, input);
+        return div;
+    }
 
 
 
