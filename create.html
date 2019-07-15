@@ -360,8 +360,8 @@
 
 loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
-    uploads = [];
     var files = {};
+    var uploads = [];
     var textures = {};
 
     const viewer = document.getElementById("viewer");
@@ -1848,7 +1848,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         if ( this.value ) {
             var src = textures[ this.value ].sourceFile;
-            $("img#texture-preview").src = src;
+            $("img#texture-preview").attr({"src":src});
         }
 
         if ( this.value ) {
@@ -1912,26 +1912,10 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
 
-//  UPLOAD.
-
-    $(textureUploadBtn).on("click", function(){
-        if ( !navigator.onLine ) return;
-
-        clearTimeout(this.interval);
-        this.interval = setTimeout( function(){
-
-            while( uploads.length ){
-                uploads.shift().call();
-            }
-
-        }, 500 );
-
-    });
-
-
 //  CLEAR.
 
     $(texturesClearBtn).on("click", function(){
+        debugMode && console.log("uploads:", uploads);
 
         clearTimeout(this.interval);
         this.interval = setTimeout( function(){
@@ -1945,6 +1929,23 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             $(textureCheckboxSelector).attr({checked:false});
 
         }, 250 );
+
+    });
+
+
+//  UPLOAD.
+
+    $(textureUploadBtn).on("click", function(){
+        if ( !navigator.onLine ) return;
+
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+
+            while( uploads.length ){
+                uploads.shift().call();
+            }
+
+        }, 500 );
 
     });
 
