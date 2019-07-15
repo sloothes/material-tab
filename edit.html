@@ -335,16 +335,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 //  Colorpicker startup.
                     var hexString = "#" + json.emissive.toString(16);
                     $("#emissive-control").spectrum( "set", hexString );
-                })();
 
+                })();
             break;
 
             case "_id":
             case "uuid":
                 (function(){
                     var input = document.createElement("input");
-                    input.value = json[key]; input.type = "text"; input.readOnly = true;
-                    input.classList.add("form-control", "pull-right", "uuid-material-textfield");
+                    input.type = "text"; input.readOnly = true; 
+                    input.classList.add("form-control"); input.value = json[key];
                     $(propControls).append( input );
                 })();
             break;
