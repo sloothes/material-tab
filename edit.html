@@ -89,6 +89,8 @@
     <h2 style="margin-bottom:20px;">Edit Material:</h2>
 </div>
 
+<div id="material-editor-panel">
+
 <!--
     <div style="margin-bottom:20px;">
         <input type="text" id="material-title" class="form-control text-center x-large material-title-field" placeholder="material name">
@@ -107,47 +109,73 @@
     </div>
 -->
 
-<div style="height:35px;margin-bottom:10px;">
-    <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
-        <div style="width:40%;display:inline-block;float:right;">
-            <select id="outfit-slot" class="form-control outfit-slot-droplist" readonly>
-                <option value="">Select slot:</option>
-                <option value="body">body</option>
-                <option value="eyes">eyes</option>
-                <option value="hairs">hairs</option>
-                <option value="stockings">stockings</option>
-                <option value="underwears">underwears</option>
-                <option value="costume">costume</option>
-                <option value="tshirt">tshirt</option>
-                <option value="trousers">trousers</option>
-                <option value="dress">dress</option>
-                <option value="shoes">shoes</option>
-            </select>
-        </div>
-    </h4>
-</div>
+    <div style="height:35px;margin-bottom:10px;">
+        <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
+            <div style="width:40%;display:inline-block;float:right;">
+                <select id="outfit-slot" class="form-control outfit-slot-droplist" readonly>
+                    <option value="">Select slot:</option>
+                    <option value="body">body</option>
+                    <option value="eyes">eyes</option>
+                    <option value="hairs">hairs</option>
+                    <option value="stockings">stockings</option>
+                    <option value="underwears">underwears</option>
+                    <option value="costume">costume</option>
+                    <option value="tshirt">tshirt</option>
+                    <option value="trousers">trousers</option>
+                    <option value="dress">dress</option>
+                    <option value="shoes">shoes</option>
+                </select>
+            </div>
+        </h4>
+    </div>
 
-<div style="height:35px;margin-bottom:10px;">
-    <h4><span style="vertical-align:-0.5rem;">Select property:</span>
-        <div style="width:40%;display:inline-block;float:right;">
-            <select id="material-property" class="form-control material-property-droplist" readonly>
-                <option value="">Select key:</option>
-            </select>
-        </div>
-    </h4>
-</div>
+    <div style="height:35px;margin-bottom:10px;">
+        <h4><span style="vertical-align:-0.5rem;">Select property:</span>
+            <div style="width:40%;display:inline-block;float:right;">
+                <select id="material-property" class="form-control material-property-droplist" readonly>
+                    <option value="">Select key:</option>
+                </select>
+            </div>
+        </h4>
+    </div>
 
-<div id="material-property-controls" class="well"></div>
+    <div id="material-property-controls" class="well"></div>
 
-<div style="margin-bottom:10px;height:35px;">
-    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:49%;">Save</div>
-<!-- div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div -->
-    <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:49%;">Reset</div>
+    <div style="margin-bottom:10px;height:35px;">
+        <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:49%;">Save</div>
+    <!-- div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div -->
+        <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:49%;">Reset</div>
+    </div>
+
 </div>
 
 <hr/>
 
 
+<script>
+
+loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
+
+    var gender, material;
+
+    const viewer = document.getElementById("viewer");
+    const materialEditorPanel = document.getElementById("material-editor-panel");
+    const slotDroplist = $(materialEditorPanel).find("select#outfit-slot").get(0);
+    const propDroplist = $(materialEditorPanel).find("select#material-property").get(0);
+    const propControls = $(materialEditorPanel).find("#material-property-controls").get(0);
+
+    $(slotDroplist).on("change", function(){
+
+        gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        material = viewer.contentWindow[ gender ][this.value].material;
+        debugMode && console.log({"gender":gender, "material":material});
+
+    });
+
+
+});
+
+</script>
 
 
 
