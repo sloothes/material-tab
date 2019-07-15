@@ -267,7 +267,7 @@
     </select>
 </div>
 
-<div>
+<div style="width:100%;text-align:center;margin-bottom:20px;">
     <img id="texture-preview" width="256" height="256" style="margin:auto;">
 </div>
 
@@ -318,9 +318,9 @@
 
 <div style="margin-bottom:20px;">
     <input id="texture-fileinput" type="file" class="hidden" multiple>
-    <div id="upload-material-textures" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:24%;">Upload</div>
+    <div id="clear-import-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-left" style="width:24%;">Clear</div>
     <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Import textures</div>
-    <div id="clear-import-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Clear</div>
+    <div id="upload-material-textures" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Upload</div>
 </div>
 
 <script>
@@ -1860,15 +1860,16 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
     $(textureFileinput).on("change", function(){
-
         if ( this.files.length == 0 ) return;
+
+        $(textureCheckboxSelector).attr({checked:false});
 
         for (var i = 0; i < this.files.length; i++ ) {
 
-            (() => {
+            (function(){
 
-                var file = this.files[i];
-                var name = this.files[i].name;
+                var file = textureFileinput.files[i];
+                var name = textureFileinput.files[i].name;
 
                 if ( name in files && file.lastModified == files[name].lastModified 
                     && file.size == files[name].size && file.type == files[name].type ) {
@@ -1892,7 +1893,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                         $(textureDroplist).append(option);
                     //  textureDroplist.value = name;
-                        $(textureCheckboxSelector).attr({checked:false});
 
                     };
 
@@ -1919,7 +1919,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 uploads.shift().call();
             }
 
-        }, 250 );
+        }, 500 );
 
     });
 
