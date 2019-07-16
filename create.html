@@ -159,7 +159,7 @@
 
         if ( !viewer.contentWindow[gender][slot] ) return;
         var geometry = viewer.contentWindow[gender][slot].geometry;
-        var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
+        var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
         $("img#texture-preview").attr({"src":src});
 
@@ -228,7 +228,7 @@
 
         if ( !viewer.contentWindow[gender][slot] ) return;
         var geometry = viewer.contentWindow[gender][slot].geometry;
-        var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
+        var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
         $("img#texture-preview").attr({"src":src});
 
@@ -745,7 +745,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         $(propDroplist).find("option#_id").val( objectId );
 
                     //  Change uuid also.
-                        var uuid = json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
+                        var uuid = json.uuid = THREE.Math.generateUUID();
                         $(propDroplist).find("option#uuid").val( uuid );
                         debugMode && console.log({
                             "new _id":json._id,
@@ -785,12 +785,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     input.classList.add("form-control", "pull-right", "uuid-material-textfield");
 
                     if (json.uuid) input.value = json.uuid;
-                    else input.value = json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
+                    else input.value = json.uuid = THREE.Math.generateUUID();
                     $(propDroplist).find("option#uuid").val( json.uuid );
 
                     $(button).on("click", function(){
 
-                        var uuid = viewer.contentWindow.THREE.Math.generateUUID();
+                        var uuid = THREE.Math.generateUUID();
                         input.value = json.uuid = uuid;
                         $(propDroplist).find("option#uuid").val( uuid );
 
@@ -1779,7 +1779,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json = materialtoJSON(material);
 
         json._id = ObjectId();  //  important!
-    //  json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
+    //  json.uuid = THREE.Math.generateUUID();
 
     //  Settings.
         json.skinning = true;
@@ -1911,7 +1911,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             sourceFile: "",
             type: 1009,
             unpackAlignment: 4,
-            uuid: viewer.contentWindow.THREE.Math.generateUUID(),
+            uuid: THREE.Math.generateUUID(),
             version: 0,
             wrapS: 1001,
             wrapT: 1001,
@@ -2021,7 +2021,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
                 if ( !viewer.contentWindow[gender][slot] ) return;
                 var geometry = viewer.contentWindow[gender][slot].geometry;
-                var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
+                var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
                 $("img#texture-preview").attr({"src":src});
 
@@ -2174,9 +2174,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         if ( !viewer.contentWindow[gender][slot] ) return;
         var outfit = viewer.contentWindow[ gender ][ slot ];
 
-        json = viewer.contentWindow.materialtoJSON( outfit.material );
+        json = materialtoJSON( outfit.material );
         json._id = ObjectId();  json.name += "#copy";
-        json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
+        json.uuid = THREE.Math.generateUUID();
 
         outfitMaterialChanged.dispatch();
 
@@ -2198,7 +2198,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         if ( !json._id ) json._id = ObjectId();  
         //  throw `Material "_id" required.`;
-        if ( !json.uuid ) json.uuid = viewer.contentWindow.THREE.Math.generateUUID();  
+        if ( !json.uuid ) json.uuid = THREE.Math.generateUUID();  
         //  throw `Material "uuid" required.`;
 
         if ( !json.name ) {
