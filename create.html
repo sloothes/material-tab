@@ -439,7 +439,7 @@ loadjs(["/three/three.js", "/AW3D/AW3D-dev0.3.8"], function(){
     var propertyValueChanged = new Signal();
     var outfitMaterialChanged = new Signal();
 
-    var json = viewer.contentWindow.materialtoJSON( new THREE.Material() );
+    var json = materialtoJSON( new THREE.Material() );
     debugMode && console.log({"json": json});
 
     $(titleTextfield).on("input", function(){
