@@ -2011,7 +2011,47 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 //  UPLOAD.
 
     $(textureUploadBtn).on("click", function(){
-        if ( !navigator.onLine ) return;
+        debugMode && console.log({"uploads":uploads});
+
+        if ( !uploads.length ) {
+            var msg = "There is nothing to upload.";
+            return bootbox.dialog({
+                size: "small",
+                className: "middle",
+                title: `<div class="alert-icon icon-warning"></div>`
+                     + `<h2 style="margin:auto;">Sorry!</h2>`,
+                message: `<div>${msg}</div>`,
+                buttons: {
+                    cancel: {
+                        label: "Close",
+                        className: "btn-default",
+                        callback: function(){
+                            debugMode && console.log(msg);
+                        },
+                    },
+                },
+            });
+        }
+
+        if ( !navigator.onLine ) {
+            var msg = "Your connection to the internet is down.";
+            return bootbox.dialog({
+                size: "small",
+                className: "middle",
+                title: `<div class="alert-icon icon-error"></div>`
+                     + `<h2 style="margin:auto;">Sorry!</h2>`,
+                message: `<div>${msg}</div>`,
+                buttons: {
+                    cancel: {
+                        label: "Close",
+                        className: "btn-default",
+                        callback: function(){
+                            debugMode && console.log(msg);
+                        },
+                    },
+                },
+            });
+        }
 
         clearTimeout(this.interval);
         this.interval = setTimeout( function(){
