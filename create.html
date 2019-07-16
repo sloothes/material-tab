@@ -2158,6 +2158,7 @@
     $("#new-material-button").on("click", function(){
         updateMaterialPropertiesDroplist();
         outfitMaterialChanged.dispatch();
+        debugMode && console.log({"json":json});
     });
 
 
