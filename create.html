@@ -271,9 +271,9 @@
 <div id="material-property-controls" class="well"></div>
 
 <div style="margin-bottom:10px;">
-    <div id="new-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
-    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Save</div>
-    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn pull-right" style="width:24%;">Apply</div>
+    <div id="new-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div>
+    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Save</div>
 </div>
 
 <hr/>
@@ -1951,7 +1951,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 if ( name in files && file.lastModified == files[name].lastModified 
                     && file.size == files[name].size && file.type == files[name].type ) {
 
-                        /* (WHATEVER) */
+                        // (WHATEVER) //
 
                 } else {
 
@@ -1969,7 +1969,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         option.id = textures[ name ]._id;
 
                         $(textureDroplist).append(option);
-                    //  textureDroplist.value = name;
+                        //  textureDroplist.value = name;
 
                     };
 
@@ -1980,6 +1980,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             })();
 
         }
+
+        debugMode && console.log({
+            "files": files, 
+            "textures": textures,
+        });
 
     });
 
@@ -2041,7 +2046,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             $(option).remove();
 
             debugMode && console.log({
-                "files":files, 
+                "files": files, 
                 "textures": textures,
             });
 
