@@ -149,6 +149,8 @@
 
     genderChanged.add(function(){
 
+        if ( $("#imported-textures").val() ) return;
+
         if ( !slotDroplist.value ) return;
         if ( !genderDroplist.value ) return;
 
