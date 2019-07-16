@@ -2175,7 +2175,9 @@
         if ( !viewer.contentWindow[gender][slot] ) return;
         var outfit = viewer.contentWindow[ gender ][ slot ];
 
-        json = materialtoJSON( outfit.material );
+        var materialtoJSON = viewer.contentWindow.materialtoJSON; // danger! important!
+
+        json = materialtoJSON( outfit.material ); 
         json._id = ObjectId();  json.name += "#copy";
         json.uuid = THREE.Math.generateUUID();
 
