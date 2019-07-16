@@ -2173,15 +2173,20 @@
         var gender = genderDroplist.value;
 
         if ( !viewer.contentWindow[gender][slot] ) return;
-        var outfit = viewer.contentWindow[ gender ][ slot ];
+        var copy = viewer.contentWindow[ gender ][ slot ].material.clone();
 
-        var materialtoJSON = viewer.contentWindow.materialtoJSON; // danger! important!
+    //  "materialtoJSON" must be the function of the scene AW3D.js
+    //  else does not recognize "color" as instance of THREE.Color.
+    //  var materialtoJSON = viewer.contentWindow.materialtoJSON; 
 
-        json = materialtoJSON( outfit.material ); 
-        json._id = ObjectId();  json.name += "#copy";
+        json = viewer.contentWindow.materialtoJSON( copy ); // important danger!!!
+
+        json.name += "#copy";
+        json._id = ObjectId();  
         json.uuid = THREE.Math.generateUUID();
 
         outfitMaterialChanged.dispatch();
+        $(titleTextfield).val( json.name );
 
         debugMode && console.log({"json copy":json});
 
