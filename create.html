@@ -272,8 +272,8 @@
 
 <div style="margin-bottom:10px;">
     <div id="new-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
-    <div id="copy-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:24%;margin:0 1%;">Copy</div>
-    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;margin:0 1% 0 0;">Apply</div>
+    <div id="copy-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:24%;margin-left:1%;">Copy</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Apply</div>
     <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Save</div>
 </div>
 
@@ -413,7 +413,7 @@
 
 <script>
 
-loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
+(function(){
 
     var files = {};
     var uploads = [];
@@ -439,7 +439,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     var propertyValueChanged = new Signal();
     var outfitMaterialChanged = new Signal();
 
-    var json = materialtoJSON( new THREE.Material() );
+    var json = viewer.contentWindow.materialtoJSON( new viewer.contentWindow.THREE.Material() );
     debugMode && console.log({"json": json});
 
     $(titleTextfield).on("input", function(){
@@ -650,7 +650,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             sourceFile: "",
             type: 1009,
             unpackAlignment: 4,
-            uuid: THREE.Math.generateUUID(),
+            uuid: viewer.contentWindow.THREE.Math.generateUUID(),
             version: 0,
             wrapS: 1001,
             wrapT: 1001,
@@ -663,11 +663,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         $(titleTextfield).val("");
 
         var TYPE = $(typeDroplist).val();
-        var material = new THREE[ TYPE ]();
-        json = materialtoJSON(material);
+        var material = new viewer.contentWindow.THREE[ TYPE ]();
+        json = viewer.contentWindow.materialtoJSON(material);
 
         json._id = ObjectId();  //  important!
-    //  json.uuid = THREE.Math.generateUUID();
+    //  json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
 
     //  Settings.
         json.skinning = true;
@@ -840,7 +840,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                         $(propDroplist).find("option#_id").val( objectId );
 
                     //  Change uuid also.
-                        var uuid = json.uuid = THREE.Math.generateUUID();
+                        var uuid = json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
                         $(propDroplist).find("option#uuid").val( uuid );
                         debugMode && console.log({
                             "new _id":json._id,
@@ -880,12 +880,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     input.classList.add("form-control", "pull-right", "uuid-material-textfield");
 
                     if (json.uuid) input.value = json.uuid;
-                    else input.value = json.uuid = THREE.Math.generateUUID();
+                    else input.value = json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
                     $(propDroplist).find("option#uuid").val( json.uuid );
 
                     $(button).on("click", function(){
 
-                        var uuid = THREE.Math.generateUUID();
+                        var uuid = viewer.contentWindow.THREE.Math.generateUUID();
                         input.value = json.uuid = uuid;
                         $(propDroplist).find("option#uuid").val( uuid );
 
@@ -2145,12 +2145,34 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
 
-//  APPLY.
+//  NEW.
 
     $("#new-material-button").on("click", function(){
         updateMaterialPropertiesDroplist();
         outfitMaterialChanged.dispatch();
     });
+
+//  COPY.
+
+    $("#copy-material-button").on("click", function(){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !viewer.contentWindow[gender][slot] ) return;
+        var outfit = viewer.contentWindow[ gender ][ slot ];
+
+        json = viewer.contentWindow.materialtoJSON( outfit.material );
+
+        json._id = ObjectId();
+        json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
+
+    });
+
+//  APPLY.
 
     $("#apply-material-button").on("click", function(){
         outfitMaterialChanged.dispatch();
@@ -2163,7 +2185,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         if ( !json._id ) json._id = ObjectId();  
         //  throw `Material "_id" required.`;
-        if ( !json.uuid ) json.uuid = THREE.Math.generateUUID();  
+        if ( !json.uuid ) json.uuid = viewer.contentWindow.THREE.Math.generateUUID();  
         //  throw `Material "uuid" required.`;
 
         if ( !json.name ) {
@@ -2509,7 +2531,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     });
 
-});
+})();
 
 </script>
 
