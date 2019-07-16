@@ -2046,8 +2046,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             $(textureCheckboxSelector).attr({checked:false});
             $(textureDroplist).change(); // or ...dispatch();
 
-            textures[ option.value ].dispose();
-
         //  Optional.
 
             delete files[ option.value ];
@@ -2074,10 +2072,6 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
             $(textureControlSelector).slideUp();
             $(textureCheckboxSelector).attr({checked:false});
-
-            for (var name in textures){
-                textures[name].dispose();
-            }
 
         //  Optional.
 
