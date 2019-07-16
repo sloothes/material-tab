@@ -1,15 +1,16 @@
 <script>
 
-    $(function(){
+    (function(){
         var component_ID = {
             type: "tab",
-            demo: true,
+            demo: false,
             version: 1.8,
             kind: "component",
-            name: "create-material-tab.html",
+            name: "create.html",
+            path: "/material-tab/create.html",
             description: "creates outfit material in zangoDB.",
         };
-    });
+    })();
 
 </script>
 
@@ -127,24 +128,46 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const droplist = document.getElementById("material-gender-droplist");
-    const outfitHelpersTabSelector = ".outfit-helpers.component-pane.tab-pane";
+    const slotDroplist = $("select#outfit-slot").get(0);
+    const genderDroplist = $("#material-gender-droplist").get(0);
 
     var Signal = signals.Signal;
     var genderChanged = new Signal();
 
     genderChanged.add(function(value){
+
+    //  Null values not allowed.
         if ( !value ) return;
 
         var data = "/gender/" + value;
         viewer.contentWindow.localPlayerHandler(data);
+
         store( "Sex", data );
 
     });
 
-    $(droplist).on("change", function(){
+    genderChanged.add(function(){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !viewer.contentWindow[gender][slot] ) return;
+        var geometry = viewer.contentWindow[gender][slot].geometry;
+
+        var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
+        $("img#texture-preview").attr({"src":src});
+
+    });
+
+    $(genderDroplist).on("change", function(){
+
+    //  Null values not allowed.
         if ( !this.value ) return;
         genderChanged.dispatch( this.value );
+
     });
 
 })();
@@ -183,11 +206,14 @@
     var outfitSlotChanged = new Signal();
 
     outfitSlotChanged.add(function(value){
+
+    //  Null values are allowed!
         var data = "/select/" + value;
         viewer.contentWindow.localPlayerHandler(data);
+
     });
 
-    outfitSlotChanged.add(function(value){
+    outfitSlotChanged.add(function(){
 
         if ( !slotDroplist.value ) return;
         if ( !genderDroplist.value ) return;
@@ -198,13 +224,16 @@
         if ( !viewer.contentWindow[gender][slot] ) return;
         var geometry = viewer.contentWindow[gender][slot].geometry;
 
-        var src = viewer.contentWindow.THREE.UVsDebug(geometry, 256).toDataURL();
+        var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
         $("img#texture-preview").attr({"src":src});
 
     });
 
     $(slotDroplist).on("change", function(){
+
+    //  Null values are allowed!
         outfitSlotChanged.dispatch(this.value);
+
     });
 
 })();
