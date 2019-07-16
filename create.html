@@ -413,7 +413,7 @@
 
 <script>
 
-loadjs(["/three/three.js", "/AW3D/AW3D-dev0.3.8.js"], function(){
+loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
     var files = {};
     var uploads = [];
@@ -1775,8 +1775,8 @@ loadjs(["/three/three.js", "/AW3D/AW3D-dev0.3.8.js"], function(){
         $(titleTextfield).val("");
 
         var TYPE = $(typeDroplist).val();
-        var material = new viewer.contentWindow.THREE[ TYPE ]();
-        json = viewer.contentWindow.materialtoJSON(material);
+        var material = THREE[ TYPE ]();
+        json = materialtoJSON(material);
 
         json._id = ObjectId();  //  important!
     //  json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
