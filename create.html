@@ -114,7 +114,7 @@
 <div style="height:35px;margin-bottom:10px;">
     <h4><span style="vertical-align:-0.5rem;">Select gender:</span>
         <div style="width:40%;display:inline-block;float:right;">
-            <select id="material-gender-droplist" class="form-control gender droplist" readonly>
+            <select id="material-gender-droplist" class="form-control gender-droplist" readonly>
                 <option value="">Select sex:</option>
                 <option value="male">male</option>
                 <option value="female">female</option>
@@ -128,7 +128,7 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const slotDroplist = $("select#outfit-slot").get(0);
+    const slotDroplist = $("#material-outfit-slot").get(0);
     const genderDroplist = $("#material-gender-droplist").get(0);
 
     var Signal = signals.Signal;
@@ -177,7 +177,7 @@
 <div style="height:35px;margin-bottom:10px;">
     <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
         <div style="width:40%;display:inline-block;float:right;">
-            <select id="outfit-slot" class="form-control outfit-slot-droplist" readonly>
+            <select id="material-outfit-slot" class="form-control outfit-slot-droplist" readonly>
                 <option value="">Select slot:</option>
                 <option value="body">body</option>
                 <option value="eyes">eyes</option>
@@ -199,7 +199,7 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const slotDroplist = $("select#outfit-slot").get(0);
+    const slotDroplist = $("#material-outfit-slot").get(0);
     const genderDroplist = $("#material-gender-droplist").get(0);
 
     var Signal = signals.Signal;
@@ -266,9 +266,9 @@
 <div id="material-property-controls" class="well"></div>
 
 <div style="margin-bottom:10px;">
-    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-left" style="width:24%;">Save</div>
-    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Apply</div>
-    <div id="reset-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-right" style="width:24%;">Reset</div>
+    <div id="new-material-button" class="form-control btn btn-danger btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
+    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Save</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn pull-right" style="width:24%;">Apply</div>
 </div>
 
 <hr/>
@@ -306,7 +306,7 @@
 </script>
 
 <div class="helpers-header texture-header">
-    <h2 style="margin-bottom:20px;">Textures:</h2>
+    <h2 style="margin-bottom:20px;">Texture:</h2>
 </div>
 
 <div id="texture-viewer" style="width:100%;text-align:center;margin-bottom:20px;">
@@ -413,12 +413,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     var textures = {};
 
     const viewer = document.getElementById("viewer");
-    const propControls = document.getElementById("material-property-controls");
-    const genderDroplist = document.getElementById("material-gender-droplist");
-    const slotDroplist = $("select#outfit-slot").get(0);
-    const typeDroplist = $("select#material-type").get(0);
-    const propDroplist = $("select#material-property").get(0);
-    const titleTextfield = $("input#material-title").get(0);
+    const genderDroplist   = $("select#material-gender-droplist").get(0);
+    const slotDroplist     = $("select#material-outfit-slot").get(0);
+    const typeDroplist     = $("select#material-type").get(0);
+    const propDroplist     = $("select#material-property").get(0);
+    const propControls     = $("#material-property-controls").get(0);
+    const titleTextfield   = $("input#material-title").get(0);
     const textureImportBtn = $("#import-texture-button").get(0);
     const textureFileinput = $("input#texture-fileinput").get(0);
     const texturesClearBtn = $("#clear-import-textures").get(0);
@@ -2027,13 +2027,12 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
 //  SAVE.
 
-    $("#apply-material-button").on("click", function(){
-        outfitMaterialChanged.dispatch(json);
+    $("#new-material-button").on("click", function(){
+        updateMaterialPropertiesDroplist();
     });
 
-    $("#reset-material-button").on("click", function(){
-    //  initMaterialPropertiesDroplist();
-        updateMaterialPropertiesDroplist();
+    $("#apply-material-button").on("click", function(){
+        outfitMaterialChanged.dispatch(json);
     });
 
     $("#save-material-button").on("click", async function(){
