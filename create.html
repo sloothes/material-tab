@@ -2147,8 +2147,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 //  APPLY.
 
     $("#new-material-button").on("click", function(){
-        outfitMaterialChanged.dispatch();
         updateMaterialPropertiesDroplist();
+        outfitMaterialChanged.dispatch();
     });
 
     $("#apply-material-button").on("click", function(){
