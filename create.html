@@ -413,7 +413,7 @@
 
 <script>
 
-(function(){
+loadjs("/three/three.js", function(){
 
     var files = {};
     var uploads = [];
@@ -439,7 +439,7 @@
     var propertyValueChanged = new Signal();
     var outfitMaterialChanged = new Signal();
 
-    var json = viewer.contentWindow.materialtoJSON( new viewer.contentWindow.THREE.Material() );
+    var json = viewer.contentWindow.materialtoJSON( new THREE.Material() );
     debugMode && console.log({"json": json});
 
     $(titleTextfield).on("input", function(){
@@ -2544,7 +2544,7 @@
 
     });
 
-})();
+});
 
 </script>
 
