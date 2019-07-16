@@ -449,13 +449,17 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         if ( !$(slotDroplist).val() ) return;
         if ( !$(genderDroplist).val() ) return;
 
+        var slot = $(slotDroplist).val();
+        var gender = $(genderDroplist).val();
+
         var data = {
-            slot: $(slotDroplist).val(),
-            gender: $(genderDroplist).val(),
+            slot    : slot,
+            gender  : gender,
             material: json,
         };
 
         viewer.contentWindow.localPlayerApplyMaterial(data);
+        viewer.contentWindow.localPlayerHandler( "/select/" + slot );
 
     });
 
