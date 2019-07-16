@@ -195,7 +195,7 @@
         var slot = slotDroplist.value;
         var gender = genderDroplist.value;
 
-        if ( !viewer.contentWindow[gender][slot] );
+        if ( !viewer.contentWindow[gender][slot] ) return;
         var geometry = viewer.contentWindow[gender][slot].geometry;
 
         var src = viewer.contentWindow.THREE.UVsDebug(geometry, 256).toDataURL();
