@@ -776,9 +776,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     $(propDroplist).find("option#_id").val( json._id );
 
                     $(button).on("click", function(){
+
                         var objectId = ObjectId();
                         input.value = json._id = objectId;
                         $(propDroplist).find("option#_id").val( objectId );
+
                     //  Change uuid also.
                         var uuid = json.uuid = THREE.Math.generateUUID();
                         $(propDroplist).find("option#uuid").val( uuid );
@@ -824,9 +826,11 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     $(propDroplist).find("option#uuid").val( json.uuid );
 
                     $(button).on("click", function(){
+
                         var uuid = THREE.Math.generateUUID();
                         input.value = json.uuid = uuid;
                         $(propDroplist).find("option#uuid").val( uuid );
+
                     //  Change _id also.
                         var objectId = json._id = ObjectId();
                         $(propDroplist).find("option#_id").val( objectId );
