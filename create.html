@@ -2045,7 +2045,9 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 "textures": textures,
             });
 
-            $(textureDroplist).change();  // or ...dispatch();
+            $(textureControlSelector).slideUp();
+            $(textureCheckboxSelector).attr({checked:false});
+            $(textureDroplist).change(); // or ...dispatch();
 
         }, 250 );
 
@@ -2249,6 +2251,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             if (!doc) throw "material could not be found!";
 
         //  Success.
+
             bootbox.dialog({
                 size: "small",
                 className: "middle",
@@ -2286,7 +2289,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
-            //  It is a "fake" texture, not real one.
+            //  It is a "json" texture, not a real one.
                 if ( texture.sourceFile && texture.name ) {
                     var name = texture.name;
                     if ( textureImages[ name ] == undefined ) {
@@ -2300,24 +2303,22 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                 }
             });
 
-            debugMode && console.log( "first pass:", deepCopy(textureImages) );
+            debugMode && console.log( "textureImages (1):", deepCopy(textureImages) );
 
         //  Second pass (collect mapkeys).
 
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
                 var texture = doc[ key ];
-            //  It is a "fake" texture, not real one.
+            //  It is a "json" texture, not a real one.
                 var name = texture.name;
                 if ( !textureImages[ name ].maps.includes(key) )
                     textureImages[ name ].maps.push( key );
             });
 
-            debugMode && console.log( "second pass:", textureImages );
+            debugMode && console.log( "textureImages (2):", textureImages );
 
         //  Third pass (upload images in background).
-
-        //  var uploads = [];
 
             for (var name in textureImages ) {
 
@@ -2454,11 +2455,23 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     uploads.shift().call();
                 }
 
-            } 
+            }
+
+        /*
+            if ( !navigator.onLine ) {
+                $(window).off("online")
+                .on("online", function(){
+                    while( uploads.length ){
+                        uploads.shift().call();
+                    }
+                });
+            }
+        */
 
             return;
 
         }).catch(function(err){
+
         //  Error.
             bootbox.dialog({
                 size: "small",
@@ -2474,12 +2487,17 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     },
                 },
             });
+
             console.error(err);
         });
 
     });
 
 });
+
+</script>
+
+<script>
 
 //  multiFilter.js
 
@@ -2504,4 +2522,5 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         });
     }
 */
+
 </script>
