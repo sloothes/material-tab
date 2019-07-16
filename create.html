@@ -4,7 +4,7 @@
         var component_ID = {
             type: "tab",
             demo: true,
-            version: 1.7,
+            version: 1.8,
             kind: "component",
             name: "create-material-tab.html",
             description: "creates outfit material in zangoDB.",
@@ -622,7 +622,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         json.color = Number(0xffffff);
         json.emissive = Number(0x000000);
 
-        $(propDroplist).off();
+    //  $(propDroplist).off();
         $(propDroplist).children().remove();
         $(propControls).children().remove();
 
@@ -666,1118 +666,1119 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 
         }
 
-        $(propDroplist).on("change", function(){
-
-            $(propControls).css({height:""});
-            $(propControls).children().remove();
-            var key = $(this.selectedOptions[0]).text();
-
-            switch (key) {
-
-                case "color":
-
-                    (function(){
-
-                        var input = document.createElement("input");
-                        input.type = "hidden"; input.id = "input_color";
-
-                        $(propControls).append(input);
-                        $(propControls).css({height:"auto"});
-
-                        $(input).spectrum({
-
-                            preferredFormat: "hex",
-                            color: "#ffffff",
-                            flat: true,
-                            showInput: true,
-                            showInitial: true,
-                            showButtons: false,
-                            allowEmpty: false,
-
-                            move: function(color) {
-                                var hex = color.toString("hex").replace(/#/, "0x");
-                                json.color = Number(hex);
-                                propertyValueChanged.dispatch(key, hex);
-                                $(propDroplist).find("option#color").val( json.color );
-                            },
-
-                        });
-
-                    //  Colorpicker startup.
-
-                        var hexString = "#" + json.color.toString(16);
-                        $("#input_color").spectrum( "set", hexString );
-
-                        $(propControls).slideDown();
-
-                    })();
-
-                break;
-
-                case "emissive":
-
-                    (function(){
-
-                        var input = document.createElement("input");
-                        input.type = "hidden"; input.id = "input_emissive";
-
-                        $(propControls).append(input);
-                        $(propControls).css({height:"auto"});
-
-                        $(input).spectrum({
-
-                            preferredFormat: "hex",
-                            color: "#000000",
-                            flat: true,
-                            showInput: true,
-                            showInitial: true,
-                            showButtons: false,
-                            allowEmpty: false,
-
-                            move: function(color) {
-                                var hex = color.toString("hex").replace(/#/, "0x");
-                                json.emissive = Number(hex);
-                                propertyValueChanged.dispatch(key, hex);
-                                $(propDroplist).find("option#emissive").val( json.emissive );
-                            },
-
-                        });
-
-                    //  Colorpicker startup.
-
-                        var hexString = "#" + json.emissive.toString(16);
-                        $("#input_emissive").spectrum( "set", hexString );
-
-                        $(propControls).slideDown();
-
-                    })();
-
-                break;
-
-                case "_id":
-
-                    (function(){
-
-                        var button = document.createElement("div");
-                        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
-                        button.id = "button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
-
-                        var input = document.createElement("input");
-                        input.id = "input_id"; input.type = "text"; input.readOnly = true;
-                        input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
-
-                        if (json._id) input.value = json._id;
-                        else input.value = json._id = ObjectId();
-                        $(propDroplist).find("option#_id").val( json._id );
-
-                        $(button).on("click", function(){
-                            var objectId = ObjectId();
-                            input.value = json._id = objectId;
-                            $(propDroplist).find("option#_id").val( objectId );
-                        //  Change uuid also.
-                            var uuid = json.uuid = THREE.Math.generateUUID();
-                            $(propDroplist).find("option#uuid").val( uuid );
-                        });
-
-                        $(input).on("input", function(){
-                            json._id = this.value;
-                            $(propDroplist).find("option#_id").val( this.value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(button, input);
-
-                    })();
-
-                break;
-
-                case "uuid":
-
-                    (function(){
-
-                        var button = document.createElement("div");
-                        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
-                        button.id = "button_uuid"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
-
-                        var input = document.createElement("input");
-                        input.id = "input_uuid"; input.type = "text"; input.readOnly = true;
-                        input.classList.add("form-control", "pull-right", "uuid-material-textfield");
-
-                        if (json.uuid) input.value = json.uuid;
-                        else input.value = json.uuid = THREE.Math.generateUUID();
-                        $(propDroplist).find("option#uuid").val( json.uuid );
-
-                        $(button).on("click", function(){
-                            var uuid = THREE.Math.generateUUID();
-                            input.value = json.uuid = uuid;
-                            $(propDroplist).find("option#uuid").val( uuid );
-                        //  Change _id also.
-                            var objectId = json._id = ObjectId();
-                            $(propDroplist).find("option#_id").val( objectId );
-                        });
-
-                        $(input).on("input", function(){
-                            json.uuid = this.value;
-                            $(propDroplist).find("option#uuid").val( this.value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(button, input);
-
-                    })();
-
-                break;
-
-                case "name":
-                    
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "name"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_name"; input.type = "text";
-                        input.classList.add("form-control", "pull-right", "material-textfield");
-
-                        titleTextfield.value = input.value = json.name;
-
-                        $(input).on("input", function(){
-                            titleTextfield.value = json.name = this.value;
-                            $(propDroplist).find("option#name").val( this.value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "type":
-                    
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "type"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_type"; input.type = "text"; input.readOnly = true;
-                        input.classList.add("form-control", "pull-right", "material-textfield");
-
-                        input.value = json.type;
-
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "bumpScale":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "bumpScale"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_bumpScale"; input.type = "number"; input.step = 0.01;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.bumpScale;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.bumpScale = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#bumpScale").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "displacementScale":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "displacementScale"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_displacementScale"; input.type = "number"; input.step = 0.01;
-
-                        input.value = json.displacementScale;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.displacementScale = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#displacementScale").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "displacementBias":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "displacementBias"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_displacementBias"; input.type = "number"; input.step = 0.01;
-
-                        input.value = json.displacementBias;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.displacementBias = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#displacementBias").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "normalScale":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "normalScale"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_normalScale"; input.type = "number"; input.step = 0.01;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        if ( json.normalScale && Array.isArray(json.normalScale) ) {
-                            input.value = json.normalScale[0];
-                        }
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            propertyValueChanged.dispatch(key, value );
-                            json.normalScale[0] = json.normalScale[1] = value;
-                            $(propDroplist).find("option#normalScale").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "visible":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "visible"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_visible"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.visible || "";
-
-                        $(input).on("click", function(){
-                            json.visible = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#visible").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "opacity":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "opacity"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_opacity"; input.type = "number"; 
-                        input.step = 0.01; input.min = 0; input.max = 1;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.opacity;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.opacity = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#opacity").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "transparent":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "transparent"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_transparent"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.transparent || "";
-
-                        $(input).on("click", function(){
-                            json.transparent = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#transparent").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "skinning":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "skinning"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_skinning"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.skinning || "";
-
-                        $(input).on("click", function(){
-                            json.skinning = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#skinning").val( this.checked || "" );
-                        });
-
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "wireframe":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "wireframe"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_wireframe"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.wireframe || "";
-
-                        $(input).on("click", function(){
-                            json.wireframe = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#wireframe").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "fog":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "fog"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_fog"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.fog || "";
-
-                        $(input).on("click", function(){
-                            json.fog = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#fog").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "lights":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "lights"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_lights"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.lights || "";
-
-                        $(input).on("click", function(){
-                            json.lights = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#lights").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "emissiveIntensity":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "emissiveIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_emissiveIntensity"; input.type = "number";  input.step = 0.01;
-
-                        input.value = json.emissiveIntensity;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.emissiveIntensity = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#emissiveIntensity").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "lightMapIntensity":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "lightMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_lightMapIntensity"; input.type = "number";  input.step = 0.01;
-
-                        input.value = json.lightMapIntensity;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.lightMapIntensity = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#lightMapIntensity").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "aoMapIntensity":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "aoMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_aoMapIntensity"; input.type = "number";  input.step = 0.01;
-
-                        input.value = json.aoMapIntensity;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.aoMapIntensity = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#aoMapIntensity").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "colorWrite":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "colorWrite"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_colorWrite"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.colorWrite || "";
-
-                        $(input).on("click", function(){
-                            json.colorWrite = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#colorWrite").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "clipShadows":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "clipShadows"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_clipShadows"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.clipShadows || "";
-
-                        $(input).on("click", function(){
-                            json.clipShadows = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#clipShadows").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-            /*
-                case "alphaTest":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "alphaTest"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_alphaTest"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = Boolean(json.alphaTest) || "";
-
-                        $(input).on("click", function(){
-                            var value = Number(this.checked);
-                            json.alphaTest = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#alphaTest").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-            */
-                case "depthTest":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "depthTest"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_depthTest"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.depthTest || "";
-
-                        $(input).on("click", function(){
-                            json.depthTest = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#depthTest").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "depthWrite":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "depthWrite"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_depthWrite"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.depthWrite || "";
-
-                        $(input).on("click", function(){
-                            json.depthWrite = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#depthTest").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "depthFunc":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "depthFunc"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.min = 0; input.max = 7; input.step = 1;
-                        input.id = "input_depthFunc"; input.type = "number";  
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.depthFunc;
-
-                        $(input).on("input", function(){
-                            var value = parseInt(this.value);
-                            json.depthFunc = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#depthFunc").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "morphNormals":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "morphNormals"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_morphNormals"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.morphNormals || "";
-
-                        $(input).on("click", function(){
-                            json.morphNormals = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#morphNormals").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "morphTargets":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "morphTargets"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_morphTargets"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.morphTargets || "";
-
-                        $(input).on("click", function(){
-                            json.morphTargets = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#morphTargets").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "refractionRatio":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "refractionRatio"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_refractionRatio"; input.type = "number";  input.step = 0.01;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.refractionRatio;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.refractionRatio = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#shading").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "metalness":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "metalness"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_metalness"; input.type = "number";  input.step = 0.01;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.metalness;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.metalness = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#metalness").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "roughness":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "roughness"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_roughness"; input.type = "number";  input.step = 0.01;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.roughness;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.roughness = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#roughness").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "shading":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "shading"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_shading"; input.type = "number"; 
-                        input.step = 1; input.min = 1; input.max = 2;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.shading;
-
-                        $(input).on("input", function(){
-                            var value = parseInt(this.value);
-                            json.shading = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#shading").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "side":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "side"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_side"; input.type = "number"; 
-                        input.step = 1; input.min = 0; input.max = 2;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.side;
-
-                        $(input).on("input", function(){
-                            var value = parseInt(this.value);
-                            json.side = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#side").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "wireframeLinewidth":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "wireframeLinewidth"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.id = "input_wireframeLinewidth"; 
-                        input.type = "number"; input.step = 1; input.min = 1;
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-
-                        input.value = json.wireframeLinewidth;
-
-                        $(input).on("input", function(){
-                            var value = parseInt(this.value);
-                            json.wireframeLinewidth = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#wireframeLinewidth").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "wireframeLinecap":
-                    
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "wireframeLinecap"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_wireframeLinecap"; input.type = "text"; 
-                        input.style.cssText = "width:40%;"; input.readOnly = true;
-                        input.classList.add("form-control", "pull-right", "material-textfield"); 
-
-                        input.value = json.wireframeLinecap;
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "wireframeLinejoin":
-                    
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "wireframeLinejoin"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_wireframeLinejoin"; input.type = "text"; 
-                        input.style.cssText = "width:40%;"; input.readOnly = true;
-                        input.classList.add("form-control", "pull-right", "material-textfield"); 
-
-                        input.value = json.wireframeLinejoin;
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "polygonOffset":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "polygonOffset"; span.style.cssText = "vertical-align:-0.7rem;";
-
-                        var input = document.createElement("input"); 
-                        input.id = "input_polygonOffset"; input.type = "checkbox"; 
-                        input.classList.add("form-control", "pull-right", "material-checkbox");
-
-                        input.checked = json.polygonOffset || "";
-
-                        $(input).on("click", function(){
-                            json.polygonOffset = this.checked;
-                            propertyValueChanged.dispatch(key, this.checked);
-                            $(propDroplist).find("option#polygonOffset").val( this.checked || "" );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "polygonOffsetFactor":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "polygonOffsetFactor"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_polygonOffsetFactor"; input.type = "number"; input.step = 1;
-
-                        input.value = json.polygonOffsetFactor;
-
-                        $(input).on("input", function(){
-                            var value = parseInt(this.value);
-                            json.polygonOffsetFactor = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#side").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "polygonOffsetUnits":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "polygonOffsetUnits"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_polygonOffsetUnits"; input.type = "number"; input.step = 1;
-
-                        input.value = json.polygonOffsetUnits;
-
-                        $(input).on("input", function(){
-                            var value = parseInt(this.value);
-                            json.polygonOffsetUnits = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#side").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-                case "envMapIntensity":
-
-                    (function(){
-
-                        var span = document.createElement("span");
-                        span.innerText = "envMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
-                        
-                        var input = document.createElement("input"); 
-                        input.classList.add("form-control", "pull-right", "material-input-number");
-                        input.id = "input_envMapIntensity"; input.type = "number";  input.step = 0.01;
-
-                        input.value = json.envMapIntensity;
-
-                        $(input).on("input", function(){
-                            var value = round(this.value, 2);
-                            json.envMapIntensity = value;
-                            propertyValueChanged.dispatch(key, value);
-                            $(propDroplist).find("option#envMapIntensity").val( value );
-                        });
-
-                        $(propControls).slideDown();
-                        $(propControls).append(span, input);
-
-                    })();
-
-                break;
-
-            }
-
-        });
-
         $(propDroplist).change();
 
     }
+
+
+    $(propDroplist).on("change", function(){
+
+        $(propControls).css({height:""});
+        $(propControls).children().remove();
+        var key = $(this.selectedOptions[0]).text();
+
+        switch (key) {
+
+            case "color":
+
+                (function(){
+
+                    var input = document.createElement("input");
+                    input.type = "hidden"; input.id = "input_color";
+
+                    $(propControls).append(input);
+                    $(propControls).css({height:"auto"});
+
+                    $(input).spectrum({
+
+                        preferredFormat: "hex",
+                        color: "#ffffff",
+                        flat: true,
+                        showInput: true,
+                        showInitial: true,
+                        showButtons: false,
+                        allowEmpty: false,
+
+                        move: function(color) {
+                            var hex = color.toString("hex").replace(/#/, "0x");
+                            json.color = Number(hex);
+                            propertyValueChanged.dispatch(key, hex);
+                            $(propDroplist).find("option#color").val( json.color );
+                        },
+
+                    });
+
+                //  Colorpicker startup.
+
+                    var hexString = "#" + json.color.toString(16);
+                    $("#input_color").spectrum( "set", hexString );
+
+                    $(propControls).slideDown();
+
+                })();
+
+            break;
+
+            case "emissive":
+
+                (function(){
+
+                    var input = document.createElement("input");
+                    input.type = "hidden"; input.id = "input_emissive";
+
+                    $(propControls).append(input);
+                    $(propControls).css({height:"auto"});
+
+                    $(input).spectrum({
+
+                        preferredFormat: "hex",
+                        color: "#000000",
+                        flat: true,
+                        showInput: true,
+                        showInitial: true,
+                        showButtons: false,
+                        allowEmpty: false,
+
+                        move: function(color) {
+                            var hex = color.toString("hex").replace(/#/, "0x");
+                            json.emissive = Number(hex);
+                            propertyValueChanged.dispatch(key, hex);
+                            $(propDroplist).find("option#emissive").val( json.emissive );
+                        },
+
+                    });
+
+                //  Colorpicker startup.
+
+                    var hexString = "#" + json.emissive.toString(16);
+                    $("#input_emissive").spectrum( "set", hexString );
+
+                    $(propControls).slideDown();
+
+                })();
+
+            break;
+
+            case "_id":
+
+                (function(){
+
+                    var button = document.createElement("div");
+                    button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+                    button.id = "button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+                    var input = document.createElement("input");
+                    input.id = "input_id"; input.type = "text"; input.readOnly = true;
+                    input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
+
+                    if (json._id) input.value = json._id;
+                    else input.value = json._id = ObjectId();
+                    $(propDroplist).find("option#_id").val( json._id );
+
+                    $(button).on("click", function(){
+                        var objectId = ObjectId();
+                        input.value = json._id = objectId;
+                        $(propDroplist).find("option#_id").val( objectId );
+                    //  Change uuid also.
+                        var uuid = json.uuid = THREE.Math.generateUUID();
+                        $(propDroplist).find("option#uuid").val( uuid );
+                    });
+
+                    $(input).on("input", function(){
+                        json._id = this.value;
+                        $(propDroplist).find("option#_id").val( this.value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(button, input);
+
+                })();
+
+            break;
+
+            case "uuid":
+
+                (function(){
+
+                    var button = document.createElement("div");
+                    button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+                    button.id = "button_uuid"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+                    var input = document.createElement("input");
+                    input.id = "input_uuid"; input.type = "text"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "uuid-material-textfield");
+
+                    if (json.uuid) input.value = json.uuid;
+                    else input.value = json.uuid = THREE.Math.generateUUID();
+                    $(propDroplist).find("option#uuid").val( json.uuid );
+
+                    $(button).on("click", function(){
+                        var uuid = THREE.Math.generateUUID();
+                        input.value = json.uuid = uuid;
+                        $(propDroplist).find("option#uuid").val( uuid );
+                    //  Change _id also.
+                        var objectId = json._id = ObjectId();
+                        $(propDroplist).find("option#_id").val( objectId );
+                    });
+
+                    $(input).on("input", function(){
+                        json.uuid = this.value;
+                        $(propDroplist).find("option#uuid").val( this.value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(button, input);
+
+                })();
+
+            break;
+
+            case "name":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "name"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_name"; input.type = "text";
+                    input.classList.add("form-control", "pull-right", "material-textfield");
+
+                    titleTextfield.value = input.value = json.name;
+
+                    $(input).on("input", function(){
+                        titleTextfield.value = json.name = this.value;
+                        $(propDroplist).find("option#name").val( this.value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "type":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "type"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_type"; input.type = "text"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "material-textfield");
+
+                    input.value = json.type;
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "bumpScale":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "bumpScale"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_bumpScale"; input.type = "number"; input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.bumpScale;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.bumpScale = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#bumpScale").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "displacementScale":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "displacementScale"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_displacementScale"; input.type = "number"; input.step = 0.01;
+
+                    input.value = json.displacementScale;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.displacementScale = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#displacementScale").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "displacementBias":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "displacementBias"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_displacementBias"; input.type = "number"; input.step = 0.01;
+
+                    input.value = json.displacementBias;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.displacementBias = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#displacementBias").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "normalScale":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "normalScale"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_normalScale"; input.type = "number"; input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    if ( json.normalScale && Array.isArray(json.normalScale) ) {
+                        input.value = json.normalScale[0];
+                    }
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        propertyValueChanged.dispatch(key, value );
+                        json.normalScale[0] = json.normalScale[1] = value;
+                        $(propDroplist).find("option#normalScale").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "visible":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "visible"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_visible"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.visible || "";
+
+                    $(input).on("click", function(){
+                        json.visible = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#visible").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "opacity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "opacity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_opacity"; input.type = "number"; 
+                    input.step = 0.01; input.min = 0; input.max = 1;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.opacity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.opacity = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#opacity").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "transparent":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "transparent"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_transparent"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.transparent || "";
+
+                    $(input).on("click", function(){
+                        json.transparent = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#transparent").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "skinning":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "skinning"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_skinning"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.skinning || "";
+
+                    $(input).on("click", function(){
+                        json.skinning = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#skinning").val( this.checked || "" );
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframe":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframe"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframe"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.wireframe || "";
+
+                    $(input).on("click", function(){
+                        json.wireframe = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#wireframe").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "fog":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "fog"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_fog"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.fog || "";
+
+                    $(input).on("click", function(){
+                        json.fog = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#fog").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "lights":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "lights"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_lights"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.lights || "";
+
+                    $(input).on("click", function(){
+                        json.lights = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#lights").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "emissiveIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "emissiveIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_emissiveIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.emissiveIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.emissiveIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#emissiveIntensity").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "lightMapIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "lightMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_lightMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.lightMapIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.lightMapIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#lightMapIntensity").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "aoMapIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "aoMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_aoMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.aoMapIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.aoMapIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#aoMapIntensity").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "colorWrite":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "colorWrite"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_colorWrite"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.colorWrite || "";
+
+                    $(input).on("click", function(){
+                        json.colorWrite = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#colorWrite").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "clipShadows":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "clipShadows"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_clipShadows"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.clipShadows || "";
+
+                    $(input).on("click", function(){
+                        json.clipShadows = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#clipShadows").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+        /*
+            case "alphaTest":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "alphaTest"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_alphaTest"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = Boolean(json.alphaTest) || "";
+
+                    $(input).on("click", function(){
+                        var value = Number(this.checked);
+                        json.alphaTest = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#alphaTest").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+        */
+            case "depthTest":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "depthTest"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_depthTest"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.depthTest || "";
+
+                    $(input).on("click", function(){
+                        json.depthTest = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#depthTest").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "depthWrite":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "depthWrite"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_depthWrite"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.depthWrite || "";
+
+                    $(input).on("click", function(){
+                        json.depthWrite = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#depthTest").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "depthFunc":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "depthFunc"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.min = 0; input.max = 7; input.step = 1;
+                    input.id = "input_depthFunc"; input.type = "number";  
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.depthFunc;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.depthFunc = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#depthFunc").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "morphNormals":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "morphNormals"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_morphNormals"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.morphNormals || "";
+
+                    $(input).on("click", function(){
+                        json.morphNormals = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#morphNormals").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "morphTargets":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "morphTargets"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_morphTargets"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.morphTargets || "";
+
+                    $(input).on("click", function(){
+                        json.morphTargets = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#morphTargets").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "refractionRatio":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "refractionRatio"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_refractionRatio"; input.type = "number";  input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.refractionRatio;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.refractionRatio = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#shading").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "metalness":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "metalness"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_metalness"; input.type = "number";  input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.metalness;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.metalness = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#metalness").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "roughness":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "roughness"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_roughness"; input.type = "number";  input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.roughness;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.roughness = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#roughness").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "shading":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "shading"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_shading"; input.type = "number"; 
+                    input.step = 1; input.min = 1; input.max = 2;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.shading;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.shading = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#shading").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "side":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "side"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_side"; input.type = "number"; 
+                    input.step = 1; input.min = 0; input.max = 2;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.side;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.side = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#side").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframeLinewidth":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframeLinewidth"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframeLinewidth"; 
+                    input.type = "number"; input.step = 1; input.min = 1;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.wireframeLinewidth;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.wireframeLinewidth = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#wireframeLinewidth").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframeLinecap":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframeLinecap"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframeLinecap"; input.type = "text"; 
+                    input.style.cssText = "width:40%;"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "material-textfield"); 
+
+                    input.value = json.wireframeLinecap;
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframeLinejoin":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframeLinejoin"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframeLinejoin"; input.type = "text"; 
+                    input.style.cssText = "width:40%;"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "material-textfield"); 
+
+                    input.value = json.wireframeLinejoin;
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "polygonOffset":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "polygonOffset"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_polygonOffset"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.polygonOffset || "";
+
+                    $(input).on("click", function(){
+                        json.polygonOffset = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                        $(propDroplist).find("option#polygonOffset").val( this.checked || "" );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "polygonOffsetFactor":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "polygonOffsetFactor"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_polygonOffsetFactor"; input.type = "number"; input.step = 1;
+
+                    input.value = json.polygonOffsetFactor;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.polygonOffsetFactor = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#side").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "polygonOffsetUnits":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "polygonOffsetUnits"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_polygonOffsetUnits"; input.type = "number"; input.step = 1;
+
+                    input.value = json.polygonOffsetUnits;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.polygonOffsetUnits = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#side").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "envMapIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "envMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_envMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.envMapIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.envMapIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                        $(propDroplist).find("option#envMapIntensity").val( value );
+                    });
+
+                    $(propControls).slideDown();
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+        }
+
+    });
 
 /*
 //  initMaterialPropertiesDroplist();
