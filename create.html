@@ -2040,19 +2040,19 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         clearTimeout(this.interval);
         this.interval = setTimeout( function(){
 
-            delete files[ option.value ];     // optional!
-            delete textures[ option.value ];  // optional!
-
             $(option).remove();
-
-            debugMode && console.log({
-                "files": files, 
-                "textures": textures,
-            });
 
             $(textureControlSelector).slideUp();
             $(textureCheckboxSelector).attr({checked:false});
             $(textureDroplist).change(); // or ...dispatch();
+
+            textures[ option.value ].dispose();
+
+        //  Optional.
+
+            delete files[ option.value ];
+            delete textures[ option.value ];
+            debugMode && console.log({"files":files, "textures": textures});
 
         }, 250 );
 
@@ -2062,18 +2062,31 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
 //  CLEAR.
 
     $(texturesClearBtn).on("click", function(){
-        debugMode && console.log({"files":files, "textures": textures});
 
         clearTimeout(this.interval);
         this.interval = setTimeout( function(){
+            debugMode && console.log({"files":files, "textures": textures});
 
-            files = {}; textures = {}; // optional!
             $(textureDroplist).children().remove();
             var option = document.createElement("option");
-            option.value = ""; option.innerText = "Select imported texture:";
+            option.value = "";  option.innerText = "Select imported texture:";
             $(textureDroplist).append(option);
+
             $(textureControlSelector).slideUp();
             $(textureCheckboxSelector).attr({checked:false});
+
+            for (var name in textures){
+                textures[name].dispose();
+            }
+
+        //  Optional.
+
+            for (var name in textures){
+                delete files[name];
+                delete textures[name];
+            }
+
+            files = {}; textures = {};
 
         }, 250 );
 
