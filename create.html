@@ -782,11 +782,22 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     //  Change uuid also.
                         var uuid = json.uuid = THREE.Math.generateUUID();
                         $(propDroplist).find("option#uuid").val( uuid );
+                        debugMode && console.log({
+                            "new _id":json._id,
+                            "new uuid":json.uuid,
+                        });
                     });
 
                     $(input).on("input", function(){
                         json._id = this.value;
                         $(propDroplist).find("option#_id").val( this.value );
+                    });
+
+                    $(input).on("change", function(){
+                        debugMode && console.log({
+                            "new _id":json._id,
+                            "new uuid":json.uuid,
+                        });
                     });
 
                     $(propControls).slideDown();
@@ -819,11 +830,22 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
                     //  Change _id also.
                         var objectId = json._id = ObjectId();
                         $(propDroplist).find("option#_id").val( objectId );
+                        debugMode && console.log({
+                            "new _id":json._id,
+                            "new uuid":json.uuid,
+                        });
                     });
 
                     $(input).on("input", function(){
                         json.uuid = this.value;
                         $(propDroplist).find("option#uuid").val( this.value );
+                    });
+
+                    $(input).on("change", function(){
+                        debugMode && console.log({
+                            "new _id":json._id,
+                            "new uuid":json.uuid,
+                        });
                     });
 
                     $(propControls).slideDown();
