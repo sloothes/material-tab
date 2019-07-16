@@ -176,7 +176,8 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const droplist = $("select#outfit-slot").get(0);
+    const slotDroplist = $("select#outfit-slot").get(0);
+    const genderDroplist = $("#material-gender-droplist").get(0);
 
     var Signal = signals.Signal;
     var outfitSlotChanged = new Signal();
@@ -186,7 +187,23 @@
         viewer.contentWindow.localPlayerHandler(data);
     });
 
-    $(droplist).on("change", function(){
+    outfitSlotChanged.add(function(value){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !viewer.contentWindow[gender][slot] );
+        var geometry = viewer.contentWindow[gender][slot].geometry;
+
+        var src = viewer.contentWindow.THREE.UVsDebug(geometry, 256).toDataURL();
+        $("img#texture-preview").attr({"src":src});
+
+    });
+
+    $(slotDroplist).on("change", function(){
         outfitSlotChanged.dispatch(this.value);
     });
 
