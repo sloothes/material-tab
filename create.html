@@ -136,8 +136,9 @@
 
     genderChanged.add(function(value){
 
-    //  Null values not allowed.
         if ( !value ) return;
+
+    //  Null values not allowed.
 
         var data = "/gender/" + value;
         viewer.contentWindow.localPlayerHandler(data);
@@ -214,6 +215,8 @@
     });
 
     outfitSlotChanged.add(function(){
+
+        if ( $("#imported-textures").val() ) return;
 
         if ( !slotDroplist.value ) return;
         if ( !genderDroplist.value ) return;
