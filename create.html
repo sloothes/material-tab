@@ -632,108 +632,13 @@
 
     });
 
-    function newJsonTexture() {
-        return {
-            anisotropy: 1,
-            encoding: 3000,
-            flipY: true,
-            format: 1021,
-            generateMipmaps: true,
-            magFilter: 1006,
-            mapping: 300,
-            minFilter: 1008,
-            mipmaps: [],
-            name: "",
-            offset: [0, 0],
-            premultiplyAlpha: false,
-            repeat: [1, 1],
-            sourceFile: "",
-            type: 1009,
-            unpackAlignment: 4,
-            uuid: viewer.contentWindow.THREE.Math.generateUUID(),
-            version: 0,
-            wrapS: 1001,
-            wrapT: 1001,
-            _id: ObjectId(),
-        };
-    }
-
-    function updateMaterialPropertiesDroplist(){
-
-        $(titleTextfield).val("");
-
-        var TYPE = $(typeDroplist).val();
-        var material = new viewer.contentWindow.THREE[ TYPE ]();
-        json = viewer.contentWindow.materialtoJSON(material);
-
-        json._id = ObjectId();  //  important!
-    //  json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
-
-    //  Settings.
-        json.skinning = true;
-        json.bumpScale = 0.05;
-        json.depthTest = true;
-        json.depthWrite = true;
-        json.displacementBias = 0;
-        json.displacementScale = 0;
-        json.normalScale = [0.1, 0.1];
-        json.color = Number(0xffffff);
-        json.emissive = Number(0x000000);
-
-    //  $(propDroplist).off();
-        $(propDroplist).children().remove();
-        $(propControls).children().remove();
-
-    //  Sort json keys.
-        var sortedKeys = Object.keys(json).sort();
-        for ( var i = 0; i < sortedKeys.length; i++ ) {
-
-            var key = sortedKeys[i];
-            var option = document.createElement("option");
-
-            option.id = key; 
-            option.innerText = key;
-
-            switch (key) {
-
-                case "normalScale":
-
-                    if ( typeof(json[key]) == "number" ) {
-                        option.value = json[ key ]; break;
-                    }
-
-                //  leading value is the "normalScale.x"
-
-                    if (Array.isArray(json[key]) && json[key].length) {
-                        option.value = json[key][0]; break;
-                    }
-
-                break;
-
-                default:
-                    if ( typeof(json[key]) != "boolean" ) {
-                        option.value = json[ key ]; break;
-                    } else {
-                        option.value = json[key] || ""; break;
-                    }
-                break;
-
-            }
-
-            $(propDroplist).append(option);
-
-        }
-
-        $(propDroplist).change();
-
-    }
 
 
-    $(propDroplist).on("change", function(){
+    function propertiesDroplistChanged(){
 
         $(propControls).css({height:""});
         $(propControls).children().remove();
-        var key = $(this.selectedOptions[0]).text();
+        var key = $(propDroplist.selectedOptions[0]).text();
 
         switch (key) {
 
@@ -1864,6 +1769,77 @@
 
     });
 
+
+    function updateMaterialPropertiesDroplist(){
+
+        $(titleTextfield).val("");
+
+        var TYPE = $(typeDroplist).val();
+        var material = new viewer.contentWindow.THREE[ TYPE ]();
+        json = viewer.contentWindow.materialtoJSON(material);
+
+        json._id = ObjectId();  //  important!
+    //  json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
+
+    //  Settings.
+        json.skinning = true;
+        json.bumpScale = 0.05;
+        json.depthTest = true;
+        json.depthWrite = true;
+        json.displacementBias = 0;
+        json.displacementScale = 0;
+        json.normalScale = [0.1, 0.1];
+        json.color = Number(0xffffff);
+        json.emissive = Number(0x000000);
+
+    //  $(propDroplist).off();
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
+
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
+
+            var key = sortedKeys[i];
+            var option = document.createElement("option");
+
+            option.id = key; 
+            option.innerText = key;
+
+            switch (key) {
+
+                case "normalScale":
+
+                    if ( typeof(json[key]) == "number" ) {
+                        option.value = json[ key ]; break;
+                    }
+
+                //  leading value is the "normalScale.x"
+
+                    if (Array.isArray(json[key]) && json[key].length) {
+                        option.value = json[key][0]; break;
+                    }
+
+                break;
+
+                default:
+                    if ( typeof(json[key]) != "boolean" ) {
+                        option.value = json[ key ]; break;
+                    } else {
+                        option.value = json[key] || ""; break;
+                    }
+                break;
+
+            }
+
+            $(propDroplist).append(option);
+
+        }
+
+        propertiesDroplistChanged();
+
+    }
+
 /*
 //  initMaterialPropertiesDroplist();
 
@@ -1884,6 +1860,7 @@
     }
 */
 
+
     $(slotDroplist).on("change", function(){
         updateMaterialPropertiesDroplist();
     });
@@ -1892,7 +1869,12 @@
         updateMaterialPropertiesDroplist();
     });
 
+    $(propDroplist).on("change", function(){
+        propertiesDroplistChanged();
+    });
+
     updateMaterialPropertiesDroplist();
+
 
 
 //  TEXTURES.
@@ -1910,6 +1892,32 @@
         "aoMap", 
         "envMap",
     ];
+
+    function newJsonTexture() {
+        return {
+            anisotropy: 1,
+            encoding: 3000,
+            flipY: true,
+            format: 1021,
+            generateMipmaps: true,
+            magFilter: 1006,
+            mapping: 300,
+            minFilter: 1008,
+            mipmaps: [],
+            name: "",
+            offset: [0, 0],
+            premultiplyAlpha: false,
+            repeat: [1, 1],
+            sourceFile: "",
+            type: 1009,
+            unpackAlignment: 4,
+            uuid: viewer.contentWindow.THREE.Math.generateUUID(),
+            version: 0,
+            wrapS: 1001,
+            wrapT: 1001,
+            _id: ObjectId(),
+        };
+    }
 
     maps.forEach(function(mapkey){
         $(`input[type=checkbox]#${mapkey}`).on("click", function(){
@@ -2152,6 +2160,7 @@
         outfitMaterialChanged.dispatch();
     });
 
+
 //  COPY.
 
     $("#copy-material-button").on("click", function(){
@@ -2166,11 +2175,15 @@
         var outfit = viewer.contentWindow[ gender ][ slot ];
 
         json = viewer.contentWindow.materialtoJSON( outfit.material );
-
-        json._id = ObjectId();
+        json._id = ObjectId();  json.name += "#copy";
         json.uuid = viewer.contentWindow.THREE.Math.generateUUID();
 
+        outfitMaterialChanged.dispatch();
+
+        debugMode && console.log({"json#copy":json});
+
     });
+
 
 //  APPLY.
 
