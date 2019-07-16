@@ -371,9 +371,10 @@
 
 <div style="margin-bottom:20px;">
     <input id="texture-fileinput" type="file" class="hidden" multiple>
-    <div id="clear-import-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-left" style="width:24%;">Clear</div>
+    <div id="clear-imported-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-left" style="width:24%;">Clear</div>
     <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Import textures</div>
-    <div id="upload-material-textures" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Upload</div>
+    <div id="delete-selected-texture" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Delete</div>
+    <div id="upload-material-textures" class="form-control btn btn-success btn-white-outline gradient-btn pull-right hidden" style="width:24%;">Upload</div>
 </div>
 
 <script>
@@ -426,7 +427,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     const titleTextfield   = $("input#material-title").get(0);
     const textureImportBtn = $("#import-texture-button").get(0);
     const textureFileinput = $("input#texture-fileinput").get(0);
-    const texturesClearBtn = $("#clear-import-textures").get(0);
+    const textureDeleteBtn = $("#delete-selected-texture").get(0);
+    const texturesClearBtn = $("#clear-imported-textures").get(0);
     const textureUploadBtn = $("#upload-material-textures").get(0);
     const textureDroplist  = $("select#imported-textures").get(0);
     const textureControlSelector = "#material-texture-controls";
@@ -1926,42 +1928,8 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         });
     });
 
-    $(textureDroplist).on("change", function(){
 
-        $(textureCheckboxSelector).attr({checked:false});
-
-        if ( this.value ) {
-
-            var src = textures[ this.value ].sourceFile;
-            $("img#texture-preview").attr({"src":src});
-
-        } else {
-
-            (function(){
-
-                if ( !slotDroplist.value ) return;
-                if ( !genderDroplist.value ) return;
-
-                var slot = slotDroplist.value;
-                var gender = genderDroplist.value;
-
-                if ( !viewer.contentWindow[gender][slot] ) return;
-                var geometry = viewer.contentWindow[gender][slot].geometry;
-                var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
-
-                $("img#texture-preview").attr({"src":src});
-
-            })();
-
-        }
-
-        if ( this.value ) {
-            $(textureControlSelector).slideDown();
-        } else {
-            $(textureControlSelector).slideUp();
-        }
-
-    });
+//  IMPORT.
 
     $(textureImportBtn).on("click", function(){
         $(textureFileinput).val("");
@@ -2016,10 +1984,78 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
 
+//  SELECT.
+
+    $(textureDroplist).on("change", function(){
+
+        $(textureCheckboxSelector).attr({checked:false});
+
+        if ( this.value ) {
+
+            var src = textures[ this.value ].sourceFile;
+            $("img#texture-preview").attr({"src":src});
+
+        } else {
+
+            (function(){
+
+                if ( !slotDroplist.value ) return;
+                if ( !genderDroplist.value ) return;
+
+                var slot = slotDroplist.value;
+                var gender = genderDroplist.value;
+
+                if ( !viewer.contentWindow[gender][slot] ) return;
+                var geometry = viewer.contentWindow[gender][slot].geometry;
+                var src = viewer.contentWindow.THREE.UVsDebug(geometry, 512).toDataURL();
+
+                $("img#texture-preview").attr({"src":src});
+
+            })();
+
+        }
+
+        if ( this.value ) {
+            $(textureControlSelector).slideDown();
+        } else {
+            $(textureControlSelector).slideUp();
+        }
+
+    });
+
+
+//  DELETE.
+
+    $(textureDeleteBtn).on("click", function(){
+        var option = textureDroplist.selectedOptions[0];
+
+        if ( !option ) return;
+        if ( !option.value ) return;
+
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+
+            delete files[ option.value ];     // optional!
+            delete textures[ option.value ];  // optional!
+
+            $(option).remove();
+
+            debugMode && console.log({
+                "files":files, 
+                "textures": textures,
+            });
+
+            $(textureDroplist).change();  // or ...dispatch();
+
+        }, 250 );
+
+    });
+
+
 //  CLEAR.
 
     $(texturesClearBtn).on("click", function(){
-        debugMode && console.log("uploads:", uploads);
+        debugMode && console.log({"files":files, "textures": textures});
 
         clearTimeout(this.interval);
         this.interval = setTimeout( function(){
