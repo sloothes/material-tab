@@ -446,7 +446,7 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
         $("input[type=text]#input_name").val(this.value);
     });
 
-    outfitMaterialChanged.add(function(json){
+    outfitMaterialChanged.add(function(){
 
         if ( !$(slotDroplist).val() ) return;
         if ( !$(genderDroplist).val() ) return;
@@ -2144,15 +2144,19 @@ loadjs(["/three/three.js", "/material/materialtoJson.js"], function(){
     });
 
 
-//  SAVE.
+//  APPLY.
 
     $("#new-material-button").on("click", function(){
+        outfitMaterialChanged.dispatch();
         updateMaterialPropertiesDroplist();
     });
 
     $("#apply-material-button").on("click", function(){
-        outfitMaterialChanged.dispatch(json);
+        outfitMaterialChanged.dispatch();
     });
+
+
+//  SAVE.
 
     $("#save-material-button").on("click", async function(){
 
