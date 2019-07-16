@@ -1775,7 +1775,7 @@
         $(titleTextfield).val("");
 
         var TYPE = $(typeDroplist).val();
-        var material = THREE[ TYPE ]();
+        var material = new THREE[ TYPE ]();
         json = materialtoJSON(material);
 
         json._id = ObjectId();  //  important!
