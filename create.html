@@ -135,7 +135,7 @@
     var Signal = signals.Signal;
     var genderChanged = new Signal();
 
-    genderChanged.add(function(){
+    genderChanged.add(function(value){
 
         if ( !value ) return;
 
