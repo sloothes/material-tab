@@ -2331,6 +2331,8 @@
                 var gender = genderDroplist.value;
 
                 if ( !viewer.contentWindow[gender][slot] ) return;
+
+                var THREE = viewer.contentWindow.THREE; // important!
                 var geometry = viewer.contentWindow[gender][slot].geometry;
                 var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
