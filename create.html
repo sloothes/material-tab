@@ -421,6 +421,23 @@
 
 (function(){
 
+    const NAME = "USER";
+    const VERSION = 2;
+
+    const db = new zango.Db( NAME, VERSION, {
+        textures:   true,
+        materials:  true,
+    });
+
+    db.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+
+
     var files = {};
     var uploads = [];
     var textures = {};
@@ -2620,7 +2637,8 @@
 
     //  Insert to collection.
 
-        var collection = UserDB.collection("materials");
+        var collection = db.collection("materials");
+        debugMode && console.log({"collection":collection});
 
         await collection.insert(json, function(err){
             if (err) throw err;
