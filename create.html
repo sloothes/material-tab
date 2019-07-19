@@ -158,6 +158,8 @@
         var gender = genderDroplist.value;
 
         if ( !viewer.contentWindow[gender][slot] ) return;
+
+        var THREE = viewer.contentWindow.THREE; // important!
         var geometry = viewer.contentWindow[gender][slot].geometry;
         var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
@@ -227,6 +229,8 @@
         var gender = genderDroplist.value;
 
         if ( !viewer.contentWindow[gender][slot] ) return;
+
+        var THREE = viewer.contentWindow.THREE; // important!
         var geometry = viewer.contentWindow[gender][slot].geometry;
         var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
@@ -415,6 +419,22 @@
 
 (function(){
 
+    function generateUUID(){
+
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
+
+            function(c) {
+
+                var r = Math.random()*16|0;
+
+                var v = c == 'x'?r:r&0x3|0x8;
+
+                return v.toString(16);
+
+            });
+
+    }
+
     var files = {};
     var uploads = [];
     var textures = {};
@@ -438,9 +458,13 @@
     var Signal = signals.Signal;
     var propertyValueChanged = new Signal();
     var outfitMaterialChanged = new Signal();
+    var materialDroplistChanged = new Signal();
+    var propertiesDroplistChanged = new Signal();
 
-    var json = materialtoJSON( new THREE.Material() );
-    debugMode && console.log({"json": json});
+    var THREE = viewer.contentWindow.THREE; // important!
+
+//  var json = materialtoJSON( new THREE.Material() );
+//  debugMode && console.log({"json": json});
 
     $(titleTextfield).on("input", function(){
         json.name = this.value;
@@ -634,7 +658,7 @@
 
 
 
-    function propertiesDroplistChanged(){
+    propertiesDroplistChanged.add(function (){
 
         $(propControls).css({height:""});
         $(propControls).children().remove();
@@ -745,7 +769,7 @@
                         $(propDroplist).find("option#_id").val( objectId );
 
                     //  Change uuid also.
-                        var uuid = json.uuid = THREE.Math.generateUUID();
+                        var uuid = json.uuid = generateUUID();
                         $(propDroplist).find("option#uuid").val( uuid );
                         debugMode && console.log({
                             "new _id":json._id,
@@ -785,12 +809,12 @@
                     input.classList.add("form-control", "pull-right", "uuid-material-textfield");
 
                     if (json.uuid) input.value = json.uuid;
-                    else input.value = json.uuid = THREE.Math.generateUUID();
+                    else input.value = json.uuid = generateUUID();
                     $(propDroplist).find("option#uuid").val( json.uuid );
 
                     $(button).on("click", function(){
 
-                        var uuid = THREE.Math.generateUUID();
+                        var uuid = generateUUID();
                         input.value = json.uuid = uuid;
                         $(propDroplist).find("option#uuid").val( uuid );
 
@@ -1767,8 +1791,286 @@
 
         }
 
-    }
+    });
 
+
+    materialDroplistChanged.add(function(){
+
+        var TYPE = typeDroplist.value;
+
+        switch ( TYPE ) {
+
+            case "MeshStandardMaterial":
+
+                json = {
+                    alphaTest: 0,
+                    aoMapIntensity: 1,
+                    blendDst: 205,
+                    blendEquation: 100,
+                    blendSrc: 204,
+                    blending: 1,
+                    bumpScale: 0.05,
+                    clipShadows: false,
+                    color: 16777215,
+                    colorWrite: true,
+                    depthFunc: 3,
+                    depthTest: true,
+                    depthWrite: true,
+                    displacementBias: 0,
+                    displacementScale: 0,
+                    emissive: 0,
+                    emissiveIntensity: 1,
+                    envMapIntensity: 1,
+                    fog: true,
+                    lightMapIntensity: 1,
+                    lights: true,
+                    metalness: 0.5,
+                    morphNormals: false,
+                    morphTargets: false,
+                    name: "",
+                    normalScale: [0.1, 0.1],
+                    opacity: 1,
+                    overdraw: 0,
+                    polygonOffset: false,
+                    polygonOffsetFactor: 0,
+                    polygonOffsetUnits: 0,
+                    premultipliedAlpha: false,
+                    refractionRatio: 0.98,
+                    roughness: 0.5,
+                    shading: 2,
+                    side: 0,
+                    skinning: true,
+                    transparent: false,
+                    type: "MeshStandardMaterial",
+                    uuid: generateUUID(),
+                    vertexColors: 0,
+                    visible: true,
+                    wireframe: false,
+                    wireframeLinecap: "round",
+                    wireframeLinejoin: "round",
+                    wireframeLinewidth: 1,
+                    _id: ObjectId(),
+                };
+
+            break;
+
+            case "MeshPhongMaterial":
+
+                json = {
+                    alphaTest: 0,
+                    aoMapIntensity: 1,
+                    blendDst: 205,
+                    blendEquation: 100,
+                    blendSrc: 204,
+                    blending: 1,
+                    bumpScale: 0.05,
+                    clipShadows: false,
+                    color: 16777215,
+                    colorWrite: true,
+                    combine: 0,
+                    depthFunc: 3,
+                    depthTest: true,
+                    depthWrite: true,
+                    displacementBias: 0,
+                    displacementScale: 0,
+                    emissive: 0,
+                    emissiveIntensity: 1,
+                    fog: true,
+                    lightMapIntensity: 1,
+                    lights: true,
+                    morphNormals: false,
+                    morphTargets: false,
+                    name: "",
+                    normalScale: [0.1, 0.1],
+                    opacity: 1,
+                    overdraw: 0,
+                    polygonOffset: false,
+                    polygonOffsetFactor: 0,
+                    polygonOffsetUnits: 0,
+                    premultipliedAlpha: false,
+                    reflectivity: 1,
+                    refractionRatio: 0.98,
+                    shading: 2,
+                    shininess: 30,
+                    side: 0,
+                    skinning: true,
+                    specular: 1118481,
+                    transparent: false,
+                    type: "MeshPhongMaterial",
+                    uuid: generateUUID(),
+                    vertexColors: 0,
+                    visible: true,
+                    wireframe: false,
+                    wireframeLinecap: "round",
+                    wireframeLinejoin: "round",
+                    wireframeLinewidth: 1,
+                    _id: ObjectId(),
+                };
+
+            break;
+
+            case "MeshLambertMaterial":
+
+                json = {
+                    alphaTest: 0,
+                    aoMapIntensity: 1,
+                    blendDst: 205,
+                    blendEquation: 100,
+                    blendSrc: 204,
+                    blending: 1,
+                    clipShadows: false,
+                    color: 16777215,
+                    colorWrite: true,
+                    combine: 0,
+                    depthFunc: 3,
+                    depthTest: true,
+                    depthWrite: true,
+                    emissive: 0,
+                    emissiveIntensity: 1,
+                    fog: true,
+                    lightMapIntensity: 1,
+                    lights: true,
+                    morphNormals: false,
+                    morphTargets: false,
+                    name: "",
+                    opacity: 1,
+                    overdraw: 0,
+                    polygonOffset: false,
+                    polygonOffsetFactor: 0,
+                    polygonOffsetUnits: 0,
+                    premultipliedAlpha: false,
+                    reflectivity: 1,
+                    refractionRatio: 0.98,
+                    shading: 2,
+                    side: 0,
+                    skinning: true,
+                    transparent: false,
+                    type: "MeshLambertMaterial",
+                    uuid: generateUUID(),
+                    vertexColors: 0,
+                    visible: true,
+                    wireframe: false,
+                    wireframeLinecap: "round",
+                    wireframeLinejoin: "round",
+                    wireframeLinewidth: 1,
+                    _id: ObjectId(),
+                };
+
+            break;
+
+            case "MeshBasicMaterial":
+
+                json = {
+                    alphaTest: 0,
+                    aoMapIntensity: 1,
+                    blendDst: 205,
+                    blendEquation: 100,
+                    blendSrc: 204,
+                    blending: 1,
+                    clipShadows: false,
+                    color: 16777215,
+                    colorWrite: true,
+                    combine: 0,
+                    depthFunc: 3,
+                    depthTest: true,
+                    depthWrite: true,
+                    fog: true,
+                    lights: false,
+                    morphTargets: false,
+                    name: "",
+                    opacity: 1,
+                    overdraw: 0,
+                    polygonOffset: false,
+                    polygonOffsetFactor: 0,
+                    polygonOffsetUnits: 0,
+                    premultipliedAlpha: false,
+                    reflectivity: 1,
+                    refractionRatio: 0.98,
+                    shading: 2,
+                    side: 0,
+                    skinning: true,
+                    transparent: false,
+                    type: "MeshBasicMaterial",
+                    uuid: generateUUID(),
+                    vertexColors: 0,
+                    visible: true,
+                    wireframe: false,
+                    wireframeLinecap: "round",
+                    wireframeLinejoin: "round",
+                    wireframeLinewidth: 1,
+                    _id: ObjectId(),
+                };
+
+            break;
+
+            default:
+
+                json = {
+                    alphaTest: 0,
+                    blendDst: 205,
+                    blendEquation: 100,
+                    blendSrc: 204,
+                    blending: 1,
+                    clipShadows: false,
+                    colorWrite: true,
+                    depthFunc: 3,
+                    depthTest: true,
+                    depthWrite: true,
+                    fog: true,
+                    lights: true,
+                    name: "",
+                    opacity: 1,
+                    overdraw: 0,
+                    polygonOffset: false,
+                    polygonOffsetFactor: 0,
+                    polygonOffsetUnits: 0,
+                    premultipliedAlpha: false,
+                    shading: 2,
+                    side: 0,
+                    transparent: false,
+                    type: "Material",
+                    uuid: generateUUID(),
+                    vertexColors: 0,
+                    visible: true,
+                    _id: ObjectId(),
+                };
+
+            break;
+        }
+
+    });
+
+    materialDroplistChanged.add(function(){
+
+        $(titleTextfield).val("");
+
+        if ( !json._id ) json._id = ObjectId();
+        if ( !json.uuid) json.uuid = generateUUID();
+
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
+
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
+
+            var key = sortedKeys[i];
+            var option = document.createElement("option");
+
+            option.value = key; 
+            option.innerText = key;
+
+            $(propDroplist).append(option);
+
+        }
+
+        propertiesDroplistChanged.dispatch();
+
+    });
+
+
+
+/*
 
     function updateMaterialPropertiesDroplist(){
 
@@ -1779,7 +2081,7 @@
         json = materialtoJSON(material);
 
         json._id = ObjectId();  //  important!
-    //  json.uuid = THREE.Math.generateUUID();
+    //  json.uuid = generateUUID();
 
     //  Settings.
         json.skinning = true;
@@ -1836,44 +2138,52 @@
 
         }
 
-        propertiesDroplistChanged();
+        propertiesDroplistChanged.dispatch();
 
     }
+*/
 
 /*
 //  initMaterialPropertiesDroplist();
 
     function initMaterialPropertiesDroplist(){
+
         $(slotDroplist).off();
         $(typeDroplist).off();
 
         $(slotDroplist).on("change", function(){
-            updateMaterialPropertiesDroplist();
+        //  updateMaterialPropertiesDroplist();
+            materialDroplistChanged.dispatch();
         });
 
         $(typeDroplist).on("change", function(){
-            updateMaterialPropertiesDroplist();
+        //  updateMaterialPropertiesDroplist();
+            materialDroplistChanged.dispatch();
         });
 
-        updateMaterialPropertiesDroplist();
+    //  updateMaterialPropertiesDroplist();
+        materialDroplistChanged.dispatch();
 
     }
 */
 
-
     $(slotDroplist).on("change", function(){
-        updateMaterialPropertiesDroplist();
+    //  updateMaterialPropertiesDroplist();
+        materialDroplistChanged.dispatch();
     });
 
     $(typeDroplist).on("change", function(){
-        updateMaterialPropertiesDroplist();
+    //  updateMaterialPropertiesDroplist();
+        materialDroplistChanged.dispatch();
     });
 
     $(propDroplist).on("change", function(){
-        propertiesDroplistChanged();
+        propertiesDroplistChanged.dispatch();
     });
 
-    updateMaterialPropertiesDroplist();
+//  Startup.
+//  updateMaterialPropertiesDroplist();
+    materialDroplistChanged.dispatch();
 
 
 
@@ -1911,7 +2221,7 @@
             sourceFile: "",
             type: 1009,
             unpackAlignment: 4,
-            uuid: THREE.Math.generateUUID(),
+            uuid: generateUUID(),
             version: 0,
             wrapS: 1001,
             wrapT: 1001,
@@ -2156,9 +2466,11 @@
 //  NEW.
 
     $("#new-material-button").on("click", function(){
-        updateMaterialPropertiesDroplist();
+    //  ();
+        materialDroplistChanged.dispatch();
+
         outfitMaterialChanged.dispatch();
-        debugMode && console.log({"json new":json});
+        debugMode && console.log({"new json":json});
     });
 
 
@@ -2178,12 +2490,11 @@
     //  "materialtoJSON" must be the function of the scene AW3D.js
     //  else does not recognize "color" as instance of THREE.Color.
     //  var materialtoJSON = viewer.contentWindow.materialtoJSON; 
-
-        json = viewer.contentWindow.materialtoJSON( copy ); // important danger!!!
+        json = viewer.contentWindow.materialtoJSON( copy ); // important!
 
         json.name += "#copy";
         json._id = ObjectId();  
-        json.uuid = THREE.Math.generateUUID();
+        json.uuid = generateUUID();
 
         outfitMaterialChanged.dispatch();
         $(titleTextfield).val( json.name );
@@ -2206,7 +2517,7 @@
 
         if ( !json._id ) json._id = ObjectId();  
         //  throw `Material "_id" required.`;
-        if ( !json.uuid ) json.uuid = THREE.Math.generateUUID();  
+        if ( !json.uuid ) json.uuid = generateUUID();  
         //  throw `Material "uuid" required.`;
 
         if ( !json.name ) {
@@ -2322,7 +2633,8 @@
                         label: 'Close',
                         className: 'btn-success',
                         callback: function(){ 
-                            updateMaterialPropertiesDroplist();
+                        //  updateMaterialPropertiesDroplist();
+                            materialDroplistChanged.dispatch();
                             $(textureCheckboxSelector).attr({checked:false});
                         },
                     },
