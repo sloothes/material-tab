@@ -128,13 +128,14 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const slotDroplist = $("#material-outfit-slot").get(0);
+    const titleTextfield = $("input#material-title").get(0);
+    const slotDroplist   = $("#material-outfit-slot").get(0);
     const genderDroplist = $("#material-gender-droplist").get(0);
 
     var Signal = signals.Signal;
     var genderChanged = new Signal();
 
-    genderChanged.add(function(value){
+    genderChanged.add(function(){
 
         if ( !value ) return;
 
@@ -204,7 +205,8 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const slotDroplist = $("#material-outfit-slot").get(0);
+    const titleTextfield = $("input#material-title").get(0);
+    const slotDroplist   = $("#material-outfit-slot").get(0);
     const genderDroplist = $("#material-gender-droplist").get(0);
 
     var Signal = signals.Signal;
@@ -494,6 +496,7 @@
     propertyValueChanged.add( function(key, value){
 
         if ( key == undefined ) return;
+    //  if (!value) ...null "value" allowed.
         if ( !$(slotDroplist).val() ) return;
         if ( !$(genderDroplist).val() ) return;
 
@@ -1795,247 +1798,286 @@
     });
 
 
+    function newMeshStandardJsonMaterial(){
+        return {
+            alphaTest: 0,
+            aoMapIntensity: 1,
+            blendDst: 205,
+            blendEquation: 100,
+            blendSrc: 204,
+            blending: 1,
+            bumpScale: 0.05,
+            clipShadows: false,
+            color: 16777215,
+            colorWrite: true,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            displacementBias: 0,
+            displacementScale: 0,
+            emissive: 0,
+            emissiveIntensity: 1,
+            envMapIntensity: 1,
+            fog: true,
+            lightMapIntensity: 1,
+            lights: true,
+            metalness: 0.5,
+            morphNormals: false,
+            morphTargets: false,
+            name: "",
+            normalScale: [0.1, 0.1],
+            opacity: 1,
+            overdraw: 0,
+            polygonOffset: false,
+            polygonOffsetFactor: 0,
+            polygonOffsetUnits: 0,
+            premultipliedAlpha: false,
+            refractionRatio: 0.98,
+            roughness: 0.5,
+            shading: 2,
+            side: 0,
+            skinning: true,
+            transparent: false,
+            type: "MeshStandardMaterial",
+            uuid: generateUUID(),
+            vertexColors: 0,
+            visible: true,
+            wireframe: false,
+            wireframeLinecap: "round",
+            wireframeLinejoin: "round",
+            wireframeLinewidth: 1,
+            _id: ObjectId(),
+        };
+    }
+
+    function newMeshPhongJsonMaterial(){
+        return {
+            alphaTest: 0,
+            aoMapIntensity: 1,
+            blendDst: 205,
+            blendEquation: 100,
+            blendSrc: 204,
+            blending: 1,
+            bumpScale: 0.05,
+            clipShadows: false,
+            color: 16777215,
+            colorWrite: true,
+            combine: 0,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            displacementBias: 0,
+            displacementScale: 0,
+            emissive: 0,
+            emissiveIntensity: 1,
+            fog: true,
+            lightMapIntensity: 1,
+            lights: true,
+            morphNormals: false,
+            morphTargets: false,
+            name: "",
+            normalScale: [0.1, 0.1],
+            opacity: 1,
+            overdraw: 0,
+            polygonOffset: false,
+            polygonOffsetFactor: 0,
+            polygonOffsetUnits: 0,
+            premultipliedAlpha: false,
+            reflectivity: 1,
+            refractionRatio: 0.98,
+            shading: 2,
+            shininess: 30,
+            side: 0,
+            skinning: true,
+            specular: 1118481,
+            transparent: false,
+            type: "MeshPhongMaterial",
+            uuid: generateUUID(),
+            vertexColors: 0,
+            visible: true,
+            wireframe: false,
+            wireframeLinecap: "round",
+            wireframeLinejoin: "round",
+            wireframeLinewidth: 1,
+            _id: ObjectId(),
+        };
+    }
+
+    function newMeshLambertJsonMaterial(){
+        return {
+            alphaTest: 0,
+            aoMapIntensity: 1,
+            blendDst: 205,
+            blendEquation: 100,
+            blendSrc: 204,
+            blending: 1,
+            clipShadows: false,
+            color: 16777215,
+            colorWrite: true,
+            combine: 0,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            emissive: 0,
+            emissiveIntensity: 1,
+            fog: true,
+            lightMapIntensity: 1,
+            lights: true,
+            morphNormals: false,
+            morphTargets: false,
+            name: "",
+            opacity: 1,
+            overdraw: 0,
+            polygonOffset: false,
+            polygonOffsetFactor: 0,
+            polygonOffsetUnits: 0,
+            premultipliedAlpha: false,
+            reflectivity: 1,
+            refractionRatio: 0.98,
+            shading: 2,
+            side: 0,
+            skinning: true,
+            transparent: false,
+            type: "MeshLambertMaterial",
+            uuid: generateUUID(),
+            vertexColors: 0,
+            visible: true,
+            wireframe: false,
+            wireframeLinecap: "round",
+            wireframeLinejoin: "round",
+            wireframeLinewidth: 1,
+            _id: ObjectId(),
+        };
+    }
+
+    function newMeshBasicJsonMaterial(){
+        return {
+            alphaTest: 0,
+            aoMapIntensity: 1,
+            blendDst: 205,
+            blendEquation: 100,
+            blendSrc: 204,
+            blending: 1,
+            clipShadows: false,
+            color: 16777215,
+            colorWrite: true,
+            combine: 0,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            fog: true,
+            lights: false,
+            morphTargets: false,
+            name: "",
+            opacity: 1,
+            overdraw: 0,
+            polygonOffset: false,
+            polygonOffsetFactor: 0,
+            polygonOffsetUnits: 0,
+            premultipliedAlpha: false,
+            reflectivity: 1,
+            refractionRatio: 0.98,
+            shading: 2,
+            side: 0,
+            skinning: true,
+            transparent: false,
+            type: "MeshBasicMaterial",
+            uuid: generateUUID(),
+            vertexColors: 0,
+            visible: true,
+            wireframe: false,
+            wireframeLinecap: "round",
+            wireframeLinejoin: "round",
+            wireframeLinewidth: 1,
+            _id: ObjectId(),
+        };
+    }
+
+    function newJsonMaterial(){
+        return {
+            alphaTest: 0,
+            blendDst: 205,
+            blendEquation: 100,
+            blendSrc: 204,
+            blending: 1,
+            clipShadows: false,
+            colorWrite: true,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            fog: true,
+            lights: true,
+            name: "",
+            opacity: 1,
+            overdraw: 0,
+            polygonOffset: false,
+            polygonOffsetFactor: 0,
+            polygonOffsetUnits: 0,
+            premultipliedAlpha: false,
+            shading: 2,
+            side: 0,
+            transparent: false,
+            type: "Material",
+            uuid: generateUUID(),
+            vertexColors: 0,
+            visible: true,
+            _id: ObjectId(),
+        };
+    }
+
+    function newJsonTexture() {
+        return {
+            anisotropy: 1,
+            encoding: 3000,
+            flipY: true,
+            format: 1021,
+            generateMipmaps: true,
+            magFilter: 1006,
+            mapping: 300,
+            minFilter: 1008,
+            mipmaps: [],
+            name: "",
+            offset: [0, 0],
+            premultiplyAlpha: false,
+            repeat: [1, 1],
+            sourceFile: "",
+            type: 1009,
+            unpackAlignment: 4,
+            uuid: generateUUID(),
+            version: 0,
+            wrapS: 1001,
+            wrapT: 1001,
+            _id: ObjectId(),
+        };
+    }
+
+
     materialDroplistChanged.add(function(){
 
-        var TYPE = typeDroplist.value;
+    //  Create new json material.
 
-        switch ( TYPE ) {
+        var type = typeDroplist.value;
+
+        switch ( type ) {
 
             case "MeshStandardMaterial":
-
-                json = {
-                    alphaTest: 0,
-                    aoMapIntensity: 1,
-                    blendDst: 205,
-                    blendEquation: 100,
-                    blendSrc: 204,
-                    blending: 1,
-                    bumpScale: 0.05,
-                    clipShadows: false,
-                    color: 16777215,
-                    colorWrite: true,
-                    depthFunc: 3,
-                    depthTest: true,
-                    depthWrite: true,
-                    displacementBias: 0,
-                    displacementScale: 0,
-                    emissive: 0,
-                    emissiveIntensity: 1,
-                    envMapIntensity: 1,
-                    fog: true,
-                    lightMapIntensity: 1,
-                    lights: true,
-                    metalness: 0.5,
-                    morphNormals: false,
-                    morphTargets: false,
-                    name: "",
-                    normalScale: [0.1, 0.1],
-                    opacity: 1,
-                    overdraw: 0,
-                    polygonOffset: false,
-                    polygonOffsetFactor: 0,
-                    polygonOffsetUnits: 0,
-                    premultipliedAlpha: false,
-                    refractionRatio: 0.98,
-                    roughness: 0.5,
-                    shading: 2,
-                    side: 0,
-                    skinning: true,
-                    transparent: false,
-                    type: "MeshStandardMaterial",
-                    uuid: generateUUID(),
-                    vertexColors: 0,
-                    visible: true,
-                    wireframe: false,
-                    wireframeLinecap: "round",
-                    wireframeLinejoin: "round",
-                    wireframeLinewidth: 1,
-                    _id: ObjectId(),
-                };
-
+                json = newMeshStandardJsonMaterial();
             break;
 
             case "MeshPhongMaterial":
-
-                json = {
-                    alphaTest: 0,
-                    aoMapIntensity: 1,
-                    blendDst: 205,
-                    blendEquation: 100,
-                    blendSrc: 204,
-                    blending: 1,
-                    bumpScale: 0.05,
-                    clipShadows: false,
-                    color: 16777215,
-                    colorWrite: true,
-                    combine: 0,
-                    depthFunc: 3,
-                    depthTest: true,
-                    depthWrite: true,
-                    displacementBias: 0,
-                    displacementScale: 0,
-                    emissive: 0,
-                    emissiveIntensity: 1,
-                    fog: true,
-                    lightMapIntensity: 1,
-                    lights: true,
-                    morphNormals: false,
-                    morphTargets: false,
-                    name: "",
-                    normalScale: [0.1, 0.1],
-                    opacity: 1,
-                    overdraw: 0,
-                    polygonOffset: false,
-                    polygonOffsetFactor: 0,
-                    polygonOffsetUnits: 0,
-                    premultipliedAlpha: false,
-                    reflectivity: 1,
-                    refractionRatio: 0.98,
-                    shading: 2,
-                    shininess: 30,
-                    side: 0,
-                    skinning: true,
-                    specular: 1118481,
-                    transparent: false,
-                    type: "MeshPhongMaterial",
-                    uuid: generateUUID(),
-                    vertexColors: 0,
-                    visible: true,
-                    wireframe: false,
-                    wireframeLinecap: "round",
-                    wireframeLinejoin: "round",
-                    wireframeLinewidth: 1,
-                    _id: ObjectId(),
-                };
-
+                json = newMeshPhongJsonMaterial();
             break;
 
             case "MeshLambertMaterial":
-
-                json = {
-                    alphaTest: 0,
-                    aoMapIntensity: 1,
-                    blendDst: 205,
-                    blendEquation: 100,
-                    blendSrc: 204,
-                    blending: 1,
-                    clipShadows: false,
-                    color: 16777215,
-                    colorWrite: true,
-                    combine: 0,
-                    depthFunc: 3,
-                    depthTest: true,
-                    depthWrite: true,
-                    emissive: 0,
-                    emissiveIntensity: 1,
-                    fog: true,
-                    lightMapIntensity: 1,
-                    lights: true,
-                    morphNormals: false,
-                    morphTargets: false,
-                    name: "",
-                    opacity: 1,
-                    overdraw: 0,
-                    polygonOffset: false,
-                    polygonOffsetFactor: 0,
-                    polygonOffsetUnits: 0,
-                    premultipliedAlpha: false,
-                    reflectivity: 1,
-                    refractionRatio: 0.98,
-                    shading: 2,
-                    side: 0,
-                    skinning: true,
-                    transparent: false,
-                    type: "MeshLambertMaterial",
-                    uuid: generateUUID(),
-                    vertexColors: 0,
-                    visible: true,
-                    wireframe: false,
-                    wireframeLinecap: "round",
-                    wireframeLinejoin: "round",
-                    wireframeLinewidth: 1,
-                    _id: ObjectId(),
-                };
-
+                json = newMeshLambertJsonMaterial();
             break;
 
             case "MeshBasicMaterial":
-
-                json = {
-                    alphaTest: 0,
-                    aoMapIntensity: 1,
-                    blendDst: 205,
-                    blendEquation: 100,
-                    blendSrc: 204,
-                    blending: 1,
-                    clipShadows: false,
-                    color: 16777215,
-                    colorWrite: true,
-                    combine: 0,
-                    depthFunc: 3,
-                    depthTest: true,
-                    depthWrite: true,
-                    fog: true,
-                    lights: false,
-                    morphTargets: false,
-                    name: "",
-                    opacity: 1,
-                    overdraw: 0,
-                    polygonOffset: false,
-                    polygonOffsetFactor: 0,
-                    polygonOffsetUnits: 0,
-                    premultipliedAlpha: false,
-                    reflectivity: 1,
-                    refractionRatio: 0.98,
-                    shading: 2,
-                    side: 0,
-                    skinning: true,
-                    transparent: false,
-                    type: "MeshBasicMaterial",
-                    uuid: generateUUID(),
-                    vertexColors: 0,
-                    visible: true,
-                    wireframe: false,
-                    wireframeLinecap: "round",
-                    wireframeLinejoin: "round",
-                    wireframeLinewidth: 1,
-                    _id: ObjectId(),
-                };
-
+                json = newMeshBasicJsonMaterial();
             break;
 
             default:
-
-                json = {
-                    alphaTest: 0,
-                    blendDst: 205,
-                    blendEquation: 100,
-                    blendSrc: 204,
-                    blending: 1,
-                    clipShadows: false,
-                    colorWrite: true,
-                    depthFunc: 3,
-                    depthTest: true,
-                    depthWrite: true,
-                    fog: true,
-                    lights: true,
-                    name: "",
-                    opacity: 1,
-                    overdraw: 0,
-                    polygonOffset: false,
-                    polygonOffsetFactor: 0,
-                    polygonOffsetUnits: 0,
-                    premultipliedAlpha: false,
-                    shading: 2,
-                    side: 0,
-                    transparent: false,
-                    type: "Material",
-                    uuid: generateUUID(),
-                    vertexColors: 0,
-                    visible: true,
-                    _id: ObjectId(),
-                };
-
+                json = newMeshStandardJsonMaterial();
             break;
         }
 
@@ -2043,7 +2085,7 @@
 
     materialDroplistChanged.add(function(){
 
-        $(titleTextfield).val("");
+        $(titleTextfield).val(json.name);
 
         if ( !json._id ) json._id = ObjectId();
         if ( !json.uuid) json.uuid = generateUUID();
@@ -2068,8 +2110,6 @@
         propertiesDroplistChanged.dispatch();
 
     });
-
-
 
 /*
 
@@ -2168,27 +2208,94 @@
     }
 */
 
+//  MATERIAL.
+
+    const materialButtonNew   = $("#new-material-button").get(0);
+    const materialButtonCopy  = $("#copy-material-button").get(0);
+    const materialButtonApply = $("#apply-material-button").get(0);
+    const materialButtonSave  = $("#save-material-button").get(0);
+
+
+//  SLOT DROPLIST.
+
     $(slotDroplist).on("change", function(){
     //  updateMaterialPropertiesDroplist();
         materialDroplistChanged.dispatch();
     });
+
+
+//  TYPE DROPLIST.
 
     $(typeDroplist).on("change", function(){
     //  updateMaterialPropertiesDroplist();
         materialDroplistChanged.dispatch();
     });
 
+
+//  PROP DROPLIST.
+
     $(propDroplist).on("change", function(){
         propertiesDroplistChanged.dispatch();
     });
 
-//  Startup.
+
+//  BUTTON NEW.
+
+    $(materialButtonNew).on("click", function(){
+    //  updateMaterialPropertiesDroplist();
+        materialDroplistChanged.dispatch();
+        outfitMaterialChanged.dispatch();
+        debugMode && console.log({"new json":json});
+    });
+
+
+//  BUTTON COPY.
+
+    $(materialButtonCopy).on("click", function(){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !viewer.contentWindow[gender][slot] ) return;
+        var copy = viewer.contentWindow[ gender ][ slot ].material.clone();
+
+    //  "materialtoJSON" must be the function of the scene AW3D.js
+    //  else does not recognize "color" as instance of THREE.Color.
+    //  var materialtoJSON = viewer.contentWindow.materialtoJSON; 
+
+        json = viewer.contentWindow.materialtoJSON( copy ); // danger!
+
+        json.name += " copy";
+        json._id = ObjectId();  
+        json.uuid = generateUUID();
+
+        outfitMaterialChanged.dispatch();
+        $(titleTextfield).val( json.name );
+
+        debugMode && console.log({"json copy":json});
+
+    });
+
+
+//  BUTTON APPLY.
+
+    $(materialButtonApply).on("click", function(){
+        outfitMaterialChanged.dispatch();
+    });
+
+
+//  on Startup.
 //  updateMaterialPropertiesDroplist();
     materialDroplistChanged.dispatch();
 
 
 
-//  TEXTURES.
+
+//  TEXTURE.
+
 
     var maps = [
         "map", 
@@ -2204,52 +2311,31 @@
         "envMap",
     ];
 
-    function newJsonTexture() {
-        return {
-            anisotropy: 1,
-            encoding: 3000,
-            flipY: true,
-            format: 1021,
-            generateMipmaps: true,
-            magFilter: 1006,
-            mapping: 300,
-            minFilter: 1008,
-            mipmaps: [],
-            name: "",
-            offset: [0, 0],
-            premultiplyAlpha: false,
-            repeat: [1, 1],
-            sourceFile: "",
-            type: 1009,
-            unpackAlignment: 4,
-            uuid: generateUUID(),
-            version: 0,
-            wrapS: 1001,
-            wrapT: 1001,
-            _id: ObjectId(),
-        };
-    }
-
-    maps.forEach(function(mapkey){
-        $(`input[type=checkbox]#${mapkey}`).on("click", function(){
+    maps.forEach(function( key ){
+        $(`input[type=checkbox]#${key}`).on("click", function(){
 
             if (!textureDroplist.value) return;
+
             var name = textureDroplist.value;
 
-            if ( this.checked ) {
-                var texture = textures[name];
-                json[ mapkey ] = textures[name];
-            } else {
+            if ( !this.checked ) {
+
                 var texture = null;
-                delete json[ mapkey ];
+                delete json[ key ];
+
+            } else {
+
+                var texture = textures[ name ];  //  json texture.
+                json[ key ] = textures[ name ];
+
             }
 
-            propertyValueChanged.dispatch( mapkey, texture );
+            propertyValueChanged.dispatch( key, texture );
+
         });
     });
 
-
-//  IMPORT.
+//  BUTTON IMPORT.
 
     $(textureImportBtn).on("click", function(){
         $(textureFileinput).val("");
@@ -2309,7 +2395,7 @@
     });
 
 
-//  SELECT.
+//  SELECT TEXTURE DROPLIST.
 
     $(textureDroplist).on("change", function(){
 
@@ -2351,7 +2437,7 @@
     });
 
 
-//  DELETE.
+//  BUTTON DELETE.
 
     $(textureDeleteBtn).on("click", function(){
         var option = textureDroplist.selectedOptions[0];
@@ -2379,7 +2465,7 @@
     });
 
 
-//  CLEAR.
+//  BUTTON CLEAR.
 
     $(texturesClearBtn).on("click", function(){
 
@@ -2409,7 +2495,7 @@
     });
 
 
-//  UPLOAD.
+//  BUTTON UPLOAD.
 
     $(textureUploadBtn).on("click", function(){
         debugMode && console.log({"uploads":uploads});
@@ -2466,62 +2552,9 @@
     });
 
 
-    const materialButtonNew   = $("#new-material-button").get(0);
-    const materialButtonCopy  = $("#copy-material-button").get(0);
-    const materialButtonApply = $("#apply-material-button").get(0);
-    const materialButtonSave  = $("#save-material-button").get(0);
-
-//  NEW.
-
-    $(materialButtonNew).on("click", function(){
-
-    //  updateMaterialPropertiesDroplist();
-        materialDroplistChanged.dispatch();
-
-        outfitMaterialChanged.dispatch();
-        debugMode && console.log({"new json":json});
-    });
 
 
-//  COPY.
-
-    $(materialButtonCopy).on("click", function(){
-
-        if ( !slotDroplist.value ) return;
-        if ( !genderDroplist.value ) return;
-
-        var slot = slotDroplist.value;
-        var gender = genderDroplist.value;
-
-        if ( !viewer.contentWindow[gender][slot] ) return;
-        var copy = viewer.contentWindow[ gender ][ slot ].material.clone();
-
-    //  "materialtoJSON" must be the function of the scene AW3D.js
-    //  else does not recognize "color" as instance of THREE.Color.
-    //  var materialtoJSON = viewer.contentWindow.materialtoJSON; 
-
-        json = viewer.contentWindow.materialtoJSON( copy ); // danger!
-
-        json.name += " copy";
-        json._id = ObjectId();  
-        json.uuid = generateUUID();
-
-        outfitMaterialChanged.dispatch();
-        $(titleTextfield).val( json.name );
-
-        debugMode && console.log({"json copy":json});
-
-    });
-
-
-//  APPLY.
-
-    $(materialButtonApply).on("click", function(){
-        outfitMaterialChanged.dispatch();
-    });
-
-
-//  SAVE.
+//  BUTTON SAVE.
 
     $(materialButtonSave).on("click", async function(){
 
