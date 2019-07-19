@@ -2464,10 +2464,16 @@
     });
 
 
+    const materialButtonNew   = $("#new-material-button").get(0);
+    const materialButtonCopy  = $("#copy-material-button").get(0);
+    const materialButtonApply = $("#apply-material-button").get(0);
+    const materialButtonSave  = $("#save-material-button").get(0);
+
 //  NEW.
 
-    $("#new-material-button").on("click", function(){
-    //  ();
+    $(materialButtonNew).on("click", function(){
+
+    //  updateMaterialPropertiesDroplist();
         materialDroplistChanged.dispatch();
 
         outfitMaterialChanged.dispatch();
@@ -2477,7 +2483,7 @@
 
 //  COPY.
 
-    $("#copy-material-button").on("click", function(){
+    $(materialButtonCopy).on("click", function(){
 
         if ( !slotDroplist.value ) return;
         if ( !genderDroplist.value ) return;
@@ -2508,14 +2514,14 @@
 
 //  APPLY.
 
-    $("#apply-material-button").on("click", function(){
+    $(materialButtonApply).on("click", function(){
         outfitMaterialChanged.dispatch();
     });
 
 
 //  SAVE.
 
-    $("#save-material-button").on("click", async function(){
+    $(materialButtonSave).on("click", async function(){
 
         if ( !json._id ) json._id = ObjectId();  
         //  throw `Material "_id" required.`;
