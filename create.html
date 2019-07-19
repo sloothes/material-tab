@@ -421,22 +421,6 @@
 
 (function(){
 
-    function generateUUID(){
-
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
-
-            function(c) {
-
-                var r = Math.random()*16|0;
-
-                var v = c == 'x'?r:r&0x3|0x8;
-
-                return v.toString(16);
-
-            });
-
-    }
-
     var files = {};
     var uploads = [];
     var textures = {};
@@ -464,6 +448,15 @@
     var propertiesDroplistChanged = new Signal();
 
     var THREE = viewer.contentWindow.THREE; // important!
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
 
 //  var materialtoJSON = viewer.contentWindow.materialtoJSON; 
 //  var json = viewer.contentWindow.materialtoJSON( new THREE.Material() );
@@ -2938,3 +2931,42 @@
 */
 
 </script>
+
+<script>
+
+/*
+    function generateUUID() {
+//  http://www.broofa.com/Tools/Math.uuid.htm
+
+		var rnd = 0, r;
+		var uuid = new Array(36);
+		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+
+        for ( var i = 0; i < 36; i++ ) {
+
+            if ( i === 8 || i === 13 || i === 18 || i === 23 )  {
+
+                uuid[i] = "-";
+
+            } else if ( i === 14 ) {
+
+                uuid[i] = "4";
+
+            } else {
+
+                if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
+                r = rnd & 0xf;
+                rnd = rnd >> 4;
+                uuid[ i ] = chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
+
+            }
+
+        }
+
+        return uuid.join( "" );
+
+    }
+*/
+
+</script>
+
