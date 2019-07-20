@@ -455,6 +455,8 @@
     const texturesClearBtn = $("#clear-imported-textures").get(0);
     const textureUploadBtn = $("#upload-material-textures").get(0);
     const textureDroplist  = $("select#imported-textures").get(0);
+    const textureControls  = $("#material-texture-controls").get(0);
+
     const textureControlSelector = "#material-texture-controls";
     const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
 
@@ -2322,7 +2324,7 @@
     ];
 
     maps.forEach(function( key ){
-        $(textureControlSelector).find(`input#material-${key}`).on("click", function(){
+        $(textureControls).find(`input#${key}`).on("click", function(){
 
             if (!textureDroplist.value) return;
 
