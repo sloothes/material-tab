@@ -2322,7 +2322,7 @@
     ];
 
     maps.forEach(function( key ){
-        $(`input[type=checkbox]#${key}`).on("click", function(){
+        $(textureControlSelector).find(`input#material-${key}`).on("click", function(){
 
             if (!textureDroplist.value) return;
 
