@@ -131,6 +131,7 @@
     const titleTextfield = $("input#material-title").get(0);
     const slotDroplist   = $("#material-outfit-slot").get(0);
     const genderDroplist = $("#material-gender-droplist").get(0);
+    const texturePreview = $("img#material-texture-preview").get(0);
 
     var Signal = signals.Signal;
     var genderChanged = new Signal();
@@ -164,7 +165,7 @@
         var geometry = viewer.contentWindow[gender][slot].geometry;
         var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
-        $("img#texture-preview").attr({"src":src});
+        $(texturePreview).attr({"src":src});
 
     });
 
@@ -236,7 +237,7 @@
         var geometry = viewer.contentWindow[gender][slot].geometry;
         var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
-        $("img#texture-preview").attr({"src":src});
+        $("img#material-texture-preview").attr({"src":src});
 
     });
 
@@ -2730,7 +2731,7 @@
                 }
             });
 
-            debugMode && console.log( "textureImages (1):", deepCopy(textureImages) );
+            debugMode && console.log( {"textureImages": textureImages} );
 
         //  Second pass (collect mapkeys).
 
@@ -2743,7 +2744,7 @@
                     textureImages[ name ].maps.push( key );
             });
 
-            debugMode && console.log( "textureImages (2):", textureImages );
+            debugMode && console.log( {"textureImages": textureImages} );
 
         //  Third pass (upload images in background).
 
