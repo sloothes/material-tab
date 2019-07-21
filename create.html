@@ -426,8 +426,11 @@
     const VERSION = 3;
 
     const db = new zango.Db( NAME, VERSION, {
-        textures:   true,
+        animations: true,
+        outfits:    true,
         materials:  true,
+        textures:   true,
+        products:   true,
     });
 
     db.open(function(err, database){
