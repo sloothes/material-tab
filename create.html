@@ -422,10 +422,11 @@
 
 (function(){
 
-//  const VERSION = 3;
+/*
+//  const VERSION = 4;
     const NAME = "USER";
 
-    var db = new zango.Db( NAME, VERSION, {
+    var db = new zango.Db( NAME, {
         animations: true,
         outfits:    true,
         materials:  true,
@@ -433,7 +434,6 @@
         products:   true,
     });
 
-/*
     db.open(function(err, database){
         if (err) console.error(err);
     }).then( function(){
