@@ -425,7 +425,7 @@
     const NAME = "USER";
     const VERSION = 3;
 
-    const db = new zango.Db( NAME, VERSION, {
+    var db = new zango.Db( NAME, VERSION, {
         animations: true,
         outfits:    true,
         materials:  true,
@@ -440,7 +440,6 @@
     }).catch(function(err){
         console.error(err);
     });
-
 
     var files = {};
     var uploads = [];
