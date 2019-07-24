@@ -2128,103 +2128,6 @@
 
     });
 
-/*
-
-    function updateMaterialPropertiesDroplist(){
-
-        $(titleTextfield).val("");
-
-        var TYPE = $(typeDroplist).val();
-        var material = new THREE[ TYPE ]();
-        json = viewer.contentWindow.materialtoJSON(material);
-
-        json._id = ObjectId();  //  important!
-    //  json.uuid = generateUUID();
-
-    //  Settings.
-        json.skinning = true;
-        json.bumpScale = 0.05;
-        json.depthTest = true;
-        json.depthWrite = true;
-        json.displacementBias = 0;
-        json.displacementScale = 0;
-        json.normalScale = [0.1, 0.1];
-        json.color = Number(0xffffff);
-        json.emissive = Number(0x000000);
-
-    //  $(propDroplist).off();
-        $(propDroplist).children().remove();
-        $(propControls).children().remove();
-
-    //  Sort json keys.
-        var sortedKeys = Object.keys(json).sort();
-        for ( var i = 0; i < sortedKeys.length; i++ ) {
-
-            var key = sortedKeys[i];
-            var option = document.createElement("option");
-
-            option.id = key; 
-            option.innerText = key;
-
-            switch (key) {
-
-                case "normalScale":
-
-                    if ( typeof(json[key]) == "number" ) {
-                        option.value = json[ key ]; break;
-                    }
-
-                //  leading value is the "normalScale.x"
-
-                    if (Array.isArray(json[key]) && json[key].length) {
-                        option.value = json[key][0]; break;
-                    }
-
-                break;
-
-                default:
-                    if ( typeof(json[key]) != "boolean" ) {
-                        option.value = json[ key ]; break;
-                    } else {
-                        option.value = json[key] || ""; break;
-                    }
-                break;
-
-            }
-
-            $(propDroplist).append(option);
-
-        }
-
-        propertiesDroplistChanged.dispatch();
-
-    }
-*/
-
-/*
-//  initMaterialPropertiesDroplist();
-
-    function initMaterialPropertiesDroplist(){
-
-        $(slotDroplist).off();
-        $(typeDroplist).off();
-
-        $(slotDroplist).on("change", function(){
-        //  updateMaterialPropertiesDroplist();
-            materialDroplistChanged.dispatch();
-        });
-
-        $(typeDroplist).on("change", function(){
-        //  updateMaterialPropertiesDroplist();
-            materialDroplistChanged.dispatch();
-        });
-
-    //  updateMaterialPropertiesDroplist();
-        materialDroplistChanged.dispatch();
-
-    }
-*/
-
 //  MATERIAL.
 
     const materialButtonNew   = $("#new-material-button").get(0);
@@ -2314,7 +2217,7 @@
 //  TEXTURE.
 
 
-    var maps = [
+    const maps = [
         "map", 
         "bumpMap", 
         "emissiveMap", 
@@ -2575,10 +2478,11 @@
 
     $(materialButtonSave).on("click", async function(){
 
-        if ( !json._id ) json._id = ObjectId();  
         //  throw `Material "_id" required.`;
-        if ( !json.uuid ) json.uuid = generateUUID();  
         //  throw `Material "uuid" required.`;
+
+        if ( !json._id ) json._id = ObjectId();  
+        if ( !json.uuid ) json.uuid = generateUUID();  
 
         if ( !json.name ) {
             json.name = await new Promise(function(resolve, reject){
@@ -2809,11 +2713,11 @@
                                 modifier.$set[ imagekey ] = data.link;
                                 modifier.$set[ sourcekey ] = data.link;
 
-                            //  texture matadata. (optional).
+                            //  texture metadata. (optional).
                                 var mapMetakey = mapkey + ".meta";
-                                modifier.$set[ mapMetakey ] = data;
+                                modifier.$set[ mapMetakey ] = data.id;
                                 var mtlMetakey = "meta." + mapkey;
-                                modifier.$set[ mtlMetakey ] = data;
+                                modifier.$set[ mtlMetakey ] = data.id;
 
                             });
 
@@ -2824,7 +2728,7 @@
                             }).then( function(){
 
                             //  Success.
-                        /*
+                            /*
                                 bootbox.dialog({
                                     size: "small",
                                     className: "middle",
@@ -2838,7 +2742,7 @@
                                         }
                                     },
                                 });
-                        */
+                            */
                                 console.log(`Texture ${data.name} uploaded successfully!`);
 
                             }).catch(function(err){
@@ -3029,3 +2933,104 @@
 
 </script>
 
+
+<script>
+
+/*
+
+    function updateMaterialPropertiesDroplist(){
+
+        $(titleTextfield).val("");
+
+        var TYPE = $(typeDroplist).val();
+        var material = new THREE[ TYPE ]();
+        json = viewer.contentWindow.materialtoJSON(material);
+
+        json._id = ObjectId();  //  important!
+    //  json.uuid = generateUUID();
+
+    //  Settings.
+        json.skinning = true;
+        json.bumpScale = 0.05;
+        json.depthTest = true;
+        json.depthWrite = true;
+        json.displacementBias = 0;
+        json.displacementScale = 0;
+        json.normalScale = [0.1, 0.1];
+        json.color = Number(0xffffff);
+        json.emissive = Number(0x000000);
+
+    //  $(propDroplist).off();
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
+
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
+
+            var key = sortedKeys[i];
+            var option = document.createElement("option");
+
+            option.id = key; 
+            option.innerText = key;
+
+            switch (key) {
+
+                case "normalScale":
+
+                    if ( typeof(json[key]) == "number" ) {
+                        option.value = json[ key ]; break;
+                    }
+
+                //  leading value is the "normalScale.x"
+
+                    if (Array.isArray(json[key]) && json[key].length) {
+                        option.value = json[key][0]; break;
+                    }
+
+                break;
+
+                default:
+                    if ( typeof(json[key]) != "boolean" ) {
+                        option.value = json[ key ]; break;
+                    } else {
+                        option.value = json[key] || ""; break;
+                    }
+                break;
+
+            }
+
+            $(propDroplist).append(option);
+
+        }
+
+        propertiesDroplistChanged.dispatch();
+
+    }
+*/
+
+/*
+//  initMaterialPropertiesDroplist();
+
+    function initMaterialPropertiesDroplist(){
+
+        $(slotDroplist).off();
+        $(typeDroplist).off();
+
+        $(slotDroplist).on("change", function(){
+        //  updateMaterialPropertiesDroplist();
+            materialDroplistChanged.dispatch();
+        });
+
+        $(typeDroplist).on("change", function(){
+        //  updateMaterialPropertiesDroplist();
+            materialDroplistChanged.dispatch();
+        });
+
+    //  updateMaterialPropertiesDroplist();
+        materialDroplistChanged.dispatch();
+
+    }
+*/
+
+</script>
