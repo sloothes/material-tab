@@ -2585,6 +2585,7 @@
 
             if (!doc) throw "material could not be found!";
 
+    /*
         //  Success.
 
             bootbox.dialog({
@@ -2609,6 +2610,7 @@
             return doc;
 
         }).then(function(doc){
+    */
 
             var textureImages = {};
 
@@ -2638,6 +2640,29 @@
                     }
                 }
             });
+
+
+        //  Success.
+
+            bootbox.dialog({
+                size: "small",
+                className: "middle",
+                title: `<div class="alert-icon icon-success"></div>`
+                     + `<h2 style="margin:auto;">Success</h2>`,
+                message: `<div>Material ${json.name} has been saved!</div>`,
+                buttons: {
+                    success: {
+                        label: 'Close',
+                        className: 'btn-success',
+                        callback: function(){ 
+                        //  updateMaterialPropertiesDroplist();
+                            materialDroplistChanged.dispatch();
+                            $(textureCheckboxSelector).attr({checked:false});
+                        },
+                    },
+                },
+            });
+
 
             if ( textureImages === {} ) {
 
@@ -2741,21 +2766,6 @@
                             }).then( function(){
 
                             //  Success.
-                            /*
-                                bootbox.dialog({
-                                    size: "small",
-                                    className: "middle",
-                                    title: `<div class="alert-icon icon-success"></div>`
-                                         + `<h2 style="margin:auto;">Success</h2>`,
-                                    message: `<div>Texture ${data.name} uploaded successfully!</div>`,
-                                    buttons: {
-                                        success: {
-                                            label: 'Close',
-                                            className: 'btn-success',
-                                        }
-                                    },
-                                });
-                            */
                                 console.log(`Texture ${data.name} uploaded successfully!`);
 
                             }).catch(function(err){
