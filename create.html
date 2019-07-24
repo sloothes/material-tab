@@ -2639,7 +2639,14 @@
                 }
             });
 
-            if ( textureImages === {} ) return;
+            if ( textureImages === {} ) {
+
+                debugMode && console.log(
+                    `Material ${json.name} has been saved successfully!`
+                );
+
+                return;
+            }
 
             debugMode && console.log( {"textureImages": textureImages} );
 
