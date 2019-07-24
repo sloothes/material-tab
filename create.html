@@ -2639,17 +2639,23 @@
                 }
             });
 
+            if ( textureImages === {} ) return;
+
             debugMode && console.log( {"textureImages": textureImages} );
 
         //  Second pass (collect mapkeys).
 
             textureMaps.forEach(function( key ){
                 if ( !doc[ key ] ) return;
-                var texture = doc[ key ];
             //  It is a "json" texture, not a real one.
-                var name = texture.name;
-                if ( !textureImages[ name ].maps.includes(key) )
+            //  var texture = doc[ key ];
+            //  var name = texture.name;
+                var name = doc[ key ].name;
+                if ( !textureImages[ name ] ) return;
+                if ( !textureImages[ name ].maps ) return;
+                if ( !textureImages[ name ].maps.includes(key) ) {
                     textureImages[ name ].maps.push( key );
+                }
             });
 
             debugMode && console.log( {"textureImages": textureImages} );
