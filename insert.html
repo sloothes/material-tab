@@ -318,6 +318,49 @@
 
 </script>
 
+<script>
+
+(function(){
+
+/*
+//  const VERSION = 4;
+    const NAME = "USER";
+
+    var db = new zango.Db( NAME, {
+        animations: true,
+        outfits:    true,
+        materials:  true,
+        textures:   true,
+        products:   true,
+    });
+
+    db.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+*/
+
+    const viewer = document.getElementById("viewer");
+    const genderDroplist   = $("select#material-gender-droplist").get(0);
+    const slotDroplist     = $("select#material-outfit-slot").get(0);
+    const typeDroplist     = $("select#material-type").get(0);
+    const propDroplist     = $("select#material-property").get(0);
+    const propControls     = $("#material-property-controls").get(0);
+    const titleTextfield   = $("input#material-title").get(0);
+
+    var THREE = viewer.contentWindow.THREE; // important!
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
 
 
 
@@ -330,4 +373,8 @@
 
 
 
+
+})();
+
+</script>
 
