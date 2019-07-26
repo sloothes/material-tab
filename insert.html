@@ -1,0 +1,333 @@
+<script>
+
+    (function(){
+        var component_ID = {
+            type: "tab",
+            demo: false,
+            version: 2.1,
+            kind: "component",
+            name: "insert.html",
+            path: "/material-tab/insert.html",
+            description: "creates and inserts outfit material in zangoDB.",
+        };
+    })();
+
+</script>
+
+<style>
+
+    .selected {
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(0, 142, 255, 1);
+    }
+
+    #material-title {
+        color:#ffffff;
+        background:none;
+    }
+
+    .material-value {
+        text-align: center;
+        font-size: x-large;
+        font-weight: bold;
+    }
+    
+    .material-textfield {
+        width:70%;
+        float:right;
+    }
+
+    .x-large {
+        font-size: x-large;
+    }
+    
+    .material-property-controls {
+        height:72px;
+    }
+
+    .material-textfield {
+        width:75%;
+    }
+
+    .uuid-material-textfield {
+        width:80%;
+    }
+
+    .material-checkbox {
+        width:34px;
+    }
+
+    .texture-checkbox-helper {
+        height:40px;
+        margin-top:0px;
+        margin-bottom:0px;
+    }
+
+    .material-input-number {
+        width: 60px;
+        padding: 0;
+        text-align: right;
+        background: none;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        color: #ffff;
+    }
+
+    .helpers-header h2 { 
+        cursor:pointer; 
+    }
+
+    #material-property-controls {
+        background:none;
+        border-radius:8px;
+        height:73px;
+    }
+
+    .catalog-item {
+        width:85px;
+        height:85px;
+        margin:4px;
+        background-size: contain;
+        background-position:50% 50%;
+        background-repeat:no-repeat;
+    }
+    
+    .sp-container {
+        width:100%;
+    }
+
+    .sp-picker-container {
+        width:93%;
+    }
+
+
+</style>
+
+<div class="helpers-header material-header">
+    <h2 style="margin-bottom:20px;">Material:</h2>
+</div>
+
+<div style="margin-bottom:20px;">
+    <input type="text" id="material-title" class="form-control text-center x-large material-title-field" placeholder="new untitled material">
+</div>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select gender:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-gender-droplist" class="form-control gender-droplist" readonly>
+                <option value="">Select sex:</option>
+                <option value="male">male</option>
+                <option value="female">female</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const titleTextfield = $("input#material-title").get(0);
+    const slotDroplist   = $("#material-outfit-slot").get(0);
+    const genderDroplist = $("#material-gender-droplist").get(0);
+    const texturePreview = $("img#material-texture-preview").get(0);
+
+    var Signal = signals.Signal;
+    var genderChanged = new Signal();
+
+    genderChanged.add(function(value){
+
+        if ( !value ) return;
+
+    //  Null values not allowed.
+
+        var data = "/gender/" + value;
+        viewer.contentWindow.localPlayerHandler(data);
+
+        store( "Sex", data );
+
+    });
+
+    genderChanged.add(function(){
+
+        if ( $("#imported-textures").val() ) return;
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !viewer.contentWindow[gender][slot] ) return;
+
+        var THREE = viewer.contentWindow.THREE; // important!
+        var geometry = viewer.contentWindow[gender][slot].geometry;
+        var src = THREE.UVsDebug(geometry, 512).toDataURL();
+
+        $(texturePreview).attr({"src":src});
+
+    });
+
+    $(genderDroplist).on("change", function(){
+
+    //  Null values not allowed.
+        if ( !this.value ) return;
+        genderChanged.dispatch( this.value );
+
+    });
+
+})();
+
+</script>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-outfit-slot" class="form-control outfit-slot-droplist" readonly>
+                <option value="">Select slot:</option>
+                <option value="body">body</option>
+                <option value="eyes">eyes</option>
+                <option value="hairs">hairs</option>
+                <option value="stockings">stockings</option>
+                <option value="underwears">underwears</option>
+                <option value="costume">costume</option>
+                <option value="tshirt">tshirt</option>
+                <option value="trousers">trousers</option>
+                <option value="dress">dress</option>
+                <option value="shoes">shoes</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const titleTextfield = $("input#material-title").get(0);
+    const slotDroplist   = $("#material-outfit-slot").get(0);
+    const genderDroplist = $("#material-gender-droplist").get(0);
+
+    var Signal = signals.Signal;
+    var outfitSlotChanged = new Signal();
+
+    outfitSlotChanged.add(function(value){
+
+    //  Null values are allowed!
+        var data = "/select/" + value;
+        viewer.contentWindow.localPlayerHandler(data);
+
+    });
+
+    outfitSlotChanged.add(function(){
+
+        if ( $("#imported-textures").val() ) return;
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !viewer.contentWindow[gender][slot] ) return;
+
+        var THREE = viewer.contentWindow.THREE; // important!
+        var geometry = viewer.contentWindow[gender][slot].geometry;
+        var src = THREE.UVsDebug(geometry, 512).toDataURL();
+
+        $("img#material-texture-preview").attr({"src":src});
+
+    });
+
+    $(slotDroplist).on("change", function(){
+
+    //  Null values are allowed!
+        outfitSlotChanged.dispatch(this.value);
+
+    });
+
+})();
+
+</script>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select material type:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-type" class="form-control material-type-droplist" readonly>
+                <option value="MeshStandardMaterial">standard</option>
+                <option value="MeshPhongMaterial">phong</option>
+                <option value="MeshLambertMaterial">lambert</option>
+                <option value="MeshBasicMaterial">basic</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<div style="height:35px;margin-bottom:10px;">
+    <h4><span style="vertical-align:-0.5rem;">Select property:</span>
+        <div style="width:40%;display:inline-block;float:right;">
+            <select id="material-property" class="form-control material-property-droplist" readonly>
+                <option value="">Select key:</option>
+            </select>
+        </div>
+    </h4>
+</div>
+
+<div id="material-property-controls" class="well"></div>
+
+<div style="margin-bottom:10px;">
+    <div id="new-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
+    <div id="copy-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:24%;margin-left:1%;">Copy</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Apply</div>
+    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Save</div>
+</div>
+
+<hr/>
+
+<script>
+
+(function(){
+
+    const materialHeaderSelector = ".material-header";
+    const helpersHeaderSelector = ".helpers-header";
+    const materialControlSelector = "#material-property-controls";
+
+    var Signal = signals.Signal;
+    var dblclicked = new Signal();
+
+//  Event handlers.
+    function onDoubleClickEventHandler( element ){
+        if ( $(element).css("display") == "none" ) {
+            $(element).slideDown();
+        } else {
+            $(element).slideUp();
+        }
+    }
+
+//  Event listeners.
+    dblclicked.add(onDoubleClickEventHandler);
+
+//  Dispatch events.
+    $(materialHeaderSelector).on("dblclick", function(){
+        dblclicked.dispatch( $(materialControlSelector).get(0) );
+    });
+
+})();
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
