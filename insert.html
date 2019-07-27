@@ -132,11 +132,25 @@
     var Signal = signals.Signal;
     var genderChanged = new Signal();
 
-    genderChanged.add(function(value){
+    $(genderDroplist).on("change", function(){
 
-        if ( !value ) return;
+        if ( !this.value ) {
+
+        //  Overwrite gender value.
+            this.value = viewer.contentWindow.localPlayer.outfit.getGender();
+        }
 
     //  Null values not allowed.
+        if ( !this.value ) return;
+
+        genderChanged.dispatch( this.value );
+
+    });
+
+    genderChanged.add(function(value){
+
+    //  Null values not allowed.
+        if ( !value ) return;
 
         var data = "/gender/" + value;
         viewer.contentWindow.localPlayerHandler(data);
@@ -162,14 +176,6 @@
         var src = THREE.UVsDebug(geometry, 512).toDataURL();
 
         $(texturePreview).attr({"src":src});
-
-    });
-
-    $(genderDroplist).on("change", function(){
-
-    //  Null values not allowed.
-        if ( !this.value ) return;
-        genderChanged.dispatch( this.value );
 
     });
 
