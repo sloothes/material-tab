@@ -151,7 +151,7 @@
 
     genderChanged.add(function(){
 
-        if ( $("#material-texture-imports").find("#imported-textures").val() ) return;
+        if ( $("#material-imported-textures").val() ) return;
 
         if ( !slotDroplist.value ) return;
         if ( !genderDroplist.value ) return;
@@ -223,7 +223,7 @@
 
     outfitSlotChanged.add(function(){
 
-        if ( $("#material-texture-imports").find("#imported-textures").val() ) return;
+        if ( $("#material-imported-textures").val() ) return;
 
         if ( !slotDroplist.value ) return;
         if ( !genderDroplist.value ) return;
@@ -326,8 +326,8 @@
     <img id="material-texture-preview" width="290" height="290" style="margin:auto;">
 </div>
 
-<div id="material-texture-imports" style="height:45px;margin-bottom:10px;">
-    <select id="imported-textures" class="form-control material-texture-droplist" readonly>
+<div style="height:45px;margin-bottom:10px;">
+    <select id="material-imported-textures" class="form-control material-texture-droplist" readonly>
         <option value="">Select imported texture:</option>
     </select>
 </div>
@@ -460,7 +460,7 @@
     const texturesClearBtn = $("#clear-imported-textures").get(0);
     const textureUploadBtn = $("#upload-material-textures").get(0);
     const textureControls  = $("#material-texture-controls").get(0);
-    const textureDroplist  = $("#material-texture-imports").find("select#imported-textures").get(0);
+    const textureDroplist  = $("#material-imported-textures").get(0);
 
     const textureControlSelector = "#material-texture-controls";
     const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
