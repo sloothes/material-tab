@@ -427,6 +427,8 @@
     const NAME = "USER";
 
     var db = new zango.Db( NAME, {
+        current:    true,
+        settings:   true,
         animations: true,
         outfits:    true,
         materials:  true,
@@ -2536,7 +2538,7 @@
 
 
     //  Validate json.
-
+    //  TODO: REPLACE async/await FOR BACKWARD COMPATIBILITY.
         if ( "validator" in window ) {
             var isValid = await (async function(){
                 var str = JSON.stringify( json );
@@ -2547,6 +2549,7 @@
 
 
     //  Insert to collection.
+    //  TODO: REPLACE async/await FOR BACKWARD COMPATIBILITY.
 
         var collection = db.collection("materials");
         debugMode && console.log({"collection":collection});
@@ -2576,6 +2579,7 @@
 
 
     //  Upload texture images (in background).
+    //  TODO: REPLACE async/await FOR BACKWARD COMPATIBILITY.
 
         var selector = {_id:json._id};
 
