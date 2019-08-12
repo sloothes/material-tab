@@ -2230,7 +2230,7 @@
                     reader.readAsDataURL(files[ name ]);
                 */
 
-                    files[ name ] = URL.createObjectURL(file);  // DO NOT REVOKE! important!
+                    files[ name ] = file;
 
                     textures[ name ] = newJsonTexture();
                     textures[ name ].name = name;
