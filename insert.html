@@ -393,10 +393,15 @@
     const outfitDroplist = $(tab).find("#material-outfit-slot").get(0);
     const texturePreview = $(tab).find("img#material-texture-preview").get(0);
     const importedTextures = $(tab).find("#material-imported-textures").get(0);
+    const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
 
     const slotDroplist = outfitDroplist;
 
     var Signal = signals.Signal;
+
+    function resetTextureCheckboxes(){
+        $(tab).find(textureCheckboxSelector).attr({checked:false});
+    }
 
     function updateTexturePreviewUVImage(){
 
@@ -446,6 +451,7 @@
 
     });
 
+    genderChanged.add(resetTextureCheckboxes);
     genderChanged.add(updateTexturePreviewUVImage);
 
 
@@ -466,6 +472,7 @@
         contentWindow.localPlayerHandler(cmd);
     });
 
+    outfitSlotChanged.add(resetTextureCheckboxes);
     outfitSlotChanged.add(updateTexturePreviewUVImage);
 
 })();
