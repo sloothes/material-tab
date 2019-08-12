@@ -31,11 +31,6 @@
         font-size: x-large;
         font-weight: bold;
     }
-    
-    .material-textfield {
-        width:70%;
-        float:right;
-    }
 
     .x-large {
         font-size: x-large;
@@ -45,12 +40,13 @@
         height:72px;
     }
 
-    .material-textfield {
-        width:75%;
-    }
-
     .uuid-material-textfield {
         width:80%;
+    }
+    
+    .material-textfield {
+        width:75%;
+        float:right;
     }
 
     .material-checkbox {
@@ -102,6 +98,112 @@
     }
 
 </style>
+
+<script>
+
+    function errorDialogOptions(err){
+        return {
+            size: "small",
+            className: "middle",
+            closeButton: true,
+            title: `<div class="alert-icon icon-warning">` 
+            + `</div><h2 style="margin:auto;">Error!</h2>`,
+            message: `<div>Sorry! An error occurred.</div>`
+            + `<div>${err}</div>`,
+            buttons: {
+                cancel: {
+                    label: "Close",
+                    className: "btn-default",
+                },
+            },
+        };
+    }
+
+    function cancelDialogOptions(msg){
+        return {
+            size: "small",
+            className: "middle",
+            closeButton: true,
+            title: `<div class="alert-icon icon-warning">` 
+            + `</div><h2 style="margin:auto;">Canceled</h2>`,
+            message: `<div>${msg}</div>`,
+            buttons: {
+                cancel: {
+                    label: "Close",
+                    className: "btn-default",
+                },
+            }
+        };
+    }
+
+    function successDialogOptions(msg){
+        return {
+            size: "small",
+            className: "middle",
+            closeButton: false,
+            title: `<div class="alert-icon icon-success">`
+            + `</div><h2 style="margin:auto;">Success</h2>`,
+            message: `<div>${msg}</div>`,
+            buttons: { 
+                success: {
+                    label: "Close",
+                    className: "btn-success",
+                    callback: function(){ 
+                        bootbox.hideAll(); 
+                    }
+                },
+            }
+        };
+    }
+
+    function userNotificationDialogMessage(msg){
+        return bootbox.dialog({
+            buttons: false,
+            closeButton: true,
+            className: "middle",
+            message: `<div class="text-center">${msg}</div>`,
+        });
+    }
+
+</script>
+
+<script>
+
+//  deepCopy.js
+
+    function deepCopy(obj) {
+        if (Object.prototype.toString.call(obj) === "[object Array]") {
+            var out = [], i = 0, len = obj.length;
+            for ( ; i < len; i++ ) {
+                out[i] = arguments.callee(obj[i]);
+            }
+            return out;
+        }
+        if (typeof obj === "object") {
+            var out = {}, i;
+            for ( i in obj ) {
+                out[i] = arguments.callee(obj[i]);
+            }
+            return out;
+        }
+        return obj;
+    }
+
+//  round.js  source: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round"
+
+    function round(number, precision) {
+        var shift = function (number, precision, reverseShift) {
+            if (reverseShift) {
+                precision = -precision;
+            }  
+            numArray = ("" + number).split("e");
+            return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+        };
+        return shift(Math.round(shift(number, precision, false)), precision, true);
+    }
+
+
+</script>
 
 <div class="helpers-header material-header">
     <h2 style="margin-bottom:20px;">Material:</h2>
@@ -406,15 +508,6 @@
     var uploads = [];
     var textures = {};
 
-    function generateUUID(){
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-        .replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0;
-            var v = c == 'x'?r:r&0x3|0x8;
-            return v.toString(16);
-        }).toLocaleUpperCase();
-    }
-
     const tab = document.getElementById("material-tab");
     const viewer = document.getElementById("viewer");
     const contentWindow    = viewer.contentWindow;
@@ -432,6 +525,7 @@
     const textureUploadBtn = $(tab).find("#upload-material-textures").get(0);
     const textureControls  = $(tab).find("#material-texture-controls").get(0);
     const textureDroplist  = $(tab).find("#material-imported-textures").get(0);
+    const texturePreview   = $(tab).find("img#material-texture-preview").get(0);
 
     const nameInputSelector = "input[type=text]#input_name";
     const textureControlSelector = "#material-texture-controls";
@@ -443,6 +537,35 @@
     const materialButtonSave  = $(tab).find("#save-material-button").get(0);
 
     var THREE = contentWindow.THREE; // important!
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
+
+    function updateTexturePreviewUVImage(){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = outfitDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !contentWindow[gender][slot] ) return;
+
+        var THREE = contentWindow.THREE; // (must be the scene "THREE") important!
+        var geometry = contentWindow[gender][slot].geometry;
+        texturePreview.src = THREE.UVsDebug(geometry, 512).toDataURL();
+
+    }
+
+    function resetTextureCheckboxes(){
+        $(tab).find(textureCheckboxSelector).attr({checked:false});
+    }
 
     var Signal = signals.Signal;
     var propertyValueChanged = new Signal();
@@ -539,7 +662,7 @@
             emissive: 0,
             emissiveIntensity: 1,
             metalness: 0.5,
-            name: "untitled standard material",
+            name: "new standard material",
             normalScale: [0, 0],
             opacity: 1,
             roughness: 0.5,
@@ -563,7 +686,7 @@
             displacementScale: 0,
             emissive: 0,
             emissiveIntensity: 1,
-            name: "untitled phong material",
+            name: "new phong material",
             normalScale: [0, 0],
             opacity: 1,
             reflectivity: 1,
@@ -586,7 +709,7 @@
             color: 16777215,
             emissive: 0,
             emissiveIntensity: 1,
-            name: "untitled lambert material",
+            name: "new lambert material",
             opacity: 1,
             reflectivity: 1,
             refractionRatio: 0.98,
@@ -606,7 +729,7 @@
         return {
             color: 16777215,
             lights: false,
-            name: "untitled basic material",
+            name: "new basic material",
             opacity: 1,
             reflectivity: 1,
             refractionRatio: 0.98,
@@ -636,7 +759,7 @@
             depthWrite: true,
             fog: true,
             lights: true,
-            name: "untitled material",
+            name: "new material",
             opacity: 1,
             overdraw: 0,
             polygonOffset: false,
@@ -656,26 +779,26 @@
 
     function newJsonTexture() {
         return {
-            anisotropy: 1,
-            encoding: 3000,
-            flipY: true,
-            format: 1021,
-            generateMipmaps: true,
-            magFilter: 1006,
-            mapping: 300,
-            minFilter: 1008,
-            mipmaps: [],
-            name: "untitled texture",
+        //  anisotropy: 1,
+        //  encoding: 3000,
+        //  flipY: true,
+        //  format: 1021,
+        //  generateMipmaps: true,
+        //  magFilter: 1006,
+        //  mapping: 300,
+        //  minFilter: 1008,
+        //  mipmaps: [],
+            name: "new texture",
             offset: [0, 0],
-            premultiplyAlpha: false,
+        //  premultiplyAlpha: false,
             repeat: [1, 1],
             sourceFile: "",
-            type: 1009,
-            unpackAlignment: 4,
+        //  type: 1009,
+        //  unpackAlignment: 4,
             uuid: generateUUID(),
-            version: 0,
-            wrapS: 1001,
-            wrapT: 1001,
+        //  version: 0,
+        //  wrapS: 1001,
+        //  wrapT: 1001,
             _id: ObjectId(),
         };
     }
@@ -722,21 +845,145 @@
             case "alphaMap":
                 contentWindow.localPlayerMaterialHandler(data);
             break;
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+
+            case "bumpMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "bumpScale",
+                    value: json.bumpScale,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "emissiveMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "emissive",
+                    value: json.emissive,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: "emissiveIntensity",
+                    value: json.emissiveIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "displacementMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "displacementBias",
+                    value: json.displacementBias,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: "displacementScale",
+                    value: json.displacementScale,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "lightMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "lightMapIntensity",
+                    value: json.lightMapIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "metalnessMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "metalness",
+                    value: json.metalness,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "roughnessMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "roughness",
+                    value: json.roughness,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "normalMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "normalScale",
+                    value: json.normalScale[0],
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "aoMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "aoMapIntensity",
+                    value: json.aoMapIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
+            case "envMap":
+                viewer.contentWindow.localPlayerMaterialHandler({
+                    key: "envMapIntensity",
+                    value: json.envMapIntensity,
+                    slot: slot,
+                    gender: gender,
+                }, {
+                    key: key,
+                    value: value,
+                    slot: slot,
+                    gender: gender,
+                });
+            break;
+
             default:
-                contentWindow.localPlayerMaterialHandler(data);
+                viewer.contentWindow.localPlayerMaterialHandler(data);
             break;
         }
 
@@ -809,10 +1056,10 @@
 
         var button = document.createElement("div");
         button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
-        button.id = "material-button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+        button.id = `material-button${key}`; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
 
         var input = document.createElement("input");
-        input.id = "material-input_id"; input.type = "text"; input.readOnly = true;
+        input.id = `material-input${key}`; input.type = "text"; input.readOnly = true;
         input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
 
         input.value = json[key]; // ObjectId();
@@ -834,7 +1081,7 @@
 
         var button = document.createElement("div");
         button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
-        button.id = "texture-button_uuid"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+        button.id = `material-button_${key}`; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
 
         var input = document.createElement("input");
         input.id = `material-input_${key}`; input.type = "text"; input.readOnly = true;
@@ -851,11 +1098,160 @@
         return control;
     }
 
+    function nameControl(key){
 
+        if ( key != "name" ) return;
 
+        var control = document.createElement("div");
 
+        var span = document.createElement("span");
+        span.innerText = key; span.style.cssText = "vertical-align:-1rem;";
 
+        var input = document.createElement("input"); 
+        input.id = `material-input_${key}`; input.type = "text";
+        input.classList.add("form-control", "pull-right", "material-textfield");
 
+        input.value = json[key];
+
+        $(input).on("input", function(){
+            json[key] = this.value;
+        });
+
+        $(control).append(span, input);
+
+        return control;
+    }
+
+    function typeControl(key){
+
+        if ( key != "type" ) return;
+
+        var control = document.createElement("div");
+
+        var span = document.createElement("span");
+        span.innerText = key; span.style.cssText = "vertical-align:-0.7rem;";
+
+        var input = document.createElement("input"); 
+        input.id = `material-input_${key}`;  
+        input.type = "text"; input.readOnly = true;
+        input.classList.add("form-control", "pull-right", "material-textfield");
+
+        input.value = json.type;
+
+        $(control).append(span, input);
+
+        return control;
+
+    }
+
+    function bumpScaleControl(key){
+
+        if ( key != "bumpScale" ) return;
+
+        var control = document.createElement("div");
+
+        var span = document.createElement("span");
+        span.innerText = key; span.style.cssText = "vertical-align:-0.7rem;";
+
+        var input = document.createElement("input"); 
+        input.id = `material-input_${key}`; input.type = "number"; input.step = 0.01;
+        input.classList.add("form-control", "pull-right", "material-input-number");
+
+        input.value = json.bumpScale;
+
+        $(input).on("input", function(){
+            var value = round(this.value, 2);
+            json.bumpScale = value;
+            propertyValueChanged.dispatch(key, value);
+        });
+
+        $(control).append(span, input);
+
+        return control;
+
+    }
+
+    function displacementScaleControl(key){
+
+        if ( key != "displacementScale" ) return;
+
+        var control = document.createElement("div");
+
+        var span = document.createElement("span");
+        span.innerText = key; span.style.cssText = "vertical-align:-0.7rem;";
+
+        var input = document.createElement("input"); 
+        input.classList.add("form-control", "pull-right", "material-input-number");
+        input.id = `material-input_${key}`; input.type = "number"; input.step = 0.01;
+
+        input.value = json.displacementScale;
+
+        $(input).on("input", function(){
+            var value = round(this.value, 2);
+            json.displacementScale = value;
+            propertyValueChanged.dispatch(key, value);
+        });
+
+        $(control).append(span, input);
+
+        return control;
+
+    }
+
+    function displacementBiasControl(key){
+
+        if ( key != "displacementScale" ) return;
+
+        var control = document.createElement("div");
+
+        var span = document.createElement("span");
+        span.innerText = key; span.style.cssText = "vertical-align:-0.7rem;";
+
+        var input = document.createElement("input"); 
+        input.classList.add("form-control", "pull-right", "material-input-number");
+        input.id = `material-input_${key}`; input.type = "number"; input.step = 0.01;
+
+        input.value = json.displacementBias;
+
+        $(input).on("input", function(){
+            var value = round(this.value, 2);
+            json.displacementBias = value;
+            propertyValueChanged.dispatch(key, value);
+        });
+
+        $(control).append(span, input);
+
+        return control;
+
+    }
+
+    function normalScaleControl(key){
+
+        if ( key != "normalScale" ) return;
+
+        var control = document.createElement("div");
+
+        var span = document.createElement("span");
+        span.innerText = key; span.style.cssText = "vertical-align:-0.7rem;";
+
+        var input = document.createElement("input"); 
+        input.classList.add("form-control", "pull-right", "material-input-number");
+        input.id = `material-input_${key}`; input.type = "number"; input.step = 0.01;
+
+        if ( json.normalScale && Array.isArray(json.normalScale) ) {
+            input.value = json.normalScale[0];
+        }
+
+        $(input).on("input", function(){
+            var value = round(this.value, 2);
+            propertyValueChanged.dispatch(key, value );
+            json.normalScale[0] = json.normalScale[1] = value;
+        });
+
+        $(propControls).slideDown();
+        $(propControls).append(span, input);
+
+    }
 
 
 
@@ -872,14 +1268,6 @@
 
         switch (key) {
 
-            case "_id":
-                $(propControls).append( _idControl(key) );
-            break;
-
-            case "uuid":
-                $(propControls).append( uuidControl(key) );
-            break;
-
             case "color":
                 colorControl(key); // special case!
                 $(propControls).css({height:"auto"});
@@ -888,6 +1276,770 @@
             case "emissive":
                 emissiveControl(key); // special case!
                 $(propControls).css({height:"auto"});
+            break;
+
+            case "_id":
+                $(propControls).append( _idControl(key) );
+            break;
+
+            case "uuid":
+                $(propControls).append( uuidControl(key) );
+            break;
+
+            case "name":
+                $(propControls).append( nameControl(key) );
+            break;
+
+            case "type":
+                $(propControls).append( typeControl(key) );
+            break;
+
+            case "bumpScale":
+                $(propControls).append( bumpScaleControl(key) );
+            break;
+
+            case "displacementScale":
+                $(propControls).append( displacementScaleControl(key) );
+            break;
+
+            case "displacementBias":
+                $(propControls).append( displacementBiasControl(key) );
+            break;
+
+            case "normalScale":
+                $(propControls).append( normalScaleControl(key) );
+            break;
+
+            case "visible":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "visible"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_visible"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.visible || "";
+
+                    $(input).on("click", function(){
+                        json.visible = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "opacity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "opacity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_opacity"; input.type = "number"; 
+                    input.step = 0.01; input.min = 0; input.max = 1;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.opacity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.opacity = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "transparent":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "transparent"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_transparent"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.transparent || "";
+
+                    $(input).on("click", function(){
+                        json.transparent = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "skinning":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "skinning"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_skinning"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.skinning || "";
+
+                    $(input).on("click", function(){
+                        json.skinning = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframe":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframe"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframe"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.wireframe || "";
+
+                    $(input).on("click", function(){
+                        json.wireframe = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "fog":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "fog"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_fog"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.fog || "";
+
+                    $(input).on("click", function(){
+                        json.fog = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "lights":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "lights"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_lights"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.lights || "";
+
+                    $(input).on("click", function(){
+                        json.lights = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "emissiveIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "emissiveIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_emissiveIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.emissiveIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.emissiveIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "lightMapIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "lightMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_lightMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.lightMapIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.lightMapIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "aoMapIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "aoMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_aoMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.aoMapIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.aoMapIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "colorWrite":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "colorWrite"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_colorWrite"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.colorWrite || "";
+
+                    $(input).on("click", function(){
+                        json.colorWrite = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "clipShadows":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "clipShadows"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_clipShadows"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.clipShadows || "";
+
+                    $(input).on("click", function(){
+                        json.clipShadows = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+        /*
+            case "alphaTest":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "alphaTest"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_alphaTest"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = Boolean(json.alphaTest) || "";
+
+                    $(input).on("click", function(){
+                        var value = Number(this.checked);
+                        json.alphaTest = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+        */
+            case "depthTest":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "depthTest"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_depthTest"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.depthTest || "";
+
+                    $(input).on("click", function(){
+                        json.depthTest = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "depthWrite":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "depthWrite"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_depthWrite"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.depthWrite || "";
+
+                    $(input).on("click", function(){
+                        json.depthWrite = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "depthFunc":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "depthFunc"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.min = 0; input.max = 7; input.step = 1;
+                    input.id = "input_depthFunc"; input.type = "number";  
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.depthFunc;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.depthFunc = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "morphNormals":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "morphNormals"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_morphNormals"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.morphNormals || "";
+
+                    $(input).on("click", function(){
+                        json.morphNormals = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "morphTargets":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "morphTargets"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_morphTargets"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.morphTargets || "";
+
+                    $(input).on("click", function(){
+                        json.morphTargets = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "refractionRatio":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "refractionRatio"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_refractionRatio"; input.type = "number";  input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.refractionRatio;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.refractionRatio = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "metalness":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "metalness"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_metalness"; input.type = "number";  input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.metalness;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.metalness = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "roughness":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "roughness"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_roughness"; input.type = "number";  input.step = 0.01;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.roughness;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.roughness = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "shading":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "shading"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_shading"; input.type = "number"; 
+                    input.step = 1; input.min = 1; input.max = 2;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.shading;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.shading = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "side":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "side"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_side"; input.type = "number"; 
+                    input.step = 1; input.min = 0; input.max = 2;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.side;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.side = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframeLinewidth":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframeLinewidth"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframeLinewidth"; 
+                    input.type = "number"; input.step = 1; input.min = 1;
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+
+                    input.value = json.wireframeLinewidth;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.wireframeLinewidth = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframeLinecap":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframeLinecap"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframeLinecap"; input.type = "text"; 
+                    input.style.cssText = "width:40%;"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "material-textfield"); 
+
+                    input.value = json.wireframeLinecap;
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "wireframeLinejoin":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "wireframeLinejoin"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_wireframeLinejoin"; input.type = "text"; 
+                    input.style.cssText = "width:40%;"; input.readOnly = true;
+                    input.classList.add("form-control", "pull-right", "material-textfield"); 
+
+                    input.value = json.wireframeLinejoin;
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "polygonOffset":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "polygonOffset"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.id = "input_polygonOffset"; input.type = "checkbox"; 
+                    input.classList.add("form-control", "pull-right", "material-checkbox");
+
+                    input.checked = json.polygonOffset || "";
+
+                    $(input).on("click", function(){
+                        json.polygonOffset = this.checked;
+                        propertyValueChanged.dispatch(key, this.checked);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "polygonOffsetFactor":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "polygonOffsetFactor"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_polygonOffsetFactor"; input.type = "number"; input.step = 1;
+
+                    input.value = json.polygonOffsetFactor;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.polygonOffsetFactor = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "polygonOffsetUnits":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "polygonOffsetUnits"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_polygonOffsetUnits"; input.type = "number"; input.step = 1;
+
+                    input.value = json.polygonOffsetUnits;
+
+                    $(input).on("input", function(){
+                        var value = parseInt(this.value);
+                        json.polygonOffsetUnits = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
+            break;
+
+            case "envMapIntensity":
+
+                (function(){
+
+                    var span = document.createElement("span");
+                    span.innerText = "envMapIntensity"; span.style.cssText = "vertical-align:-0.7rem;";
+
+                    var input = document.createElement("input"); 
+                    input.classList.add("form-control", "pull-right", "material-input-number");
+                    input.id = "input_envMapIntensity"; input.type = "number";  input.step = 0.01;
+
+                    input.value = json.envMapIntensity;
+
+                    $(input).on("input", function(){
+                        var value = round(this.value, 2);
+                        json.envMapIntensity = value;
+                        propertyValueChanged.dispatch(key, value);
+                    });
+
+                    $(propControls).append(span, input);
+
+                })();
+
             break;
 
         }
@@ -1003,62 +2155,460 @@
         });
     });
 
+    function warningDialogOptions(msg){
+        return {
+            size: "small",
+            className: "middle",
+            title: `<div class="alert-icon icon-warning"></div>`
+            + `<h2 style="margin:auto;">Sorry!</h2>`,
+            message: `<div>${msg}</div>`,
+            buttons: {
+                cancel: {
+                    label: "Close",
+                    className: "btn-default",
+                    callback: function(){
+                        debugMode && console.log(msg);
+                    },
+                },
+            },
+        };
 
+    }
 
+//  BUTTON IMPORT.
 
+    $(textureImportBtn).on("click", function(){
+        $(textureFileinput).val("");
+        $(textureFileinput).click();
+    });
 
+    $(textureFileinput).on("change", function(){
 
+        if ( this.files.length == 0 ) return;
 
+        resetTextureCheckboxes();
 
+        for (var i = 0; i < this.files.length; i++ ) {
 
+            (function(){
 
+                var file = textureFileinput.files[i];
+                var name = textureFileinput.files[i].name;
 
+                if ( name in files && file.lastModified == files[name].lastModified 
+                    && file.size == files[name].size && file.type == files[name].type ) {
 
+                        return;
 
+                } else {
 
+                /*
+                    files[ name ] = file;
 
+                    var reader = new FileReader();
+                    reader.onload = function() {
 
+                        textures[ name ] = newJsonTexture();
+                        textures[ name ].sourceFile = reader.result;
+                        textures[ name ].name = name;
 
+                        var option = document.createElement("option");
+                        option.id = textures[ name ]._id;
+                        option.value = option.innerText = name;
+
+                        $(textureDroplist).append(option);
+
+                    };
+
+                    reader.readAsDataURL(files[ name ]);
+                */
+
+                    files[ name ] = URL.createObjectURL(file);  // DO NOT REVOKE! important!
+
+                    textures[ name ] = newJsonTexture();
+                    textures[ name ].name = name;
+                    textures[ name ].sourceFile = files[ name ]; // DO NOT REVOKE! important!
+
+                    var option = document.createElement("option");
+                    option.id = textures[ name ]._id;
+                    option.value = option.innerText = name;
+                    $(textureDroplist).append(option);
+
+                }
+
+            })();
+
+        }
+
+        debugMode && console.log({
+            "files": files, 
+            "textures": textures,
+        });
+
+    });
+
+//  SELECT TEXTURE DROPLIST.
+
+    $(textureDroplist).on("change", function(){
+
+        resetTextureCheckboxes();
+
+        if ( this.value ) {
+
+            $(textureControls).slideDown();
+            texturePreview.src = textures[ this.value ].sourceFile;
+
+        } else {
+
+            $(textureControls).slideUp();
+            updateTexturePreviewUVImage();
+
+        }
+
+    });
+
+//  BUTTON DELETE.
+
+    $(textureDeleteBtn).on("click", function(){
+
+        var option = textureDroplist.selectedOptions[0];
+
+        if ( !option ) return;
+        if ( !option.value ) return;
+
+        var objectURL = files[option.value];
+        debugMode && console.log(objectURL);
+
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+
+            $(option).remove();
+
+            resetTextureCheckboxes();
+            $(textureDroplist).change();
+            $(textureControls).slideUp();
+
+        //  Optional.
+
+            URL.revokeObjectURL( objectURL );
+            delete files[ option.value ];
+            delete textures[ option.value ];
+            debugMode && console.log({"files":files, "textures": textures});
+
+        }, 250 );
+
+    });
+
+//  BUTTON CLEAR.
+
+    $(texturesClearBtn).on("click", function(){
+
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+            debugMode && console.log({"files":files, "textures": textures});
+
+            $(textureDroplist).children().remove();
+            var option = document.createElement("option");
+            option.value = "";  option.innerText = "Select imported texture:";
+            $(textureDroplist).append(option);
+
+            resetTextureCheckboxes();
+            $(textureControlSelector).slideUp();
+
+        //  Optional.
+
+            for (var name in textures){
+
+                var objectURL = files[name];
+                ULR.revokeObjectURL( objectURL );
+
+                delete files[name];
+                delete textures[name];
+
+            }
+
+        //  files = {}; textures = {};
+
+        }, 250 );
+
+    });
+
+//  BUTTON UPLOAD (hidden).
+
+    $(textureUploadBtn).on("click", function(){
+        debugMode && console.log({"uploads":uploads});
+
+        if ( !uploads.length ) {
+            var msg = "There is nothing to upload.";
+            return bootbox.dialog( warningDialogOptions(msg) );
+        }
+
+        if ( !navigator.onLine ) {
+            var msg = "Your connection to the internet is down.";
+            return bootbox.dialog( warningDialogOptions(msg) );
+        }
+
+        clearTimeout(this.interval);
+        this.interval = setTimeout( function(){
+
+            while( uploads.length ){
+                uploads.shift().call();
+            }
+
+        }, 250 );
+
+    });
+
+//  BUTTON SAVE.
+
+    var materialSaveButtonClicked = new Signal();
+
+    $(materialButtonSave).on("click", function(){
+
+        if ( !json._id ) json._id = ObjectId();  
+        if ( !json.uuid ) json.uuid = generateUUID();  
+
+        if ( !json.name ) {
+
+            var defaultName = "untitled material";
+            var title = `<div class="alert-icon icon-warning"></div>`
+            + `<h2 style="margin:auto;">Name required</h2>`
+            + `<div>Please type a name for this material</div>`;
+
+            return bootbox.prompt({
+                title: title,
+                size: "small",
+                className: "middle",
+                value: defaultName,
+                closeButton: false,
+                callback: callback,
+            });
+
+            function callback(result){
+
+                var msg = `Save aborted.`;
+                var err = `Name is required. Save canceled.`;
+
+                titleTextfield.value = result;  // optional!
+                debugMode && console.log({"result":result});
+
+                if ( result == defaultName ) {
+                    return $(materialButtonSave).click();
+                } else if ( result == null ) {
+                    return bootbox.dialog( cancelDialogOptions(msg) );
+                } else if ( result.length == 0 ) {
+                    return bootbox.dialog( errorDialogOptions(err) );
+                } else {
+                    json.name = result;
+                    titleTextfield.value = json.name;  // optional!
+                    return materialSaveButtonClicked.dispatch();
+                }
+            }
+
+        }
+
+        materialSaveButtonClicked.dispatch();
+
+    });
+
+    //  Validate json.
+    /*
+        if ( window.validator ) {
+            if (!(function(){
+                var str = JSON.stringify(json);
+                return validator.isJSON( str );
+            })()) throw "json is not valid";
+        }
+    */
+
+    materialSaveButtonClicked.add( function(){
+
+    //  Material metadata.
+
+        json.meta = {};
+        json.meta.slot = slotDroplist.value;
+        json.meta.gender = genderDroplist.value;
+        debugMode && console.log({"json":json});
+
+    //  Insert to collection.
+
+        var collection = db.collection("materials");
+        debugMode && console.log({"collection":collection});
+
+        collection.insert(json, function(err){
+            if (err) throw err;
+        }).then(function(){
+
+        //  Upload texture images (in background).
+            var selector = {_id:json._id};
+            return collection.findOne(selector, function(err){
+                if (err) throw err;
+            }).then(function(doc){
+                if (!doc) throw "material could not be found!";
+                return doc;
+            });
+
+        }).then(function(doc){
+            debugMode && console.log(doc);
+
+        //  Filter duplicate textures.
+
+            var textureMaps = maps.filter(function(map){
+                return ( doc[ map ] != undefined );
+            });
+
+            debugMode && console.log("textureMaps:", textureMaps);
+
+        //  First pass (collect data).
+
+            var textureImages = {};
+
+            textureMaps.forEach(function( key ){
+                if ( !doc[ key ] ) return;
+                var texture = doc[ key ];
+                if ( texture.sourceFile && texture.name ) {
+                    var name = texture.name;
+                    if ( textureImages[ name ] == undefined ) {
+                        textureImages[ name ] = { 
+                            name: name,
+                            maps: [ key ],
+                            data: texture.sourceFile,  // texture.sourceFile.split(";base64,").pop(), // important!
+                            type: files[ name ].type,  // texture.sourceFile.split(";base64,").shift().replace("data:", ""),
+                        };
+                    }
+                }
+            });
+
+            if ( textureImages === {} ) throw "None textures found.";
+
+        //  Second pass (collect mapkeys).
+
+            debugMode && console.log( {"textureImages": textureImages} );
+
+            textureMaps.forEach(function( key ){
+                if ( !doc[ key ] ) return;
+                var name = doc[ key ].name;
+                if ( !textureImages[ name ] ) return;
+                if ( !textureImages[ name ].maps ) return;
+                if ( !textureImages[ name ].maps.includes(key) ) {
+                    textureImages[ name ].maps.push( key );
+                }
+            });
+
+        //  Third pass (upload images in background).
+
+            debugMode && console.log( {"textureImages": textureImages} );
+
+            for (var name in textureImages ) {
+
+                (function(){
+
+                    var file = files[ name ];
+                    var selector = {_id:json._id};
+                    var item = textureImages[ name ];
+
+                    uploads.push( function(){
+                        new Promise(function(resolve, reject){
+
+                            var formdata = new FormData();
+                            formdata.append("image", file);
+                            formdata.append("type",  file.type);
+                            formdata.append("name",  file.name);
+
+                            var xhttp = new XMLHttpRequest();
+                            var endpoint = "https://api.imgur.com/3/image";
+                            var clientid = "60db267c697bb33";  // textures.
+                            xhttp.open('POST', endpoint, true);
+                            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                            xhttp.onreadystatechange = function () {
+                                if (this.readyState === 4) {
+                                    var response = "";
+                                    if (this.status >= 200 && this.status < 300) {
+                                        response = JSON.parse(this.responseText);
+                                        resolve( response ); // resolve promise.
+                                    } else {
+                                        var err = JSON.parse(this.responseText).data.error;
+                                        console.error("TextureUploadError:", err.type, err);
+                                        throw err;
+                                    }
+                                }
+                            };
+
+                            xhttp.send(formdata);
+                            xhttp = null;
+
+                        }).then( function( response ){
+
+                            var data = response.data;
+                            var modifier = {$set:{}};
+
+                            item.maps.forEach(function(mapkey){
+
+                                var imagekey = `${mapkey}.image`;        // mapkey + ".image";
+                                var sourcekey = `${mapkey}.sourceFile`;  // mapkey + ".sourceFile";
+                                modifier.$set[ imagekey ] = data.link;
+                                modifier.$set[ sourcekey ] = data.link;
+
+                            //  texture metadata. (optional).
+                                var textureMetakey  = `${mapkey}.meta`;   // mapkey + ".meta";
+                                var materialMetakey = `meta.${mapkey}`;   // "meta." + mapkey;
+                                modifier.$set[ textureMetakey ] = data.id;
+                                modifier.$set[ materialMetakey ] = data.id;
+
+                            });
+
+                            debugMode && console.log(modifier);
+
+                            collection.update(selector, modifier, function(err){
+                                if (err) throw err;
+                            }).then( function(){
+                                console.log(`Texture ${data.name} uploaded successfully!`);
+                            }).catch(function(err){
+                                console.error(err);
+                                throw err;
+                            });
+
+                            return data;
+
+                        }).then( function( data ){
+
+                        //  Add to cache.
+                            caches.open("textures").then(function(cache){
+                                cache.add(data.link);
+                            });
+
+                        }).catch(function(err){
+                            console.error(err);
+                            bootbox.dialog( errorDialogOptions(err) );
+                        });
+
+                    }); // end of push().
+
+                })();
+
+            }
+
+        }).then(function(){
+
+        //  Success.
+
+            resetTextureCheckboxes();
+            materialDroplistChanged.dispatch();
+
+            var msg = `Material ${json.name} has been saved!`;
+            userNotificationDialogMessage(msg);
+
+        }).catch(function(err){
+            console.error(err);
+            bootbox.dialog( errorDialogOptions(err) );
+        });
+
+    });
 
 
 //  on Startup.
 
     materialDroplistChanged.dispatch(); // important!
-
-
-//  deepCopy.js
-
-    function deepCopy(obj) {
-        if (Object.prototype.toString.call(obj) === "[object Array]") {
-            var out = [], i = 0, len = obj.length;
-            for ( ; i < len; i++ ) {
-                out[i] = arguments.callee(obj[i]);
-            }
-            return out;
-        }
-        if (typeof obj === "object") {
-            var out = {}, i;
-            for ( i in obj ) {
-                out[i] = arguments.callee(obj[i]);
-            }
-            return out;
-        }
-        return obj;
-    }
-
-
-//  round.js  source: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round"
-
-    function round(number, precision) {
-        var shift = function (number, precision, reverseShift) {
-            if (reverseShift) {
-                precision = -precision;
-            }  
-            numArray = ("" + number).split("e");
-            return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
-        };
-        return shift(Math.round(shift(number, precision, false)), precision, true);
-    }
 
 })();
 
