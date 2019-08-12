@@ -244,14 +244,41 @@
     <div id="upload-material-textures" class="form-control btn btn-success btn-white-outline gradient-btn pull-right hidden" style="width:24%;">Upload</div>
 </div>
 
-
 <script>
 
-//  Gender droplist.
-//  What does gender droplist do:
-//  1. Changes gender of localPlayer.outfit.
-//  2. Stores in localStorage key "Sex" the gender value.
-//  3. Always have a valid value. (null values not allowed).
+(function(){
+
+    const tab = document.getElementById("material-tab");
+    const materialHeaderSelector  = ".material-header";
+    const helpersHeaderSelector   = ".helpers-header";
+    const materialControlSelector = "#material-property-controls";
+    const propertyControlsPanel = $(tab).find("#material-property-controls").get(0);
+
+    var Signal = signals.Signal;
+    var dblclicked = new Signal();
+
+//  Event handlers.
+    function onDoubleClickEventHandler( element ){
+        if ( $(element).css("display") == "none" ) {
+            $(element).slideDown();
+        } else {
+            $(element).slideUp();
+        }
+    }
+
+//  Event listeners.
+    dblclicked.add(onDoubleClickEventHandler);
+
+//  Dispatch events.
+    $(materialHeaderSelector).on("dblclick", function(){
+        dblclicked.dispatch( propertyControlsPanel );
+    });
+
+})();
+
+</script>
+
+<script>
 
 (function(){
 
@@ -268,33 +295,8 @@
     const slotDroplist = outfitDroplist;
 
     var Signal = signals.Signal;
-    var genderChanged = new Signal();
 
-    $(genderDroplist).on("change", function(){
-
-        if ( !this.value ) {
-        //  Set value to current gender and return.
-            this.value = contentWindow.localPlayer.outfit.getGender(); 
-            return;
-        }
-
-        genderChanged.dispatch( this.value );
-
-    });
-
-    genderChanged.add(function(value){
-
-        if ( !value ) return;
-
-        var data = "/gender/" + value;
-        contentWindow.localPlayerHandler(data);
-
-    //  Store gender to localeStorage.
-        store( "Sex", data );
-
-    });
-
-    genderChanged.add(function(){
+    function updateTexturePreviewUVImage(){
 
         if ( importedTextures.value ) return;
 
@@ -308,16 +310,61 @@
 
         var THREE = contentWindow.THREE; // (must be the scene "THREE") important!
         var geometry = contentWindow[gender][slot].geometry;
-        var src = THREE.UVsDebug(geometry, 512).toDataURL();
+        texturePreview.src = THREE.UVsDebug(geometry, 512).toDataURL();
 
-        $(texturePreview).attr({"src":src});
+    }
+
+//  Gender droplist.
+//  1. Changes gender of localPlayer.outfit.
+//  2. Stores in localStorage key "Sex" the command.
+//  3. Updates texture preview image with outfit slot UV.
+//  4. Always have a valid value. (null values not allowed).
+
+    var genderChanged = new Signal();
+
+    $(genderDroplist).on("change", function(){
+        genderChanged.dispatch( this.value );
+    });
+
+    genderChanged.add(function(value){
+
+    //  Null values NOT allowed!
+    //  Restore gender droplist value.
+
+        if ( !value ) {
+            genderDroplist.value = contentWindow.localPlayer.outfit.getGender();
+            return;
+        }
+
+    //  Send command to viewer window.
+        var cmd = "/gender/" + value;
+        contentWindow.localPlayerHandler(cmd);
+    //  Store command to localeStorage.
+        store( "Sex", cmd );
 
     });
 
+    genderChanged.add(updateTexturePreviewUVImage);
 
 
+//  Outfit Slot droplist.
+//  1. Select outfit slot.
+//  2. Updates texture preview image with outfit slot UV.
 
+    var outfitSlotChanged = new Signal();
 
+    $(slotDroplist).on("change", function(){
+        outfitSlotChanged.dispatch(this.value);
+    });
+
+    outfitSlotChanged.add(function(value){
+    //  Null values are allowed!
+    //  Send command to viewer window.
+        var cmd = "/select/" + value;
+        contentWindow.localPlayerHandler(cmd);
+    });
+
+    outfitSlotChanged.add(updateTexturePreviewUVImage);
 
 
 
