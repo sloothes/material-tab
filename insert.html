@@ -2444,12 +2444,13 @@
             return collection.findOne(selector, function(err){
                 if (err) throw err;
             }).then(function(doc){
-                if (!doc) throw "material could not be found!";
                 return doc;
             });
 
         }).then(function(doc){
-            debugMode && console.log(doc);
+            debugMode && console.log("inserted material:", doc);
+
+            if (!doc) throw `material ${json._id} could not be found!`;
 
         //  Filter duplicate textures.
 
@@ -2540,41 +2541,41 @@
                         }).then( function( response ){
 
                             var data = response.data;
-                            var modifier = {$set:{}};
-
-                            item.maps.forEach(function(mapkey){
-
-                                var imagekey = `${mapkey}.image`;        // mapkey + ".image";
-                                var sourcekey = `${mapkey}.sourceFile`;  // mapkey + ".sourceFile";
-                                modifier.$set[ imagekey ] = data.link;
-                                modifier.$set[ sourcekey ] = data.link;
-
-                            //  texture metadata. (optional).
-                                var textureMetakey  = `${mapkey}.meta`;   // mapkey + ".meta";
-                                var materialMetakey = `meta.${mapkey}`;   // "meta." + mapkey;
-                                modifier.$set[ textureMetakey ] = data.id;
-                                modifier.$set[ materialMetakey ] = data.id;
-
-                            });
-
-                            debugMode && console.log(modifier);
-
-                            collection.update(selector, modifier, function(err){
-                                if (err) throw err;
-                            }).then( function(){
-                                console.log(`Texture ${data.name} uploaded successfully!`);
-                            }).catch(function(err){
-                                console.error(err);
-                                throw err;
-                            });
-
-                            return data;
-
-                        }).then( function( data ){
 
                         //  Add to cache.
                             caches.open("textures").then(function(cache){
                                 cache.add(data.link);
+
+                            //  Update material doc.
+
+                                var modifier = {$set:{}};
+
+                                item.maps.forEach(function(mapkey){
+
+                                    var imagekey = `${mapkey}.image`;        // mapkey + ".image";
+                                    var sourcekey = `${mapkey}.sourceFile`;  // mapkey + ".sourceFile";
+                                    modifier.$set[ imagekey ] = data.link;
+                                    modifier.$set[ sourcekey ] = data.link;
+
+                                //  texture metadata. (optional).
+                                    var textureMetakey  = `${mapkey}.meta`;   // mapkey + ".meta";
+                                    var materialMetakey = `meta.${mapkey}`;   // "meta." + mapkey;
+                                    modifier.$set[ textureMetakey ] = data.id;
+                                    modifier.$set[ materialMetakey ] = data.id;
+
+                                });
+
+                                debugMode && console.log(modifier);
+
+                                collection.update(selector, modifier, function(err){
+                                    if (err) throw err;
+                                }).then( function(){
+                                    console.log(`Texture ${data.name} uploaded successfully!`);
+                                }).catch(function(err){
+                                    console.error(err);
+                                    throw err;
+                                });
+
                             });
 
                         }).catch(function(err){
@@ -2588,15 +2589,27 @@
 
             }
 
+            debugMode && console.log({"uploads": uploads});
+
+        }).then(function(){
+
+            if ( navigator.onLine ) {
+                while ( uploads.length ) {
+                    uploads.shift().call();
+                }
+            }
+
         }).then(function(){
 
         //  Success.
 
+            if (uploads.length == 0) {
+                var msg = `Material ${json.name} has been saved!`;
+                userNotificationDialogMessage(msg);
+            }
+
             resetTextureCheckboxes();
             materialDroplistChanged.dispatch();
-
-            var msg = `Material ${json.name} has been saved!`;
-            userNotificationDialogMessage(msg);
 
         }).catch(function(err){
             console.error(err);
