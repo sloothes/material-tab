@@ -245,4 +245,100 @@
 </div>
 
 
+<script>
+
+//  Gender droplist.
+//  What does gender droplist do:
+//  1. Changes gender of localPlayer.outfit.
+//  2. Stores in localStorage key "Sex" the gender value.
+//  3. Always have a valid value. (null values not allowed).
+
+(function(){
+
+    const tab = document.getElementById("material-tab");
+    const viewer = document.getElementById("viewer");
+    const contentWindow = viewer.contentWindow;
+
+    const titleTextfield = $(tab).find("input#material-title").get(0);
+    const genderDroplist = $(tab).find("#material-gender-droplist").get(0);
+    const outfitDroplist = $(tab).find("#material-outfit-slot").get(0);
+    const texturePreview = $(tab).find("img#material-texture-preview").get(0);
+    const importedTextures = $(tab).find("#material-imported-textures").get(0);
+
+    const slotDroplist = outfitDroplist;
+
+    var Signal = signals.Signal;
+    var genderChanged = new Signal();
+
+    $(genderDroplist).on("change", function(){
+
+        if ( !this.value ) {
+        //  Set value to current gender and return.
+            this.value = contentWindow.localPlayer.outfit.getGender(); 
+            return;
+        }
+
+        genderChanged.dispatch( this.value );
+
+    });
+
+    genderChanged.add(function(value){
+
+        if ( !value ) return;
+
+        var data = "/gender/" + value;
+        contentWindow.localPlayerHandler(data);
+
+    //  Store gender to localeStorage.
+        store( "Sex", data );
+
+    });
+
+    genderChanged.add(function(){
+
+        if ( importedTextures.value ) return;
+
+        if ( !outfitDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = outfitDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !contentWindow[gender][slot] ) return;
+
+        var THREE = contentWindow.THREE; // (must be the scene "THREE") important!
+        var geometry = contentWindow[gender][slot].geometry;
+        var src = THREE.UVsDebug(geometry, 512).toDataURL();
+
+        $(texturePreview).attr({"src":src});
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+})();
+
+</script>
 
