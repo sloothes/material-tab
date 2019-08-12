@@ -401,6 +401,7 @@
 
 (function(){
 
+    var json;
     var files = {};
     var uploads = [];
     var textures = {};
@@ -436,6 +437,11 @@
     const textureControlSelector = "#material-texture-controls";
     const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
 
+    const materialButtonNew   = $(tab).find("#new-material-button").get(0);
+    const materialButtonCopy  = $(tab).find("#copy-material-button").get(0);
+    const materialButtonApply = $(tab).find("#apply-material-button").get(0);
+    const materialButtonSave  = $(tab).find("#save-material-button").get(0);
+
     var THREE = contentWindow.THREE; // important!
 
     var Signal = signals.Signal;
@@ -444,10 +450,236 @@
     var materialDroplistChanged = new Signal();
     var propertiesDroplistChanged = new Signal();
 
+
+//  TITLE TEXTFIELD.
+
     $(titleTextfield).on("input", function(){
         json.name = this.value;
         $(propControls).find(nameInputSelector).val(this.value);
     });
+
+
+//  SLOT DROPLIST.
+
+    $(slotDroplist).on("change", function(){
+        materialDroplistChanged.dispatch();
+    });
+
+
+//  TYPE DROPLIST.
+
+    $(typeDroplist).on("change", function(){
+        materialDroplistChanged.dispatch();
+    });
+
+
+//  PROP DROPLIST.
+
+    $(propDroplist).on("change", function(){
+        propertiesDroplistChanged.dispatch();
+    });
+
+
+//  BUTTON NEW.
+
+    $(materialButtonNew).on("click", function(){
+        materialDroplistChanged.dispatch();
+        outfitMaterialChanged.dispatch();
+        debugMode && console.log({"new":json});
+    });
+
+
+//  BUTTON APPLY.
+
+    $(materialButtonApply).on("click", function(){
+        outfitMaterialChanged.dispatch();
+    });
+
+
+//  BUTTON COPY.
+
+    $(materialButtonCopy).on("click", function(){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value ) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        if ( !contentWindow[gender][slot] ) return;
+        var copy = contentWindow[ gender ][ slot ].material.clone();
+
+    //  "materialtoJSON" must be the function of the scene AW3D.js
+    //  else does not recognize "color" as instance of THREE.Color.
+    //  var materialtoJSON = viewer.contentWindow.materialtoJSON; 
+
+        json = contentWindow.materialtoJSON( copy ); // danger!
+
+        json.name += " copy";
+        json._id = ObjectId();  
+        json.uuid = generateUUID();
+
+        outfitMaterialChanged.dispatch();
+        titleTextfield.value = json.name;
+
+        debugMode && console.log({"copy":json});
+
+    });
+
+
+
+//  MATERIAL.
+
+    function newMeshStandardJsonMaterial(){
+        return {
+            bumpScale: 0.05,
+            color: 16777215,
+            displacementBias: 0,
+            displacementScale: 0,
+            emissive: 0,
+            emissiveIntensity: 1,
+            metalness: 0.5,
+            name: "untitled standard material",
+            normalScale: [0, 0],
+            opacity: 1,
+            roughness: 0.5,
+            shading: 2,
+            side: 0,
+            skinning: true,
+            transparent: false,
+            type: "MeshStandardMaterial",
+            uuid: generateUUID(),
+            visible: true,
+            wireframe: false,
+            _id: ObjectId(),
+        };
+    }
+
+    function newMeshPhongJsonMaterial(){
+        return {
+            bumpScale: 0.05,
+            color: 16777215,
+            displacementBias: 0,
+            displacementScale: 0,
+            emissive: 0,
+            emissiveIntensity: 1,
+            name: "untitled phong material",
+            normalScale: [0, 0],
+            opacity: 1,
+            reflectivity: 1,
+            shading: 2,
+            shininess: 30,
+            side: 0,
+            skinning: true,
+            specular: 1118481,
+            transparent: false,
+            type: "MeshPhongMaterial",
+            uuid: generateUUID(),
+            visible: true,
+            wireframe: false,
+            _id: ObjectId(),
+        };
+    }
+
+    function newMeshLambertJsonMaterial(){
+        return {
+            color: 16777215,
+            emissive: 0,
+            emissiveIntensity: 1,
+            name: "untitled lambert material",
+            opacity: 1,
+            reflectivity: 1,
+            refractionRatio: 0.98,
+            shading: 2,
+            side: 0,
+            skinning: true,
+            transparent: false,
+            type: "MeshLambertMaterial",
+            uuid: generateUUID(),
+            visible: true,
+            wireframe: false,
+            _id: ObjectId(),
+        };
+    }
+
+    function newMeshBasicJsonMaterial(){
+        return {
+            color: 16777215,
+            lights: false,
+            name: "untitled basic material",
+            opacity: 1,
+            reflectivity: 1,
+            refractionRatio: 0.98,
+            shading: 2,
+            side: 0,
+            skinning: true,
+            transparent: false,
+            type: "MeshBasicMaterial",
+            uuid: generateUUID(),
+            visible: true,
+            wireframe: false,
+            _id: ObjectId(),
+        };
+    }
+
+    function newJsonMaterial(){
+        return {
+            alphaTest: 0,
+            blendDst: 205,
+            blendEquation: 100,
+            blendSrc: 204,
+            blending: 1,
+            clipShadows: false,
+            colorWrite: true,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            fog: true,
+            lights: true,
+            name: "untitled material",
+            opacity: 1,
+            overdraw: 0,
+            polygonOffset: false,
+            polygonOffsetFactor: 0,
+            polygonOffsetUnits: 0,
+            premultipliedAlpha: false,
+            shading: 2,
+            side: 0,
+            transparent: false,
+            type: "Material",
+            uuid: generateUUID(),
+            vertexColors: 0,
+            visible: true,
+            _id: ObjectId(),
+        };
+    }
+
+    function newJsonTexture() {
+        return {
+            anisotropy: 1,
+            encoding: 3000,
+            flipY: true,
+            format: 1021,
+            generateMipmaps: true,
+            magFilter: 1006,
+            mapping: 300,
+            minFilter: 1008,
+            mipmaps: [],
+            name: "untitled texture",
+            offset: [0, 0],
+            premultiplyAlpha: false,
+            repeat: [1, 1],
+            sourceFile: "",
+            type: 1009,
+            unpackAlignment: 4,
+            uuid: generateUUID(),
+            version: 0,
+            wrapS: 1001,
+            wrapT: 1001,
+            _id: ObjectId(),
+        };
+    }
+
 
     outfitMaterialChanged.add(function(){
 
@@ -468,32 +700,187 @@
 
     });
 
+    propertyValueChanged.add( function(key, value){
+
+        if ( key == undefined ) return;
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value) return;
+
+        var data = {};
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        data.key    = key;
+        data.value  = value;
+        data.slot   = slot;
+        data.gender = gender;
+
+        switch( key ) {
+
+            case "map":
+            case "alphaMap":
+                viewer.contentWindow.localPlayerMaterialHandler(data);
+            break;
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+            default:
+                viewer.contentWindow.localPlayerMaterialHandler(data);
+            break;
+        }
+
+    });
+
+    propertiesDroplistChanged.add(function (){
+
+        $(propControls).css({height:""});
+        $(propControls).children().remove();
+        var key = $(propDroplist.selectedOptions[0]).text();
+
+        switch (key) {
+
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+
+        }
+
+    });
+
+//  (1) materialDroplistChanged.
+
+    materialDroplistChanged.add(function(){
+
+    //  Create new json material.
+
+        var type = typeDroplist.value;
+
+        switch ( type ) {
+
+            case "MeshStandardMaterial":
+                json = newMeshStandardJsonMaterial();
+            break;
+
+            case "MeshPhongMaterial":
+                json = newMeshPhongJsonMaterial();
+            break;
+
+            case "MeshLambertMaterial":
+                json = newMeshLambertJsonMaterial();
+            break;
+
+            case "MeshBasicMaterial":
+                json = newMeshBasicJsonMaterial();
+            break;
+
+            default:
+                json = newMeshStandardJsonMaterial();
+            break;
+        }
+
+    });
+
+//  (2) materialDroplistChanged.
+
+    materialDroplistChanged.add(function(){
+
+        titleTextfield.value = json.name;
+
+        if ( !json._id ) json._id = ObjectId();
+        if ( !json.uuid) json.uuid = generateUUID();
+
+        $(propDroplist).children().remove();
+        $(propControls).children().remove();
+
+    //  Sort json keys.
+        var sortedKeys = Object.keys(json).sort();
+        for ( var i = 0; i < sortedKeys.length; i++ ) {
+
+            var key = sortedKeys[i];
+            var option = document.createElement("option");
+
+            option.value = key; 
+            option.innerText = key;
+
+            $(propDroplist).append(option);
+
+        }
+
+        propertiesDroplistChanged.dispatch();
+
+    });
+
+
+
+
+//  TEXTURE.
+
+    const maps = [
+        "map", 
+        "bumpMap", 
+        "emissiveMap", 
+        "metalnessMap", 
+        "roughnessMap", 
+        "displacementMap", 
+        "alphaMap", 
+        "normalMap", 
+        "lightMap", 
+        "aoMap", 
+        "envMap",
+    ];
+
+    maps.forEach(function( key ){
+        $(textureControls).find(`input#${key}`).on("click", function(){
+
+            if (!textureDroplist.value) return;
+
+            var name = textureDroplist.value;
+
+            if ( !this.checked ) {
+
+                var object = null;
+                delete json[ key ];
+
+            } else {
+
+                var object  = textures[ name ];  //  json texture.
+                json[ key ] = textures[ name ];  //  json texture.
+
+            }
+
+            propertyValueChanged.dispatch( key, object );
+
+        });
+    });
 
 
 
 
 
+//  on Startup.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    materialDroplistChanged.dispatch();
 
 })();
 
