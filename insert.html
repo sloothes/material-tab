@@ -2234,7 +2234,7 @@
 
                     textures[ name ] = newJsonTexture();
                     textures[ name ].name = name;
-                    textures[ name ].sourceFile = files[ name ]; // DO NOT REVOKE! important!
+                    textures[ name ].sourceFile = URL.createObjectURL( files[name] ); // DO NOT REVOKE! important!
 
                     var option = document.createElement("option");
                     option.id = textures[ name ]._id;
@@ -2283,7 +2283,8 @@
         if ( !option ) return;
         if ( !option.value ) return;
 
-        var objectURL = files[option.value];
+        var name = option.value;
+        var objectURL = textures[ name ].sourceFile; // files[option.value];
         debugMode && console.log(objectURL);
 
         clearTimeout(this.interval);
