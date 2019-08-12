@@ -476,7 +476,7 @@
 //  PROP DROPLIST.
 
     $(propDroplist).on("change", function(){
-        propertiesDroplistChanged.dispatch();
+        propertiesDroplistChanged.dispatch(this.value);
     });
 
 
@@ -720,7 +720,7 @@
 
             case "map":
             case "alphaMap":
-                viewer.contentWindow.localPlayerMaterialHandler(data);
+                contentWindow.localPlayerMaterialHandler(data);
             break;
         //
         //
@@ -736,39 +736,169 @@
         //
         //
             default:
-                viewer.contentWindow.localPlayerMaterialHandler(data);
+                contentWindow.localPlayerMaterialHandler(data);
             break;
         }
 
     });
 
-    propertiesDroplistChanged.add(function (){
+
+//  MATERIAL CONTROLS.
+
+    function colorControl(key){
+
+        if ( key != "color" ) return;
+        var input = document.createElement("input");
+        input.type = "hidden"; input.id = `material-input_${key}`;
+        $(propControls).append( input ); // (special case) important!
+
+        $(input).spectrum({
+            preferredFormat: "hex",
+            color: "#ffffff",
+            flat: true,
+            showInput: true,
+            showInitial: true,
+            showButtons: false,
+            allowEmpty: false,
+            move: function(color) {
+                var hex = color.toString("hex").replace(/#/, "0x");
+                json.color = Number(hex);
+                propertyValueChanged.dispatch(key, hex);
+            },
+        });
+
+    //  Colorpicker startup.
+        var hexString = `#${json.color.toString(16)}`;
+        $(input).spectrum( "set", hexString );
+
+    }
+
+    function emissiveControl(key){
+
+        if ( key != "emissive" ) return;
+        var input = document.createElement("input");
+        input.type = "hidden"; input.id = `material-input_${key}`;
+        $(propControls).append( input ); // (special case) important!
+
+        $(input).spectrum({
+            preferredFormat: "hex",
+            color: "#000000",
+            flat: true,
+            showInput: true,
+            showInitial: true,
+            showButtons: false,
+            allowEmpty: false,
+            move: function(color) {
+                var hex = color.toString("hex").replace(/#/, "0x");
+                json.emissive = Number(hex);
+                propertyValueChanged.dispatch(key, hex);
+            },
+        });
+
+    //  Colorpicker startup.
+        var hexString = `#${json.emissive.toString(16)}`;
+        $(input).spectrum( "set", hexString );
+
+    }
+
+    function _idControl(key){
+
+        if ( key != "_id" ) return;
+
+        var control = document.createElement("div");
+
+        var button = document.createElement("div");
+        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+        button.id = "material-button_id"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+        var input = document.createElement("input");
+        input.id = "material-input_id"; input.type = "text"; input.readOnly = true;
+        input.classList.add("form-control", "text-center", "pull-right", "uuid-material-textfield");
+
+        input.value = json[key]; // ObjectId();
+
+        $(button).on("click", function(){
+            input.value = json[key] = ObjectId();
+        });
+
+        $(control).append(button, input);
+
+        return control;
+    }
+
+    function uuidControl(key){
+
+        if ( key != "uuid" ) return;
+
+        var control = document.createElement("div");
+
+        var button = document.createElement("div");
+        button.classList.add("form-control", "btn", "btn-info", "btn-white-outline", "gradient-btn");
+        button.id = "texture-button_uuid"; button.innerText = "⟳"; button.style.cssText = "width:fit-content;";
+
+        var input = document.createElement("input");
+        input.id = `material-input_${key}`; input.type = "text"; input.readOnly = true;
+        input.classList.add("form-control", "pull-right", "uuid-material-textfield");
+
+        input.value = json[key]; // generateUUID();
+
+        $(button).on("click", function(){
+            input.value = json[key] = generateUUID();
+        });
+
+        $(control).append(button, input);
+
+        return control;
+    }
+
+
+
+
+
+
+
+
+
+
+//  MATERIAL PROPERTY DROPLIST.
+
+    propertiesDroplistChanged.add(function(key){
+
+        $(propControls).children().remove();
+
+        if ( !key ) return;
 
         $(propControls).css({height:""});
-        $(propControls).children().remove();
-        var key = $(propDroplist.selectedOptions[0]).text();
 
         switch (key) {
 
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+            case "_id":
+                $(propControls).append( _idControl(key) );
+            break;
+
+            case "uuid":
+                $(propControls).append( uuidControl(key) );
+            break;
+
+            case "color":
+                colorControl(key); // special case!
+                $(propControls).css({height:"auto"});
+            break;
+
+            case "emissive":
+                emissiveControl(key); // special case!
+                $(propControls).css({height:"auto"});
+            break;
 
         }
 
+        $(propControls).slideDown();
+
     });
 
-//  (1) materialDroplistChanged.
+
+//  MATERIAL TYPE DROPLIST.
+//  1.materialDroplistChanged
 
     materialDroplistChanged.add(function(){
 
@@ -801,7 +931,7 @@
 
     });
 
-//  (2) materialDroplistChanged.
+//  2.materialDroplistChanged
 
     materialDroplistChanged.add(function(){
 
@@ -827,10 +957,9 @@
 
         }
 
-        propertiesDroplistChanged.dispatch();
+        propertiesDroplistChanged.dispatch(propDroplist.value);
 
     });
-
 
 
 
@@ -878,9 +1007,58 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //  on Startup.
 
-    materialDroplistChanged.dispatch();
+    materialDroplistChanged.dispatch(); // important!
+
+
+//  deepCopy.js
+
+    function deepCopy(obj) {
+        if (Object.prototype.toString.call(obj) === "[object Array]") {
+            var out = [], i = 0, len = obj.length;
+            for ( ; i < len; i++ ) {
+                out[i] = arguments.callee(obj[i]);
+            }
+            return out;
+        }
+        if (typeof obj === "object") {
+            var out = {}, i;
+            for ( i in obj ) {
+                out[i] = arguments.callee(obj[i]);
+            }
+            return out;
+        }
+        return obj;
+    }
+
+
+//  round.js  source: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round"
+
+    function round(number, precision) {
+        var shift = function (number, precision, reverseShift) {
+            if (reverseShift) {
+                precision = -precision;
+            }  
+            numArray = ("" + number).split("e");
+            return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+        };
+        return shift(Math.round(shift(number, precision, false)), precision, true);
+    }
 
 })();
 
