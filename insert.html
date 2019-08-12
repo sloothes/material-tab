@@ -7,6 +7,7 @@
             version: 2.1,
             kind: "component",
             name: "insert.html",
+            from: "create.html",
             path: "/material-tab/insert.html",
             description: "creates and inserts outfit material in zangoDB.",
         };
@@ -31,6 +32,11 @@
         font-weight: bold;
     }
     
+    .material-textfield {
+        width:70%;
+        float:right;
+    }
+
     .x-large {
         font-size: x-large;
     }
@@ -40,8 +46,7 @@
     }
 
     .material-textfield {
-        width:70%;
-        float:right;
+        width:75%;
     }
 
     .uuid-material-textfield {
@@ -96,7 +101,6 @@
         width:93%;
     }
 
-
 </style>
 
 <div class="helpers-header material-header">
@@ -119,70 +123,6 @@
     </h4>
 </div>
 
-<script>
-
-(function(){
-
-    const viewer = document.getElementById("viewer");
-    const titleTextfield = $("input#material-title").get(0);
-    const slotDroplist   = $("#material-outfit-slot").get(0);
-    const genderDroplist = $("#material-gender-droplist").get(0);
-    const texturePreview = $("img#material-texture-preview").get(0);
-
-    var Signal = signals.Signal;
-    var genderChanged = new Signal();
-
-    $(genderDroplist).on("change", function(){
-
-        if ( !this.value ) {
-
-        //  Overwrite gender value.
-            this.value = viewer.contentWindow.localPlayer.outfit.getGender();
-        }
-
-    //  Null values not allowed.
-        if ( !this.value ) return;
-
-        genderChanged.dispatch( this.value );
-
-    });
-
-    genderChanged.add(function(value){
-
-    //  Null values not allowed.
-        if ( !value ) return;
-
-        var data = "/gender/" + value;
-        viewer.contentWindow.localPlayerHandler(data);
-
-        store( "Sex", data );
-
-    });
-
-    genderChanged.add(function(){
-
-        if ( $("#imported-textures").val() ) return;
-
-        if ( !slotDroplist.value ) return;
-        if ( !genderDroplist.value ) return;
-
-        var slot = slotDroplist.value;
-        var gender = genderDroplist.value;
-
-        if ( !viewer.contentWindow[gender][slot] ) return;
-
-        var THREE = viewer.contentWindow.THREE; // important!
-        var geometry = viewer.contentWindow[gender][slot].geometry;
-        var src = THREE.UVsDebug(geometry, 512).toDataURL();
-
-        $(texturePreview).attr({"src":src});
-
-    });
-
-})();
-
-</script>
-
 <div style="height:35px;margin-bottom:10px;">
     <h4><span style="vertical-align:-0.5rem;">Select outfit slot:</span>
         <div style="width:40%;display:inline-block;float:right;">
@@ -202,57 +142,6 @@
         </div>
     </h4>
 </div>
-
-<script>
-
-(function(){
-
-    const viewer = document.getElementById("viewer");
-    const titleTextfield = $("input#material-title").get(0);
-    const slotDroplist   = $("#material-outfit-slot").get(0);
-    const genderDroplist = $("#material-gender-droplist").get(0);
-
-    var Signal = signals.Signal;
-    var outfitSlotChanged = new Signal();
-
-    outfitSlotChanged.add(function(value){
-
-    //  Null values are allowed!
-        var data = "/select/" + value;
-        viewer.contentWindow.localPlayerHandler(data);
-
-    });
-
-    outfitSlotChanged.add(function(){
-
-        if ( $("#imported-textures").val() ) return;
-
-        if ( !slotDroplist.value ) return;
-        if ( !genderDroplist.value ) return;
-
-        var slot = slotDroplist.value;
-        var gender = genderDroplist.value;
-
-        if ( !viewer.contentWindow[gender][slot] ) return;
-
-        var THREE = viewer.contentWindow.THREE; // important!
-        var geometry = viewer.contentWindow[gender][slot].geometry;
-        var src = THREE.UVsDebug(geometry, 512).toDataURL();
-
-        $("img#material-texture-preview").attr({"src":src});
-
-    });
-
-    $(slotDroplist).on("change", function(){
-
-    //  Null values are allowed!
-        outfitSlotChanged.dispatch(this.value);
-
-    });
-
-})();
-
-</script>
 
 <div style="height:35px;margin-bottom:10px;">
     <h4><span style="vertical-align:-0.5rem;">Select material type:</span>
@@ -278,6 +167,29 @@
 </div>
 
 <div id="material-property-controls" class="well"></div>
+
+<div style="margin-bottom:10px;">
+    <div id="new-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
+    <div id="copy-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:24%;margin-left:1%;">Copy</div>
+    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Apply</div>
+    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Save</div>
+</div>
+
+<hr/>
+
+<div class="helpers-header texture-header">
+    <h2 style="margin-bottom:20px;">Texture:</h2>
+</div>
+
+<div id="material-texture-viewer" style="width:100%;text-align:center;margin-bottom:20px;">
+    <img id="material-texture-preview" width="290" height="290" style="margin:auto;">
+</div>
+
+<div style="height:45px;margin-bottom:10px;">
+    <select id="material-imported-textures" class="form-control material-texture-droplist" readonly>
+        <option value="">Select imported texture:</option>
+    </select>
+</div>
 
 <div id="material-texture-controls" class="well" style="background:none;border-radius:8px;height:auto;display:none;">
 
@@ -324,106 +236,13 @@
 
 </div>
 
-<hr/>
-
-<div style="margin-bottom:10px;">
-    <div id="new-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn pull-left" style="width:24%;">New</div>
-    <div id="copy-material-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:24%;margin-left:1%;">Copy</div>
-    <div id="apply-material-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:24%;">Apply</div>
-    <div id="save-material-button" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Save</div>
+<div style="margin-bottom:20px;">
+    <input id="texture-fileinput" type="file" class="hidden" multiple>
+    <div id="clear-imported-textures" class="form-control btn btn-danger btn-white-outline gradient-btn pull-left" style="width:24%;">Clear</div>
+    <div id="import-texture-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:50%;margin:0 1%;">Import textures</div>
+    <div id="delete-selected-texture" class="form-control btn btn-success btn-white-outline gradient-btn pull-right" style="width:24%;">Delete</div>
+    <div id="upload-material-textures" class="form-control btn btn-success btn-white-outline gradient-btn pull-right hidden" style="width:24%;">Upload</div>
 </div>
 
-<script>
 
-(function(){
-
-    const materialHeaderSelector = ".material-header";
-    const helpersHeaderSelector = ".helpers-header";
-    const materialControlSelector = "#material-property-controls";
-
-    var Signal = signals.Signal;
-    var dblclicked = new Signal();
-
-//  Event handlers.
-    function onDoubleClickEventHandler( element ){
-        if ( $(element).css("display") == "none" ) {
-            $(element).slideDown();
-        } else {
-            $(element).slideUp();
-        }
-    }
-
-//  Event listeners.
-    dblclicked.add(onDoubleClickEventHandler);
-
-//  Dispatch events.
-    $(materialHeaderSelector).on("dblclick", function(){
-        dblclicked.dispatch( $(materialControlSelector).get(0) );
-    });
-
-})();
-
-</script>
-
-<script>
-
-(function(){
-
-/*
-//  const VERSION = 5;
-    const NAME = "USER";
-
-    var db = new zango.Db( NAME, {
-        current:    true,
-        settings:   true,
-        animations: true,
-        outfits:    true,
-        materials:  true,
-        textures:   true,
-        products:   true,
-    });
-
-    db.open(function(err, database){
-        if (err) console.error(err);
-    }).then( function(){
-        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
-    }).catch(function(err){
-        console.error(err);
-    });
-*/
-
-    const viewer = document.getElementById("viewer");
-    const genderDroplist   = $("select#material-gender-droplist").get(0);
-    const slotDroplist     = $("select#material-outfit-slot").get(0);
-    const typeDroplist     = $("select#material-type").get(0);
-    const propDroplist     = $("select#material-property").get(0);
-    const propControls     = $("#material-property-controls").get(0);
-    const titleTextfield   = $("input#material-title").get(0);
-
-    var THREE = viewer.contentWindow.THREE; // important!
-
-    function generateUUID(){
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-        .replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0;
-            var v = c == 'x'?r:r&0x3|0x8;
-            return v.toString(16);
-        }).toLocaleUpperCase();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-})();
-
-</script>
 
