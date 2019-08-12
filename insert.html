@@ -252,7 +252,7 @@
     const materialHeaderSelector  = ".material-header";
     const helpersHeaderSelector   = ".helpers-header";
     const materialControlSelector = "#material-property-controls";
-    const propertyControlsPanel = $(tab).find("#material-property-controls").get(0);
+    const propertyControlsPanel   = $(tab).find("#material-property-controls").get(0);
 
     var Signal = signals.Signal;
     var dblclicked = new Signal();
@@ -365,6 +365,116 @@
     });
 
     outfitSlotChanged.add(updateTexturePreviewUVImage);
+
+})();
+
+</script>
+
+<script>
+//  Assuming that zango "USERS" is open.
+/*
+//  const VERSION = 6;
+    const NAME = "USER";
+
+    var db = new zango.Db( NAME, {
+        current:    true,
+        settings:   true,
+        animations: true,
+        outfits:    true,
+        materials:  true,
+        textures:   true,
+        products:   true,
+    });
+
+    db.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+*/
+
+</script>
+
+<script>
+
+(function(){
+
+    var files = {};
+    var uploads = [];
+    var textures = {};
+
+    const tab = document.getElementById("material-tab");
+    const viewer = document.getElementById("viewer");
+    const contentWindow    = viewer.contentWindow;
+
+    const genderDroplist   = $(tab).find("select#material-gender-droplist").get(0);
+    const slotDroplist     = $(tab).find("select#material-outfit-slot").get(0);
+    const typeDroplist     = $(tab).find("select#material-type").get(0);
+    const propDroplist     = $(tab).find("select#material-property").get(0);
+    const propControls     = $(tab).find("#material-property-controls").get(0);
+    const titleTextfield   = $(tab).find("input#material-title").get(0);
+    const textureImportBtn = $(tab).find("#import-texture-button").get(0);
+    const textureFileinput = $(tab).find("input#texture-fileinput").get(0);
+    const textureDeleteBtn = $(tab).find("#delete-selected-texture").get(0);
+    const texturesClearBtn = $(tab).find("#clear-imported-textures").get(0);
+    const textureUploadBtn = $(tab).find("#upload-material-textures").get(0);
+    const textureControls  = $(tab).find("#material-texture-controls").get(0);
+    const textureDroplist  = $(tab).find("#material-imported-textures").get(0);
+
+    const nameInputSelector = "input[type=text]#input_name";
+    const textureControlSelector = "#material-texture-controls";
+    const textureCheckboxSelector = "input[type=checkbox].material-texture-checkbox";
+
+    var Signal = signals.Signal;
+    var propertyValueChanged = new Signal();
+    var outfitMaterialChanged = new Signal();
+    var materialDroplistChanged = new Signal();
+    var propertiesDroplistChanged = new Signal();
+
+    var THREE = viewer.contentWindow.THREE; // important!
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
+
+    $(titleTextfield).on("input", function(){
+        json.name = this.value;
+        $(propControls).find(nameInputSelector).val(this.value);
+    });
+
+    outfitMaterialChanged.add(function(){
+
+        if ( !slotDroplist.value ) return;
+        if ( !genderDroplist.value) return;
+
+        var slot = slotDroplist.value;
+        var gender = genderDroplist.value;
+
+        var data = {
+            slot    : slot,
+            gender  : gender,
+            material: json,
+        };
+
+        contentWindow.localPlayerApplyMaterial(data);
+        contentWindow.localPlayerHandler("/select/" + slot);
+
+    });
+
+
+
+
+
+
+
+
 
 
 
